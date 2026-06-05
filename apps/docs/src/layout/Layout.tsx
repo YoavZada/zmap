@@ -85,7 +85,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
             <IconButton
               color="inherit"
               component="a"
-              href="https://github.com/"
+              href="https://github.com/YoavZada/zmap"
               target="_blank"
               rel="noopener"
             >
