@@ -1,0 +1,30 @@
+{
+  "name": "zmap-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "zmap — MUI-native map components built on MapLibre GL",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm --filter zmap build",
+    "dev": "pnpm --filter zmap dev",
+    "docs": "pnpm --filter docs dev",
+    "pathfinder": "pnpm --filter pathfinder dev",
+    "test": "pnpm --filter zmap test",
+    "lint": "eslint .",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

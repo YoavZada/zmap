@@ -1,0 +1,63 @@
+{
+  "name": "zmap",
+  "version": "0.1.0",
+  "description": "MUI-native, theme-aware map components built on MapLibre GL — markers, popups, controls, routes, arcs, clusters, and pluggable providers.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": ["**/*.css"],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "keywords": [
+    "mui",
+    "material-ui",
+    "map",
+    "maplibre",
+    "maplibre-gl",
+    "react",
+    "markers",
+    "clusters",
+    "geospatial",
+    "carto",
+    "openstreetmap"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "maplibre-gl": "^5.15.0"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^6.0.0 || ^7.0.0",
+    "@mui/material": "^6.0.0 || ^7.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.0.0",
+    "@mui/material": "^7.0.0",
+    "@types/geojson": "^7946.0.16",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.0"
+  }
+}
