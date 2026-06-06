@@ -1,0 +1,77 @@
+name: Deploy docs to GitHub Pages
+
+# Builds the docs showcase and publishes it to GitHub Pages at
+# https://<owner>.github.io/zmap/. Runs alongside the Netlify deploy
+# (deploy.yml) — this is an additional public mirror, not a replacement.
+#
+# One-time setup: repo Settings → Pages → "Build and deployment" → Source:
+# "GitHub Actions". (Private repos need GitHub Pro/Team/Enterprise for Pages.)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege for the build; pages/id-token are what the official deploy
+# actions need (id-token is the OIDC handshake used by deploy-pages).
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow a single in-flight Pages deployment. Don't cancel one mid-publish — a
+# half-finished Pages deploy is worse than waiting for it to settle.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        # Reads the version from the root package.json "packageManager" field.
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # BASE_PATH must match the Pages project subpath (/<repo>/) so assets and
+      # the client router resolve correctly. VITE_PATHFINDER_URL points the
+      # "Pathfinder" link at the deployed pathfinder (set it as a repo Actions
+      # *variable*); without it the link falls back to the dev localhost port.
+      - name: Build docs
+        run: pnpm --filter docs build
+        env:
+          BASE_PATH: /zmap/
+          VITE_PATHFINDER_URL: ${{ vars.PATHFINDER_URL }}
+
+      # GitHub Pages has no SPA rewrite rule (unlike Netlify's _redirects).
+      # Serving index.html as 404.html lets a deep link like /zmap/markers boot
+      # the app so react-router (basename=/zmap) can resolve it client-side.
+      - name: Add SPA fallback
+        run: cp apps/docs/dist/index.html apps/docs/dist/404.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/docs/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
