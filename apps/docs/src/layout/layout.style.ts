@@ -83,6 +83,7 @@ const version: SxProps<Theme> = {
   color: "text.secondary",
   fontFamily: "monospace",
   fontSize: 12,
+  "&:hover": { color: "text.primary" },
 };
 
 const main: SxProps<Theme> = {

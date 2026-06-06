@@ -12,6 +12,7 @@ import ListItemText from "@mui/material/ListItemText";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
+import Link from "@mui/material/Link";
 import Chip from "@mui/material/Chip";
 import DarkMode from "@mui/icons-material/DarkMode";
 import LightMode from "@mui/icons-material/LightMode";
@@ -29,6 +30,12 @@ import Styles from "./layout.style";
 // override with VITE_PATHFINDER_URL for a deployed build.
 const PATHFINDER_URL =
   import.meta.env.VITE_PATHFINDER_URL ?? "http://localhost:5174";
+
+// Library version, injected from packages/zmap/package.json at build time
+// (see vite.config.ts). The release workflow keeps the package version and the
+// git tag in lockstep, so this reflects the published GitHub release.
+const ZMAP_VERSION = import.meta.env.VITE_ZMAP_VERSION ?? "dev";
+const RELEASE_URL = `https://github.com/YoavZada/zmap/releases/tag/v${ZMAP_VERSION}`;
 
 type DrawerBodyProps = { onNavigate?: () => void };
 
@@ -53,7 +60,17 @@ const DrawerBody: FC<DrawerBodyProps> = ({ onNavigate }) => {
         <Typography variant="overline" color="text.secondary">
           Documentation
         </Typography>
-        <Typography sx={Styles.version}>v0.1.0</Typography>
+        <Tooltip title="Release notes on GitHub">
+          <Link
+            href={RELEASE_URL}
+            target="_blank"
+            rel="noopener"
+            underline="hover"
+            sx={Styles.version}
+          >
+            v{ZMAP_VERSION}
+          </Link>
+        </Tooltip>
       </Box>
 
       <List sx={Styles.navList}>

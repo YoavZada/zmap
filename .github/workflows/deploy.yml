@@ -53,10 +53,16 @@ jobs:
         env:
           VITE_DOCS_URL: ${{ vars.DOCS_URL }}
 
+      # --filter picks which workspace package this deploy is for. The Netlify
+      # CLI detects all three packages (zmapgl, docs, pathfinder) and refuses to
+      # proceed without one. It selects the package, not the site (--site does
+      # that); since the site has no build command and we pass no --build,
+      # nothing is rebuilt — Netlify just uploads the prebuilt --dir.
       - name: Deploy docs to Netlify
         run: >
           pnpm --package=netlify-cli dlx netlify deploy
           --prod
+          --filter docs
           --dir apps/docs/dist
           --site "$NETLIFY_DOCS_SITE_ID"
           --message "docs @ ${GITHUB_SHA::7}"
@@ -67,6 +73,7 @@ jobs:
         run: >
           pnpm --package=netlify-cli dlx netlify deploy
           --prod
+          --filter pathfinder
           --dir apps/pathfinder/dist
           --site "$NETLIFY_PATHFINDER_SITE_ID"
           --message "pathfinder @ ${GITHUB_SHA::7}"
