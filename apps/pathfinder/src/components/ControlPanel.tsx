@@ -4,57 +4,84 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
-import Search from "@mui/icons-material/Search";
+import Link from "@mui/material/Link";
+import Undo from "@mui/icons-material/Undo";
 import RestartAlt from "@mui/icons-material/RestartAlt";
-import Straighten from "@mui/icons-material/Straighten";
-import AltRoute from "@mui/icons-material/AltRoute";
-import type { Metric } from "../lib/types";
-import { formatDistance } from "../lib/geo";
+import AutoFixHigh from "@mui/icons-material/AutoFixHigh";
+import FormatListNumbered from "@mui/icons-material/FormatListNumbered";
+import { formatDistance, formatDuration } from "../lib/geo";
+import type { RouteOrder } from "../lib/types";
+import { CITIES, type City } from "../lib/cities";
 import type { Pathfinder } from "../hooks/usePathfinder";
+import WaypointList from "./WaypointList";
 import Styles from "./controlPanel.style";
 
 export type ControlPanelProps = {
   pathfinder: Pathfinder;
-  nodeCount: number;
-  edgeCount: number;
+  city: City;
+  onCityChange: (city: City) => void;
 };
 
 type Status = { text: string; tone: "info" | "success" | "error" };
 
 function statusFor(pf: Pathfinder): Status {
-  if (pf.phase === "animating")
-    return { text: "Running Dijkstra…", tone: "info" };
-  if (pf.phase === "no-path")
-    return { text: "No path connects A and B.", tone: "error" };
-  if (pf.phase === "done" && pf.result?.found)
-    return { text: "Shortest path found.", tone: "success" };
-  if (pf.start === null)
-    return { text: "Click the map to drop point A.", tone: "info" };
-  if (pf.end === null)
-    return { text: "Click again to drop point B.", tone: "info" };
-  return { text: "Ready — press Find shortest path.", tone: "info" };
+  if (pf.phase === "error")
+    return { text: pf.error ?? "Routing failed.", tone: "error" };
+  if (pf.phase === "routing")
+    return { text: "Finding the best route…", tone: "info" };
+  if (pf.phase === "done" && pf.result)
+    return {
+      text:
+        pf.points.length < 3
+          ? "Best driving route found."
+          : pf.order === "optimized"
+            ? "Fastest tour found — visiting order is optimized."
+            : "Route found — visiting points in your order.",
+      tone: "success",
+    };
+  if (pf.points.length === 0)
+    return { text: "Click the map to drop your first point.", tone: "info" };
+  return { text: "Drop another point to build a route.", tone: "info" };
 }
 
 const ControlPanel: FC<ControlPanelProps> = ({
   pathfinder,
-  nodeCount,
-  edgeCount,
+  city,
+  onCityChange,
 }) => {
-  const { metric, result, phase, canRun, changeMetric, run, reset } =
-    pathfinder;
+  const {
+    points,
+    result,
+    phase,
+    order,
+    removePoint,
+    removeLast,
+    reorderPoint,
+    renamePoint,
+    changeOrder,
+    clear,
+  } = pathfinder;
   const status = statusFor(pathfinder);
-  const showStats = result?.found === true;
+  const showStats = phase === "done" && result != null;
+  const hasPoints = points.length > 0;
+  const visitOrder =
+    result && result.visitOrder.length === points.length
+      ? result.visitOrder
+      : null;
 
   return (
     <Box sx={Styles.root}>
       <Box sx={Styles.intro}>
         <Typography variant="h5" fontWeight={700}>
-          Dijkstra Pathfinder
+          Route Pathfinder
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Pick two points on the road network and watch Dijkstra's algorithm
-          fan out to find the shortest route between them.
+          Drop points anywhere on the map and get the best driving route along
+          the real streets. With three or more points, optimize the visiting
+          order for the fastest tour — or keep your own order.
         </Typography>
       </Box>
 
@@ -62,44 +89,87 @@ const ControlPanel: FC<ControlPanelProps> = ({
 
       <Box sx={Styles.section}>
         <Typography variant="caption" sx={Styles.sectionLabel}>
-          Optimize for
+          Start location
+        </Typography>
+        <TextField
+          select
+          size="small"
+          fullWidth
+          value={city.id}
+          onChange={(event) => {
+            const next = CITIES.find((c) => c.id === event.target.value);
+            if (next) onCityChange(next);
+          }}
+        >
+          {CITIES.map((c) => (
+            <MenuItem key={c.id} value={c.id}>
+              {c.name}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Box>
+
+      <Box sx={Styles.section}>
+        <Typography variant="caption" sx={Styles.sectionLabel}>
+          Visiting order
         </Typography>
         <ToggleButtonGroup
           orientation="vertical"
           exclusive
           fullWidth
           size="small"
-          value={metric}
-          onChange={(_, value: Metric | null) => value && changeMetric(value)}
+          value={order}
+          onChange={(_, value: RouteOrder | null) =>
+            value && changeOrder(value)
+          }
           sx={Styles.toggleGroup}
         >
-          <ToggleButton value="distance">
-            <Straighten fontSize="small" />
-            Shortest distance (road length)
+          <ToggleButton value="optimized">
+            <AutoFixHigh fontSize="small" />
+            Optimized (fastest tour)
           </ToggleButton>
-          <ToggleButton value="stops">
-            <AltRoute fontSize="small" />
-            Fewest stops (intersections)
+          <ToggleButton value="fixed">
+            <FormatListNumbered fontSize="small" />
+            In my order (as dropped)
           </ToggleButton>
         </ToggleButtonGroup>
       </Box>
 
+      <Box sx={Styles.section}>
+        <Typography variant="caption" sx={Styles.sectionLabel}>
+          Points{hasPoints ? ` (${points.length})` : ""}
+        </Typography>
+        <WaypointList
+          points={points}
+          visitOrder={visitOrder}
+          onReorder={reorderPoint}
+          onRemove={removePoint}
+          onRename={renamePoint}
+        />
+        {points.length > 1 && (
+          <Typography variant="caption" color="text.secondary">
+            Use ↑ ↓ to set the visiting order — the route follows the list.
+          </Typography>
+        )}
+      </Box>
+
       <Box sx={Styles.actions}>
         <Button
-          variant="contained"
+          variant="outlined"
           fullWidth
-          startIcon={<Search />}
-          disabled={!canRun || phase === "animating"}
-          onClick={run}
+          startIcon={<Undo />}
+          disabled={!hasPoints}
+          onClick={removeLast}
         >
-          Find shortest path
+          Remove last
         </Button>
         <Button
           variant="outlined"
           startIcon={<RestartAlt />}
-          onClick={reset}
+          disabled={!hasPoints}
+          onClick={clear}
         >
-          Reset
+          Clear
         </Button>
       </Box>
 
@@ -126,31 +196,35 @@ const ControlPanel: FC<ControlPanelProps> = ({
               Total distance
             </Typography>
             <Typography variant="h6" sx={Styles.statValue}>
-              {formatDistance(result.lengthMeters)}
+              {formatDistance(result.distanceMeters)}
             </Typography>
           </Box>
           <Box sx={Styles.stat}>
             <Typography variant="caption" color="text.secondary">
-              Segments
+              Est. driving time
             </Typography>
             <Typography variant="h6" sx={Styles.statValue}>
-              {result.segments}
+              {formatDuration(result.durationSeconds)}
             </Typography>
           </Box>
           <Box sx={Styles.stat}>
             <Typography variant="caption" color="text.secondary">
-              Nodes explored
+              Points
             </Typography>
             <Typography variant="h6" sx={Styles.statValue}>
-              {result.exploredCount}
+              {points.length}
             </Typography>
           </Box>
           <Box sx={Styles.stat}>
             <Typography variant="caption" color="text.secondary">
-              Optimized for
+              Mode
             </Typography>
             <Typography variant="h6" sx={Styles.statValue}>
-              {metric === "distance" ? "Distance" : "Stops"}
+              {points.length < 3
+                ? "Direct route"
+                : order === "optimized"
+                  ? "Optimal tour"
+                  : "My order"}
             </Typography>
           </Box>
         </Box>
@@ -164,29 +238,38 @@ const ControlPanel: FC<ControlPanelProps> = ({
         </Typography>
         <Box sx={Styles.legendRow}>
           <Box sx={Styles.swatch("success.main")} />
-          <Typography variant="body2">Start (A)</Typography>
+          <Typography variant="body2">Start (1)</Typography>
+        </Box>
+        <Box sx={Styles.legendRow}>
+          <Box sx={Styles.swatch("secondary.main")} />
+          <Typography variant="body2">Stop along the way</Typography>
         </Box>
         <Box sx={Styles.legendRow}>
           <Box sx={Styles.swatch("error.main")} />
-          <Typography variant="body2">Destination (B)</Typography>
-        </Box>
-        <Box sx={Styles.legendRow}>
-          <Box sx={Styles.swatchLine("secondary.main")} />
-          <Typography variant="body2">Explored (search tree)</Typography>
+          <Typography variant="body2">Destination (last)</Typography>
         </Box>
         <Box sx={Styles.legendRow}>
           <Box sx={Styles.swatchLine("primary.main")} />
-          <Typography variant="body2">Shortest path</Typography>
+          <Typography variant="body2">Shortest route</Typography>
         </Box>
         <Box sx={Styles.legendRow}>
-          <Box sx={Styles.swatchLine("grey.500")} />
-          <Typography variant="body2">Road network</Typography>
+          <Box sx={Styles.swatchLine("text.secondary")} />
+          <Typography variant="body2">Link to nearest street</Typography>
         </Box>
       </Box>
 
       <Typography variant="caption" color="text.secondary">
-        Simulated network of {nodeCount.toLocaleString()} intersections and{" "}
-        {edgeCount.toLocaleString()} road segments. Drag A or B to re-route.
+        Each point snaps to the nearest street; only on-street travel counts.
+        Drag a point to move it, click a point to remove it. Routing by{" "}
+        <Link
+          href="https://project-osrm.org/"
+          target="_blank"
+          rel="noopener"
+          underline="hover"
+        >
+          OSRM
+        </Link>{" "}
+        · © OpenStreetMap contributors.
       </Typography>
     </Box>
   );

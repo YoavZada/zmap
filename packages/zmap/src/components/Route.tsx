@@ -2,7 +2,11 @@ import { useId, useMemo, type FC } from "react";
 import { useTheme } from "@mui/material/styles";
 import { useMapLayer, type LayerInput } from "../hooks/useMapLayer";
 import { resolvePaletteColor } from "../utils/color";
-import { featureCollection, lineFeature, type LngLatTuple } from "../utils/geojson";
+import {
+  featureCollection,
+  lineFeature,
+  type LngLatTuple,
+} from "../utils/geojson";
 
 export interface RouteProps {
   /** Explicit source/layer id. Auto-generated when omitted. */

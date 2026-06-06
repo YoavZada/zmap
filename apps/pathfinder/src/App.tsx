@@ -1,40 +1,42 @@
-import { useMemo, type FC } from "react";
+import { useCallback, useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import Brightness4 from "@mui/icons-material/Brightness4";
 import Brightness7 from "@mui/icons-material/Brightness7";
 import RouteOutlined from "@mui/icons-material/RouteOutlined";
-import { generateRoadNetwork } from "./lib/network";
+import MenuBookOutlined from "@mui/icons-material/MenuBookOutlined";
 import { usePathfinder } from "./hooks/usePathfinder";
 import MapCanvas from "./components/MapCanvas";
 import ControlPanel from "./components/ControlPanel";
+import { DEFAULT_CITY, type City } from "./lib/cities";
 import { useColorMode } from "./theme";
 import Styles from "./app.style";
+
+// The zmap docs/showcase site runs as its own app. Defaults to the pinned dev
+// port; override with VITE_DOCS_URL for a deployed build.
+const DOCS_URL = import.meta.env.VITE_DOCS_URL ?? "http://localhost:5173";
 
 const App: FC = () => {
   const { mode, toggle } = useColorMode();
 
-  // Generated once: a jittered street grid over Manhattan with some segments
-  // removed so the shortest path has to detour. Seeded → stable across reloads.
-  const network = useMemo(
-    () =>
-      generateRoadNetwork({
-        center: [-73.9857, 40.7484],
-        cols: 19,
-        rows: 15,
-        span: [0.052, 0.034],
-        jitter: 0.5,
-        dropProbability: 0.16,
-        seed: 20240605,
-      }),
-    [],
-  );
+  const pathfinder = usePathfinder();
+  const { clear } = pathfinder;
+  const [city, setCity] = useState<City>(DEFAULT_CITY);
 
-  const pathfinder = usePathfinder(network);
+  // Switching cities recenters the map; the dropped points belonged to the old
+  // location, so clear them.
+  const handleCityChange = useCallback(
+    (next: City) => {
+      setCity(next);
+      clear();
+    },
+    [clear],
+  );
 
   return (
     <Box sx={Styles.root}>
@@ -43,9 +45,18 @@ const App: FC = () => {
           <Box sx={Styles.brand}>
             <RouteOutlined color="primary" />
             <Typography variant="h6" fontWeight={700}>
-              zmap · Dijkstra Pathfinder
+              zmap · Route Pathfinder
             </Typography>
           </Box>
+          <Button
+            color="inherit"
+            component="a"
+            href={DOCS_URL}
+            startIcon={<MenuBookOutlined />}
+            sx={Styles.docsLink}
+          >
+            Docs
+          </Button>
           <Tooltip title={mode === "dark" ? "Light mode" : "Dark mode"}>
             <IconButton onClick={toggle} color="inherit">
               {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
@@ -56,13 +67,13 @@ const App: FC = () => {
 
       <Box sx={Styles.main}>
         <Box sx={Styles.mapArea}>
-          <MapCanvas network={network} pathfinder={pathfinder} />
+          <MapCanvas pathfinder={pathfinder} city={city} />
         </Box>
         <Box sx={Styles.panel}>
           <ControlPanel
             pathfinder={pathfinder}
-            nodeCount={network.nodes.length}
-            edgeCount={network.edges.length}
+            city={city}
+            onCityChange={handleCityChange}
           />
         </Box>
       </Box>

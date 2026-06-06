@@ -10,7 +10,10 @@ export type { PopupProps } from "./components/Popup";
 export { default as Tooltip } from "./components/Tooltip";
 export type { TooltipProps } from "./components/Tooltip";
 export { default as MapControls } from "./components/MapControls";
-export type { MapControlsProps, ControlPosition } from "./components/MapControls";
+export type {
+  MapControlsProps,
+  ControlPosition,
+} from "./components/MapControls";
 export { default as Route } from "./components/Route";
 export type { RouteProps } from "./components/Route";
 export { default as Arc } from "./components/Arc";
@@ -19,6 +22,20 @@ export { default as Cluster } from "./components/Cluster";
 export type { ClusterPoint, ClusterProps } from "./components/Cluster";
 export { default as GeoJSONLayer } from "./components/GeoJSONLayer";
 export type { GeoJSONLayerProps } from "./components/GeoJSONLayer";
+export { default as Layer } from "./components/Layer";
+export type { LayerProps } from "./components/Layer";
+export { default as LayerControl } from "./components/LayerControl";
+export type {
+  LayerControlProps,
+  LayerConfig,
+  LayerItemControls,
+} from "./components/LayerControl";
+export { default as PointLayer } from "./components/PointLayer";
+export type { PointLayerProps, LayerPoint } from "./components/PointLayer";
+export { default as HeatmapLayer } from "./components/HeatmapLayer";
+export type { HeatmapLayerProps } from "./components/HeatmapLayer";
+export { default as ShapeLayer } from "./components/ShapeLayer";
+export type { ShapeLayerProps } from "./components/ShapeLayer";
 
 // Hooks & context
 export { useMap, useMapContext } from "./context/useMap";
@@ -27,6 +44,14 @@ export { useMapLayer } from "./hooks/useMapLayer";
 export type { MapLayerConfig, LayerInput } from "./hooks/useMapLayer";
 export { useColorScheme } from "./hooks/useColorScheme";
 export type { ColorScheme } from "./hooks/useColorScheme";
+export {
+  useLayerRegistry,
+  useLayerVisibility,
+} from "./context/useLayerRegistry";
+export type {
+  LayerEntry,
+  LayerRegistryValue,
+} from "./context/LayerRegistryContext";
 
 // Providers
 export {
@@ -50,6 +75,8 @@ export type { ArcOptions, ArcType } from "./utils/arc";
 export { lineFeature, pointFeature, featureCollection } from "./utils/geojson";
 export type { LngLatTuple } from "./utils/geojson";
 export { resolvePaletteColor } from "./utils/color";
+export { buildColorExpression, isChoroplethSpec } from "./utils/choropleth";
+export type { ChoroplethSpec } from "./utils/choropleth";
 
 // Re-export the underlying MapLibre namespace for power users.
 export { default as maplibregl } from "maplibre-gl";

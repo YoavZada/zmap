@@ -1,141 +1,213 @@
+import { useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import PublicIcon from "@mui/icons-material/Public";
-import PaletteIcon from "@mui/icons-material/Palette";
-import LayersIcon from "@mui/icons-material/Layers";
-import BoltIcon from "@mui/icons-material/Bolt";
+import Chip from "@mui/material/Chip";
+import PaletteIcon from "@mui/icons-material/PaletteOutlined";
+import SpeedIcon from "@mui/icons-material/SpeedOutlined";
+import CodeIcon from "@mui/icons-material/CodeOutlined";
+import ExtensionIcon from "@mui/icons-material/ExtensionOutlined";
+import CheckCircle from "@mui/icons-material/CheckCircle";
+import ArrowForward from "@mui/icons-material/ArrowForward";
+import TerminalIcon from "@mui/icons-material/Terminal";
+import ContentCopy from "@mui/icons-material/ContentCopy";
+import Check from "@mui/icons-material/Check";
 import { Link as RouterLink } from "react-router-dom";
-import { Map, MapControls, Marker, Popup } from "zmap";
-import { useState } from "react";
+import { Map, Marker } from "zmap";
 import CodeBlock from "../components/CodeBlock";
-import { cities } from "../data";
+import Styles from "./introPage.style";
 
 const features = [
   {
-    icon: <PaletteIcon color="primary" />,
-    title: "MUI-native theming",
-    body: "Controls, popups and markers are MUI components. The basemap follows your theme's light/dark mode automatically.",
+    icon: <PaletteIcon />,
+    title: "Theme-aware",
+    body: "Components read your MUI theme directly — primary palette, shape and light/dark mode flow straight into the controls, popups and basemap.",
   },
   {
-    icon: <PublicIcon color="primary" />,
+    icon: <SpeedIcon />,
+    title: "Hardware-accelerated",
+    body: "Built on MapLibre GL for GPU vector rendering. Markers mount through React portals, so React state changes never re-create the map canvas.",
+  },
+  {
+    icon: <CodeIcon />,
+    title: "Declarative",
+    body: "Manage the map in JSX. Markers, popups, routes, arcs, clusters and layers are first-class React components with ordinary props and children.",
+  },
+  {
+    icon: <ExtensionIcon />,
     title: "Pluggable providers",
-    body: "Ship with CARTO and OpenStreetMap, or drop in any MapLibre style URL or spec — MapTiler, Stadia, self-hosted.",
-  },
-  {
-    icon: <LayersIcon color="primary" />,
-    title: "Everything you need",
-    body: "Markers, popups, tooltips, controls, routes, arcs and native clustering — composable React components.",
-  },
-  {
-    icon: <BoltIcon color="primary" />,
-    title: "Built on MapLibre GL",
-    body: "Hardware-accelerated vector maps with zero lock-in. Drop down to the raw map instance whenever you need to.",
+    body: "CARTO and OpenStreetMap ship built in — or pass any MapLibre style URL or spec. Drop down to the raw map instance whenever you need it.",
   },
 ];
+
+const chips = ["Light & dark mode", "TypeScript-first", "MIT licensed"];
 
 const installCode = `npm install zmap @mui/material @mui/icons-material \\
   @emotion/react @emotion/styled maplibre-gl`;
 
-const quickStart = `import { Map, MapControls, Marker, Popup } from "zmap";
+const quickStart = `import type { FC } from "react";
+import { Map, MapControls, Marker } from "zmap";
 
-export function MyMap() {
+const MyMap: FC = () => {
   return (
     <Map center={[-0.1276, 51.5072]} zoom={11} sx={{ height: 420 }}>
       <MapControls position="top-right" />
       <Marker longitude={-0.1276} latitude={51.5072} />
     </Map>
   );
-}`;
+};
+
+export default MyMap;`;
+
+const InstallButton: FC = () => {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    await navigator.clipboard.writeText("npm install zmap");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+  return (
+    <Button
+      onClick={copy}
+      startIcon={<TerminalIcon fontSize="small" />}
+      endIcon={
+        copied ? <Check fontSize="small" /> : <ContentCopy fontSize="small" />
+      }
+      sx={Styles.installButton}
+    >
+      npm install zmap
+    </Button>
+  );
+};
+
+// Two real maps, one forced light and one forced dark — the library's headline
+// feature (`colorScheme`) demonstrated literally, side by side.
+const ThemeShowcase: FC = () => {
+  const view = { center: [-0.118, 51.509] as [number, number], zoom: 10.5 };
+  const half = (scheme: "light" | "dark", label: string) => (
+    <Box sx={Styles.showcaseHalf}>
+      <Map
+        colorScheme={scheme}
+        center={view.center}
+        zoom={view.zoom}
+        interactive={false}
+        hideAttribution
+        sx={Styles.showcaseMap}
+      >
+        <Marker longitude={view.center[0]} latitude={view.center[1]} />
+      </Map>
+      <Chip label={label} size="small" sx={Styles.showcaseChip} />
+    </Box>
+  );
+  return (
+    <Paper variant="outlined" sx={Styles.showcase}>
+      {half("light", "Light theme")}
+      {half("dark", "Dark theme")}
+    </Paper>
+  );
+};
 
 export function IntroPage() {
-  const [openCity, setOpenCity] = useState<string | null>("London");
-
   return (
     <Box>
-      <Stack spacing={2} sx={{ mb: 4 }}>
-        <Typography variant="h3" fontWeight={800} sx={{ letterSpacing: -1 }}>
-          Beautiful maps for MUI apps
-        </Typography>
-        <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 760 }}>
-          <b>zmap</b> is a set of composable, theme-aware map components built on
-          MapLibre GL — the map equivalent of the MUI components you already use.
-        </Typography>
-        <Stack direction="row" spacing={1.5}>
-          <Button variant="contained" component={RouterLink} to="/markers">
-            Explore components
-          </Button>
-          <Button variant="outlined" component={RouterLink} to="/providers">
-            Providers & theming
-          </Button>
-        </Stack>
-      </Stack>
-
-      <Map center={[2, 30]} zoom={1.4} sx={{ height: 460, borderRadius: 3, mb: 5 }}>
-        <MapControls position="top-right" showScale />
-        {cities.map((city) => (
-          <Marker
-            key={city.name}
-            longitude={city.coordinates[0]}
-            latitude={city.coordinates[1]}
-            onClick={() => setOpenCity(city.name)}
-          />
-        ))}
-        {cities
-          .filter((c) => c.name === openCity)
-          .map((city) => (
-            <Popup
-              key={city.name}
-              longitude={city.coordinates[0]}
-              latitude={city.coordinates[1]}
-              offset={28}
-              onClose={() => setOpenCity(null)}
+      {/* Hero */}
+      <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center" sx={Styles.hero}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Typography variant="h2" gutterBottom>
+            Beautiful maps for{" "}
+            <Box component="span" sx={Styles.accent}>
+              MUI apps
+            </Box>
+            .
+          </Typography>
+          <Typography variant="subtitle1" color="text.secondary" sx={Styles.heroLead}>
+            zmap inherits your Material UI theme, giving you a unified design
+            system from your buttons to your base maps. No custom styling
+            hacks — just declarative, composable mapping components.
+          </Typography>
+          <Stack direction="row" spacing={1.5} sx={Styles.heroActions} flexWrap="wrap" useFlexGap>
+            <Button
+              variant="contained"
+              endIcon={<ArrowForward />}
+              component={RouterLink}
+              to="/markers"
             >
-              <Typography fontWeight={700}>{city.name}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                {city.country} · {city.population}
-              </Typography>
-            </Popup>
-          ))}
-      </Map>
-
-      <Grid container spacing={2} sx={{ mb: 5 }}>
-        {features.map((f) => (
-          <Grid key={f.title} size={{ xs: 12, sm: 6 }}>
-            <Paper variant="outlined" sx={{ p: 2.5, height: "100%", borderRadius: 3 }}>
-              <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1 }}>
-                {f.icon}
-                <Typography fontWeight={700}>{f.title}</Typography>
+              Explore Components
+            </Button>
+            <InstallButton />
+          </Stack>
+          <Stack direction="row" spacing={2.5} flexWrap="wrap" useFlexGap>
+            {chips.map((c) => (
+              <Stack key={c} direction="row" spacing={0.75} alignItems="center">
+                <CheckCircle sx={Styles.checkIcon} />
+                <Typography variant="body2" color="text.secondary">
+                  {c}
+                </Typography>
               </Stack>
-              <Typography variant="body2" color="text.secondary">
-                {f.body}
-              </Typography>
-            </Paper>
-          </Grid>
-        ))}
+            ))}
+          </Stack>
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <ThemeShowcase />
+        </Grid>
       </Grid>
 
-      <Typography variant="h5" fontWeight={700} gutterBottom>
-        Installation
-      </Typography>
-      <Typography color="text.secondary" sx={{ mb: 2 }}>
-        Install zmap alongside its MUI and MapLibre peers. The MapLibre stylesheet
-        is bundled automatically — no extra CSS import required.
-      </Typography>
-      <Box sx={{ mb: 3 }}>
-        <CodeBlock code={installCode} language="bash" />
+      {/* Feature grid */}
+      <Box sx={Styles.featureSection}>
+        <Typography variant="h4" gutterBottom>
+          Built for the Modern Developer
+        </Typography>
+        <Typography color="text.secondary" sx={Styles.featureLead}>
+          Composable mapping components that feel like the MUI primitives you
+          already use.
+        </Typography>
+        <Grid container spacing={2.5}>
+          {features.map((f) => (
+            <Grid key={f.title} size={{ xs: 12, sm: 6 }}>
+              <Paper variant="outlined" sx={Styles.featureCard}>
+                <Box sx={Styles.featureIcon}>{f.icon}</Box>
+                <Typography variant="h6" gutterBottom>
+                  {f.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {f.body}
+                </Typography>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
       </Box>
 
-      <Typography variant="h5" fontWeight={700} gutterBottom>
-        Quick start
-      </Typography>
-      <Typography color="text.secondary" sx={{ mb: 2 }}>
-        Wrap your app in an MUI <code>ThemeProvider</code>, then compose a map:
-      </Typography>
-      <CodeBlock code={quickStart} />
+      {/* Installation */}
+      <Box sx={Styles.installSection}>
+        <Typography variant="h4" gutterBottom>
+          Installation
+        </Typography>
+        <Typography color="text.secondary" sx={Styles.sectionLead}>
+          Install zmap alongside its MUI and MapLibre peers. The MapLibre
+          stylesheet is bundled automatically — no extra CSS import required.
+        </Typography>
+        <CodeBlock code={installCode} language="bash" filename="Terminal" />
+      </Box>
+
+      {/* Quick start */}
+      <Box id="quick-start" sx={Styles.quickStart}>
+        <Typography variant="h4" gutterBottom>
+          Quick start
+        </Typography>
+        <Typography color="text.secondary" sx={Styles.sectionLead}>
+          Wrap your app in an MUI <code>ThemeProvider</code>, then compose a map.
+          The basemap follows the theme automatically.
+        </Typography>
+        <CodeBlock
+          code={quickStart}
+          filename="MyMap.tsx"
+          note="Ensure @mui/material is installed and an MUI ThemeProvider wraps your app."
+        />
+      </Box>
     </Box>
   );
 }

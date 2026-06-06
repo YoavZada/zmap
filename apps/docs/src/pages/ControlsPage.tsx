@@ -9,18 +9,28 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Map, MapControls, type ControlPosition } from "zmap";
 import DemoSection from "../components/DemoSection";
+import Styles from "./controlsPage.style";
 
-const code = `<Map center={[2.3522, 48.8566]} zoom={11} mapOptions={{ pitch: 30 }}>
-  <MapControls
-    position="top-right"
-    showZoom
-    showCompass
-    showGeolocate
-    showFullscreen
-    showScale
-    scalePosition="bottom-left"
-  />
-</Map>`;
+const code = `import type { FC } from "react";
+import { Map, MapControls } from "zmap";
+
+const MyMap: FC = () => {
+  return (
+    <Map center={[2.3522, 48.8566]} zoom={11} mapOptions={{ pitch: 30 }}>
+      <MapControls
+        position="top-right"
+        showZoom
+        showCompass
+        showGeolocate
+        showFullscreen
+        showScale
+        scalePosition="bottom-left"
+      />
+    </Map>
+  );
+};
+
+export default MyMap;`;
 
 export function ControlsPage() {
   const [position, setPosition] = useState<ControlPosition>("top-right");
@@ -35,7 +45,7 @@ export function ControlsPage() {
       <Typography variant="h4" fontWeight={800} gutterBottom>
         Controls
       </Typography>
-      <Typography color="text.secondary" sx={{ mb: 3, maxWidth: 760 }}>
+      <Typography color="text.secondary" sx={Styles.intro}>
         <code>MapControls</code> is a cluster of MUI buttons — zoom, compass
         (drag to rotate, then click to reset north), geolocate, and fullscreen —
         plus an optional scale bar. Because it's plain MUI, it inherits your
@@ -52,7 +62,7 @@ export function ControlsPage() {
               direction={{ xs: "column", md: "row" }}
               spacing={2}
               alignItems={{ md: "center" }}
-              sx={{ mb: 2 }}
+              sx={Styles.controls}
             >
               <ToggleButtonGroup
                 size="small"
@@ -118,7 +128,7 @@ export function ControlsPage() {
               center={[2.3522, 48.8566]}
               zoom={11}
               mapOptions={{ pitch: 30 }}
-              sx={{ height: 440, borderRadius: 2 }}
+              sx={Styles.map}
             >
               <MapControls
                 position={position}

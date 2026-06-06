@@ -7,9 +7,11 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import { Map, Marker, Route } from "zmap";
 import DemoSection from "../components/DemoSection";
+import Styles from "./routesPage.style";
 import { londonRoute } from "../data";
 
-const code = `import { Map, Route, Marker } from "zmap";
+const code = `import type { FC } from "react";
+import { Map, Route, Marker } from "zmap";
 
 const path = [
   [-0.1419, 51.5014],
@@ -19,11 +21,17 @@ const path = [
   [-0.0759, 51.5081],
 ];
 
-<Map center={[-0.11, 51.506]} zoom={13}>
-  <Route coordinates={path} color="primary.main" width={5} />
-  <Marker longitude={path[0][0]} latitude={path[0][1]} />
-  <Marker longitude={path.at(-1)[0]} latitude={path.at(-1)[1]} />
-</Map>`;
+const MyMap: FC = () => {
+  return (
+    <Map center={[-0.11, 51.506]} zoom={13}>
+      <Route coordinates={path} color="primary.main" width={5} />
+      <Marker longitude={path[0][0]} latitude={path[0][1]} />
+      <Marker longitude={path.at(-1)[0]} latitude={path.at(-1)[1]} />
+    </Map>
+  );
+};
+
+export default MyMap;`;
 
 export function RoutesPage() {
   const [width, setWidth] = useState(5);
@@ -37,7 +45,7 @@ export function RoutesPage() {
       <Typography variant="h4" fontWeight={800} gutterBottom>
         Routes
       </Typography>
-      <Typography color="text.secondary" sx={{ mb: 3, maxWidth: 760 }}>
+      <Typography color="text.secondary" sx={Styles.intro}>
         <code>Route</code> draws a polyline from a list of coordinates as a
         GPU-rendered line layer. Colors accept MUI palette tokens like{" "}
         <code>"primary.main"</code>, and the line survives theme changes.
@@ -53,9 +61,9 @@ export function RoutesPage() {
               direction={{ xs: "column", sm: "row" }}
               spacing={3}
               alignItems={{ sm: "center" }}
-              sx={{ mb: 2 }}
+              sx={Styles.controls}
             >
-              <Box sx={{ width: 220 }}>
+              <Box sx={Styles.sliderBox}>
                 <Typography variant="caption" color="text.secondary">
                   Width: {width}px
                 </Typography>
@@ -81,7 +89,7 @@ export function RoutesPage() {
             <Map
               center={[-0.108, 51.506]}
               zoom={13}
-              sx={{ height: 440, borderRadius: 2 }}
+              sx={Styles.map}
             >
               <Route
                 coordinates={londonRoute}

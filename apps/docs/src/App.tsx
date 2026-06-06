@@ -8,6 +8,7 @@ import { ControlsPage } from "./pages/ControlsPage";
 import { RoutesPage } from "./pages/RoutesPage";
 import { ArcsPage } from "./pages/ArcsPage";
 import { ClustersPage } from "./pages/ClustersPage";
+import { LayersPage } from "./pages/LayersPage";
 
 export function App() {
   return (
@@ -21,6 +22,7 @@ export function App() {
         <Route path="/routes" element={<RoutesPage />} />
         <Route path="/arcs" element={<ArcsPage />} />
         <Route path="/clusters" element={<ClustersPage />} />
+        <Route path="/layers" element={<LayersPage />} />
       </Routes>
     </Layout>
   );

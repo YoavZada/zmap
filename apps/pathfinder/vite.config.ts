@@ -10,6 +10,8 @@ const zmapSrc = fileURLToPath(
 
 export default defineConfig({
   plugins: [react()],
+  // Pinned so the docs app's "Pathfinder" link has a stable URL in dev.
+  server: { port: 5174 },
   resolve: {
     alias: {
       zmap: zmapSrc,

@@ -39,7 +39,8 @@ export function resolveStyle(
   mode: ColorMode,
 ): string | StyleSpecification {
   if (typeof input === "string") {
-    if (input in providers) return providers[input as ProviderId].getStyle(mode);
+    if (input in providers)
+      return providers[input as ProviderId].getStyle(mode);
     return input; // raw style URL
   }
   if (isMapProvider(input)) return input.getStyle(mode);

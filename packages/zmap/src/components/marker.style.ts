@@ -8,5 +8,9 @@ const pin: SxProps<Theme> = {
   filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,0.4))",
 };
 
-const styles: { pin: SxProps<Theme> } = { pin };
+const pinIcon: SxProps<Theme> = {
+  fontSize: 36,
+};
+
+const styles: Record<"pin" | "pinIcon", SxProps<Theme>> = { pin, pinIcon };
 export default styles;

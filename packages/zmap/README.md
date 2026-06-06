@@ -48,6 +48,11 @@ colors and to switch the basemap between light and dark.
 | `Route`         | Draw a polyline from coordinates.                              |
 | `Arc`           | Draw a curved (bezier or great-circle) line between two points.|
 | `Cluster`       | Native MapLibre clustering rendered as themed MUI markers.     |
+| `LayerControl`  | Collapsible MUI panel that toggles registered layers on/off.   |
+| `Layer`         | Register a toggleable overlay; pairs with `LayerControl`.      |
+| `PointLayer`    | Render many points as a single GPU circle layer.              |
+| `HeatmapLayer`  | Render points as a density heatmap.                           |
+| `ShapeLayer`    | GeoJSON polygons / lines, with optional choropleth fill.      |
 | `GeoJSONLayer`  | Low-level escape hatch for custom sources + layers.            |
 
 Hooks: `useMap()` (the raw MapLibre instance), `useMapLayer()`,

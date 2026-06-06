@@ -153,7 +153,11 @@ const Cluster: FC<ClusterProps> = ({
   useMapLayer({
     id: baseId,
     data,
-    sourceOptions: { cluster: true, clusterRadius: radius, clusterMaxZoom: maxZoom },
+    sourceOptions: {
+      cluster: true,
+      clusterRadius: radius,
+      clusterMaxZoom: maxZoom,
+    },
     layers,
   });
 

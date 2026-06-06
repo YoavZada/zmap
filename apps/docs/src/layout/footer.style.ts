@@ -1,13 +1,12 @@
 import type { SxProps, Theme } from "@mui/material/styles";
 
-const footer: SxProps<Theme> = {
+const footer: SxProps<Theme> = (t) => ({
   borderTop: 1,
   borderColor: "divider",
   mt: 6,
   py: { xs: 4, md: 6 },
-  bgcolor: (t) =>
-    t.palette.mode === "dark" ? "rgba(255,255,255,0.02)" : "grey.50",
-};
+  bgcolor: t.tokens.surfaceContainerLow,
+});
 
 const inner: SxProps<Theme> = {
   maxWidth: 1100,

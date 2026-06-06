@@ -1,50 +1,59 @@
 import type { FC } from "react";
 import { Map, MapControls } from "zmap";
-import type { RoadNetwork } from "../lib/types";
+import type { City } from "../lib/cities";
 import type { Pathfinder } from "../hooks/usePathfinder";
 import MapInteraction from "./MapInteraction";
-import NetworkLayer from "./NetworkLayer";
-import SearchTreeLayer from "./SearchTreeLayer";
+import CityFocus from "./CityFocus";
+import ConnectorLayer from "./ConnectorLayer";
 import PathLayer from "./PathLayer";
-import Endpoints from "./Endpoints";
+import Waypoints from "./Waypoints";
 import Styles from "./mapCanvas.style";
 
 export type MapCanvasProps = {
-  network: RoadNetwork;
   pathfinder: Pathfinder;
+  city: City;
 };
 
-const CENTER: [number, number] = [-73.9857, 40.7484];
+/** The interactive map: basemap + the route, off-street connectors, and points. */
+const MapCanvas: FC<MapCanvasProps> = ({ pathfinder, city }) => {
+  const {
+    points,
+    result,
+    phase,
+    pathVisible,
+    addPoint,
+    movePoint,
+    removePoint,
+  } = pathfinder;
 
-/** The interactive map: basemap + the routable network, search tree, and path. */
-const MapCanvas: FC<MapCanvasProps> = ({ network, pathfinder }) => {
-  const { phase, result, exploredVisible, pathVisible, pickPoint, dragEndpoint } =
-    pathfinder;
+  // The result can briefly lag the points (during a refetch); only draw the
+  // snapped connectors / order numbers while it still lines up with the points.
+  const inSync = result?.snapped.length === points.length;
 
   return (
-    <Map center={CENTER} zoom={13.2} colorScheme="auto" sx={Styles.map}>
+    <Map
+      center={city.center}
+      zoom={city.zoom}
+      colorScheme="auto"
+      sx={Styles.map}
+    >
       <MapControls position="top-right" showGeolocate={false} />
-      <MapInteraction onPick={pickPoint} active={phase !== "animating"} />
+      <MapInteraction onPick={addPoint} active={phase !== "routing"} />
+      <CityFocus center={city.center} zoom={city.zoom} />
 
-      <NetworkLayer network={network} />
-
-      {result && (
-        <SearchTreeLayer
-          network={network}
-          settled={result.settled}
-          visible={exploredVisible}
-        />
+      {result && inSync && (
+        <ConnectorLayer points={points} snapped={result.snapped} />
       )}
 
-      {result?.found && (
+      {result && (
         <PathLayer coordinates={result.coordinates} visible={pathVisible} />
       )}
 
-      <Endpoints
-        network={network}
-        start={pathfinder.start}
-        end={pathfinder.end}
-        onDrag={dragEndpoint}
+      <Waypoints
+        points={points}
+        visitOrder={result && inSync ? result.visitOrder : null}
+        onMove={movePoint}
+        onRemove={removePoint}
       />
     </Map>
   );

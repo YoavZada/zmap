@@ -6,28 +6,36 @@ import Slider from "@mui/material/Slider";
 import Chip from "@mui/material/Chip";
 import { Map, Cluster, type ClusterPoint } from "zmap";
 import DemoSection from "../components/DemoSection";
+import Styles from "./clustersPage.style";
 import { clusterPoints } from "../data";
 
-const code = `import { Map, Cluster } from "zmap";
+const code = `import type { FC } from "react";
+import { Map, Cluster } from "zmap";
 
 // points: { longitude, latitude, properties? }[]
-<Map center={[10, 45]} zoom={3}>
-  <Cluster
-    points={points}
-    radius={50}
-    color="primary.main"
-    pointColor="secondary.main"
-    onPointClick={(p) => console.log(p)}
-  />
-</Map>
+const MyMap: FC = () => {
+  return (
+    <Map center={[10, 45]} zoom={3}>
+      <Cluster
+        points={points}
+        radius={50}
+        color="primary.main"
+        pointColor="secondary.main"
+        onPointClick={(p) => console.log(p)}
+      />
+    </Map>
+  );
+};
 
-// Custom bubbles:
-<Cluster
-  points={points}
-  renderCluster={(count, expand) => (
-    <Badge badgeContent={count} color="primary" onClick={expand} />
-  )}
-/>`;
+export default MyMap;
+
+// Custom bubbles — pass renderCluster:
+// <Cluster
+//   points={points}
+//   renderCluster={(count, expand) => (
+//     <Badge badgeContent={count} color="primary" onClick={expand} />
+//   )}
+// />`;
 
 export function ClustersPage() {
   const [radius, setRadius] = useState(50);
@@ -38,7 +46,7 @@ export function ClustersPage() {
       <Typography variant="h4" fontWeight={800} gutterBottom>
         Clusters
       </Typography>
-      <Typography color="text.secondary" sx={{ mb: 3, maxWidth: 760 }}>
+      <Typography color="text.secondary" sx={Styles.intro}>
         <code>Cluster</code> groups nearby points using MapLibre's native
         clustering and renders the bubbles and points as themed MUI markers.
         Click a cluster to zoom in and expand it. This demo plots{" "}
@@ -55,9 +63,9 @@ export function ClustersPage() {
               direction={{ xs: "column", sm: "row" }}
               spacing={3}
               alignItems={{ sm: "center" }}
-              sx={{ mb: 2 }}
+              sx={Styles.controls}
             >
-              <Box sx={{ width: 240 }}>
+              <Box sx={Styles.sliderBox}>
                 <Typography variant="caption" color="text.secondary">
                   Cluster radius: {radius}px
                 </Typography>
@@ -81,7 +89,7 @@ export function ClustersPage() {
               )}
             </Stack>
 
-            <Map center={[20, 45]} zoom={2.4} sx={{ height: 480, borderRadius: 2 }}>
+            <Map center={[20, 45]} zoom={2.4} sx={Styles.map}>
               <Cluster
                 points={clusterPoints}
                 radius={radius}

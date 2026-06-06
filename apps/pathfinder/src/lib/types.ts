@@ -1,57 +1,43 @@
 import type { LngLatTuple } from "zmap";
 
-/** A graph vertex — an "intersection" in the road network. */
-export type GraphNode = {
+/** A point the user dropped on the map (in any location, on or off a street). */
+export type RoutePoint = {
   id: number;
   lng: number;
   lat: number;
+  /** Optional custom label; falls back to the visiting number when unset. */
+  name?: string;
 };
 
-/** An undirected graph edge — a "road segment" between two intersections. */
-export type GraphEdge = {
-  id: number;
-  a: number;
-  b: number;
-  /** Segment length in meters (great-circle between the two nodes). */
-  length: number;
-};
+/**
+ * How the visiting order is decided:
+ * - `"optimized"` — the engine reorders the points into the shortest tour.
+ * - `"fixed"` — the points are visited in the order they were dropped.
+ */
+export type RouteOrder = "optimized" | "fixed";
 
-/** A neighbor reachable from a node, used when relaxing edges. */
-export type AdjacencyEntry = {
-  to: number;
-  edgeId: number;
-  length: number;
-};
-
-/** The full routable network. `adjacency[nodeId]` lists that node's neighbors. */
-export type RoadNetwork = {
-  nodes: GraphNode[];
-  edges: GraphEdge[];
-  adjacency: AdjacencyEntry[][];
-};
-
-/** What Dijkstra minimizes: total road length, or number of stops (hops). */
-export type Metric = "distance" | "stops";
-
-/** One node being settled (popped from the queue), plus the edge used to reach it. */
-export type SettleStep = {
-  node: number;
-  /** Predecessor node id in the shortest-path tree, or -1 for the source. */
-  from: number;
-};
-
-export type PathResult = {
-  found: boolean;
-  /** Node ids from start to end (inclusive). Empty when no path exists. */
-  nodeIds: number[];
-  /** Coordinates along the path, ready to hand to <Route>. */
+/**
+ * The route computed by the routing engine over the real street network. For
+ * two points it's the shortest road route; for three or more it's the optimal
+ * open tour visiting every point (a traveling-salesman path).
+ */
+export type RouteResult = {
+  /** The full polyline following real streets, in visiting order. */
   coordinates: LngLatTuple[];
-  /** Total road length of the path in meters (always real distance). */
-  lengthMeters: number;
-  /** Number of road segments in the path. */
-  segments: number;
-  /** Order nodes were settled, for animating the search wavefront. */
-  settled: SettleStep[];
-  /** How many nodes Dijkstra explored before stopping. */
-  exploredCount: number;
+  /** Total driving distance along the streets, in meters. */
+  distanceMeters: number;
+  /** Estimated driving time, in seconds. */
+  durationSeconds: number;
+  /**
+   * The 0-based visiting position of each input point, indexed by input order.
+   * `visitOrder[i] === 0` means input point `i` is visited first. For three or
+   * more points this encodes the optimized order.
+   */
+  visitOrder: number[];
+  /**
+   * Where each input point snaps onto the street network, indexed by input
+   * order. The route runs between these snapped points; only this on-street
+   * travel counts toward the distance.
+   */
+  snapped: LngLatTuple[];
 };

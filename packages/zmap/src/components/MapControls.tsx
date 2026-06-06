@@ -79,8 +79,7 @@ function ScaleBar({
         }
       } else {
         const meters = niceRound(maxMeters);
-        const label =
-          meters >= 1000 ? `${meters / 1000} km` : `${meters} m`;
+        const label = meters >= 1000 ? `${meters / 1000} km` : `${meters} m`;
         setState({ width: (maxWidth * (meters / maxMeters)) | 0, label });
       }
     };

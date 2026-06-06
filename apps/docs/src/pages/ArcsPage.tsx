@@ -8,20 +8,28 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Map, Arc, Marker } from "zmap";
 import type { ArcType } from "zmap";
 import DemoSection from "../components/DemoSection";
+import Styles from "./arcsPage.style";
 import { flights } from "../data";
 
-const code = `import { Map, Arc, Marker } from "zmap";
+const code = `import type { FC } from "react";
+import { Map, Arc, Marker } from "zmap";
 
-<Map center={[-40, 35]} zoom={1.6}>
-  <Arc
-    from={[-74.006, 40.7128]}   // JFK
-    to={[-0.1276, 51.5072]}     // LHR
-    type="bezier"               // or "geodesic"
-    curvature={0.3}
-    color="secondary.main"
-    width={2}
-  />
-</Map>`;
+const MyMap: FC = () => {
+  return (
+    <Map center={[-40, 35]} zoom={1.6}>
+      <Arc
+        from={[-74.006, 40.7128]}   // JFK
+        to={[-0.1276, 51.5072]}     // LHR
+        type="bezier"               // or "geodesic"
+        curvature={0.3}
+        color="secondary.main"
+        width={2}
+      />
+    </Map>
+  );
+};
+
+export default MyMap;`;
 
 export function ArcsPage() {
   const [curvature, setCurvature] = useState(0.3);
@@ -34,7 +42,7 @@ export function ArcsPage() {
       <Typography variant="h4" fontWeight={800} gutterBottom>
         Arcs
       </Typography>
-      <Typography color="text.secondary" sx={{ mb: 3, maxWidth: 760 }}>
+      <Typography color="text.secondary" sx={Styles.intro}>
         <code>Arc</code> draws a curved line between two points — perfect for
         flight paths and connection maps. Choose a <code>"bezier"</code> bulge or
         a <code>"geodesic"</code> great-circle path.
@@ -50,7 +58,7 @@ export function ArcsPage() {
               direction={{ xs: "column", sm: "row" }}
               spacing={3}
               alignItems={{ sm: "center" }}
-              sx={{ mb: 2 }}
+              sx={Styles.controls}
             >
               <ToggleButtonGroup
                 size="small"
@@ -61,7 +69,7 @@ export function ArcsPage() {
                 <ToggleButton value="bezier">bezier</ToggleButton>
                 <ToggleButton value="geodesic">geodesic</ToggleButton>
               </ToggleButtonGroup>
-              <Box sx={{ width: 240, opacity: type === "bezier" ? 1 : 0.4 }}>
+              <Box sx={Styles.curvatureBox(type === "bezier")}>
                 <Typography variant="caption" color="text.secondary">
                   Curvature: {curvature.toFixed(2)}
                 </Typography>
@@ -77,7 +85,7 @@ export function ArcsPage() {
               </Box>
             </Stack>
 
-            <Map center={[-40, 30]} zoom={1.5} sx={{ height: 460, borderRadius: 2 }}>
+            <Map center={[-40, 30]} zoom={1.5} sx={Styles.map}>
               <Marker longitude={origin[0]} latitude={origin[1]} />
               {flights.map((f, i) => (
                 <Box key={f.label}>
@@ -95,14 +103,7 @@ export function ArcsPage() {
                     anchor="center"
                   >
                     <Box
-                      sx={{
-                        width: 10,
-                        height: 10,
-                        borderRadius: "50%",
-                        bgcolor: i % 2 ? "secondary.main" : "primary.main",
-                        border: "2px solid",
-                        borderColor: "background.paper",
-                      }}
+                      sx={Styles.dot(i % 2 ? "secondary.main" : "primary.main")}
                     />
                   </Marker>
                 </Box>

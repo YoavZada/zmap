@@ -15,7 +15,14 @@ export interface ArcProps extends Omit<RouteProps, "coordinates"> {
 }
 
 /** Draws a curved line between two points (great-circle or bezier). */
-const Arc: FC<ArcProps> = ({ from, to, curvature, points, type, ...routeProps }) => {
+const Arc: FC<ArcProps> = ({
+  from,
+  to,
+  curvature,
+  points,
+  type,
+  ...routeProps
+}) => {
   const coordinates = useMemo(
     () => generateArc(from, to, { curvature, points, type }),
     // Depend on scalar coords so new array identities don't force recompute.

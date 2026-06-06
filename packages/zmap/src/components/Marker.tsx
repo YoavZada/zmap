@@ -27,7 +27,7 @@ export interface MarkerProps {
 function DefaultMarkerPin() {
   return (
     <Box sx={Styles.pin}>
-      <LocationOn sx={{ fontSize: 36 }} />
+      <LocationOn sx={Styles.pinIcon} />
     </Box>
   );
 }

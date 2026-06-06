@@ -3,10 +3,7 @@ import { createPortal } from "react-dom";
 import maplibregl, { type PopupOptions } from "maplibre-gl";
 import { useTheme } from "@mui/material/styles";
 import { useMapContext } from "../context/useMap";
-import {
-  applyOverlayTheme,
-  injectOverlayStyles,
-} from "../utils/overlayTheme";
+import { applyOverlayTheme, injectOverlayStyles } from "../utils/overlayTheme";
 
 export interface PopupProps {
   longitude: number;

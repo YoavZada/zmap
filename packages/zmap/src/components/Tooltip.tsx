@@ -1,10 +1,7 @@
 import type { FC } from "react";
 import Popup, { type PopupProps } from "./Popup";
 
-export type TooltipProps = Omit<
-  PopupProps,
-  "closeButton" | "closeOnClick"
->;
+export type TooltipProps = Omit<PopupProps, "closeButton" | "closeOnClick">;
 
 /**
  * A lightweight, non-interactive label anchored to a coordinate — a Popup with

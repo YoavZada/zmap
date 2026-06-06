@@ -10,12 +10,9 @@ import {
 import maplibregl, { type MapOptions } from "maplibre-gl";
 import Box, { type BoxProps } from "@mui/material/Box";
 import { MapContext } from "../context/MapContext";
+import { LayerRegistryProvider } from "../context/LayerRegistryContext";
 import { useColorScheme, type ColorScheme } from "../hooks/useColorScheme";
-import {
-  providerKey,
-  resolveStyle,
-  type MapStyleInput,
-} from "../providers";
+import { providerKey, resolveStyle, type MapStyleInput } from "../providers";
 import type { LngLatTuple } from "../utils/geojson";
 import Styles from "./map.style";
 
@@ -44,6 +41,12 @@ export interface MapProps extends Omit<BoxProps, "onLoad" | "ref"> {
   maxZoom?: number;
   /** Allow user pan/zoom/rotate. Default true. */
   interactive?: boolean;
+  /**
+   * Let the map wrap/repeat horizontally and scroll forever. Default false —
+   * the map shows a single, non-wrapping world (a barrier), instead of the
+   * infinite east-west repetition MapLibre renders by default.
+   */
+  infinite?: boolean;
   /** Hide MapLibre's built-in attribution control (attribute elsewhere). */
   hideAttribution?: boolean;
   /** Escape hatch for any other MapLibre map option. */
@@ -68,6 +71,7 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     minZoom,
     maxZoom,
     interactive = true,
+    infinite = false,
     hideAttribution = false,
     mapOptions,
     onLoad,
@@ -102,6 +106,7 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
       minZoom,
       maxZoom,
       interactive,
+      renderWorldCopies: infinite,
       attributionControl: hideAttribution ? false : undefined,
       ...mapOptions,
     });
@@ -142,6 +147,18 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [styleKey]);
 
+  // Toggle the world barrier when `infinite` changes (skip the first run — it's
+  // applied at creation). renderWorldCopies:false shows a single, non-wrapping
+  // world instead of MapLibre's default infinite east-west repetition.
+  const firstBarrierRun = useRef(true);
+  useEffect(() => {
+    if (firstBarrierRun.current) {
+      firstBarrierRun.current = false;
+      return;
+    }
+    mapRef.current?.setRenderWorldCopies(infinite);
+  }, [infinite]);
+
   useImperativeHandle(ref, () => map as maplibregl.Map, [map]);
 
   const value = useMemo(() => ({ map, loaded }), [map, loaded]);
@@ -153,7 +170,9 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
         sx={[Styles.container, ...(Array.isArray(sx) ? sx : [sx])]}
         {...boxProps}
       >
-        {loaded ? children : null}
+        <LayerRegistryProvider>
+          {loaded ? children : null}
+        </LayerRegistryProvider>
       </Box>
     </MapContext.Provider>
   );

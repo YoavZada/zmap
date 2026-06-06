@@ -13,6 +13,12 @@ const brand: SxProps<Theme> = {
   flexGrow: 1,
 };
 
+const docsLink: SxProps<Theme> = {
+  textTransform: "none",
+  fontWeight: 600,
+  mr: 0.5,
+};
+
 const main: SxProps<Theme> = {
   flex: 1,
   minHeight: 0,
@@ -36,13 +42,16 @@ const panel: SxProps<Theme> = (theme) => ({
   bgcolor: theme.palette.background.paper,
 });
 
-const styles: Record<"root" | "brand" | "main" | "mapArea" | "panel", SxProps<Theme>> =
-  {
-    root,
-    brand,
-    main,
-    mapArea,
-    panel,
-  };
+const styles: Record<
+  "root" | "brand" | "docsLink" | "main" | "mapArea" | "panel",
+  SxProps<Theme>
+> = {
+  root,
+  brand,
+  docsLink,
+  main,
+  mapArea,
+  panel,
+};
 
 export default styles;

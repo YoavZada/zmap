@@ -1,9 +1,4 @@
-import type {
-  Feature,
-  FeatureCollection,
-  LineString,
-  Point,
-} from "geojson";
+import type { Feature, FeatureCollection, LineString, Point } from "geojson";
 
 /** A [longitude, latitude] pair. */
 export type LngLatTuple = [number, number];

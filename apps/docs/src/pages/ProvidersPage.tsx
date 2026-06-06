@@ -7,17 +7,25 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Alert from "@mui/material/Alert";
 import { Map, MapControls, type MapStyleInput } from "zmap";
 import DemoSection from "../components/DemoSection";
+import Styles from "./providersPage.style";
 
-const code = `import { Map, MapControls } from "zmap";
+const code = `import type { FC } from "react";
+import { Map, MapControls } from "zmap";
 
 // provider: "carto" (default) | "osm" | a MapProvider | style URL | StyleSpecification
 // colorScheme: "auto" (follow MUI theme) | "light" | "dark"
-<Map provider="carto" colorScheme="auto" center={[2.2, 41]} zoom={4}>
-  <MapControls />
-</Map>
+const MyMap: FC = () => {
+  return (
+    <Map provider="carto" colorScheme="auto" center={[2.2, 41]} zoom={4}>
+      <MapControls />
+    </Map>
+  );
+};
+
+export default MyMap;
 
 // Bring your own MapLibre-compatible provider:
-<Map provider="https://tiles.example.com/style.json" />`;
+// <Map provider="https://tiles.example.com/style.json" />`;
 
 type Scheme = "auto" | "light" | "dark";
 
@@ -30,7 +38,7 @@ export function ProvidersPage() {
       <Typography variant="h4" fontWeight={800} gutterBottom>
         Providers & Theming
       </Typography>
-      <Typography color="text.secondary" sx={{ mb: 3, maxWidth: 760 }}>
+      <Typography color="text.secondary" sx={Styles.intro}>
         Switch basemap providers with a single prop. CARTO and OpenStreetMap are
         built in; anything MapLibre-compatible works via a style URL, spec, or a
         custom <code>MapProvider</code>. With <code>colorScheme="auto"</code> the
@@ -46,7 +54,7 @@ export function ProvidersPage() {
             <Stack
               direction={{ xs: "column", sm: "row" }}
               spacing={2}
-              sx={{ mb: 2 }}
+              sx={Styles.controls}
             >
               <Stack spacing={0.5}>
                 <Typography variant="caption" color="text.secondary">
@@ -84,13 +92,13 @@ export function ProvidersPage() {
               colorScheme={scheme}
               center={[2.2, 41]}
               zoom={3.5}
-              sx={{ height: 420, borderRadius: 2 }}
+              sx={Styles.map}
             >
               <MapControls position="top-right" />
             </Map>
 
             {provider === "osm" && scheme === "dark" && (
-              <Alert severity="info" sx={{ mt: 2 }}>
+              <Alert severity="info" sx={Styles.alert}>
                 OpenStreetMap ships a single raster style, so it looks the same in
                 light and dark. CARTO provides dedicated dark tiles.
               </Alert>
