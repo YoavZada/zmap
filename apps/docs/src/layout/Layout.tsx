@@ -23,13 +23,9 @@ import BoltOutlined from "@mui/icons-material/BoltOutlined";
 import RouteOutlined from "@mui/icons-material/RouteOutlined";
 import { navItems } from "../nav";
 import { useColorMode } from "../theme";
+import { PATHFINDER_URL } from "../env";
 import Footer from "./Footer";
 import Styles from "./layout.style";
-
-// The pathfinder demo runs as its own app. Defaults to the pinned dev port;
-// override with VITE_PATHFINDER_URL for a deployed build.
-const PATHFINDER_URL =
-  import.meta.env.VITE_PATHFINDER_URL ?? "http://localhost:5174";
 
 // Library version, injected from packages/zmap/package.json at build time
 // (see vite.config.ts). The release workflow keeps the package version and the
