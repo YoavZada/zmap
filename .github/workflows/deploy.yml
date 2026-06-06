@@ -1,0 +1,66 @@
+name: Deploy (production)
+
+# Builds both apps and deploys each to its own Netlify site.
+# Runs on every push to main; can also be triggered by hand.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Never let two production deploys run at once; cancel an in-flight one if a
+# newer commit lands.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        # Reads the version from the root package.json "packageManager" field.
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build docs
+        run: pnpm --filter docs build
+
+      - name: Build pathfinder
+        run: pnpm --filter pathfinder build
+
+      - name: Deploy docs to Netlify
+        run: >
+          pnpm dlx netlify-cli deploy
+          --prod
+          --dir apps/docs/dist
+          --site "$NETLIFY_DOCS_SITE_ID"
+          --message "docs @ ${GITHUB_SHA::7}"
+        env:
+          NETLIFY_DOCS_SITE_ID: ${{ secrets.NETLIFY_DOCS_SITE_ID }}
+
+      - name: Deploy pathfinder to Netlify
+        run: >
+          pnpm dlx netlify-cli deploy
+          --prod
+          --dir apps/pathfinder/dist
+          --site "$NETLIFY_PATHFINDER_SITE_ID"
+          --message "pathfinder @ ${GITHUB_SHA::7}"
+        env:
+          NETLIFY_PATHFINDER_SITE_ID: ${{ secrets.NETLIFY_PATHFINDER_SITE_ID }}

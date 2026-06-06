@@ -1,0 +1,4 @@
+# SPA fallback: the docs site uses react-router's BrowserRouter, so every
+# unknown path must serve index.html (200, not a redirect) and let the client
+# router resolve it. Netlify reads this file from the published dist/ root.
+/*    /index.html   200
