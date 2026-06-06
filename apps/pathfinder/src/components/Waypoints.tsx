@@ -1,8 +1,8 @@
 import type { FC } from "react";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
-import { Marker } from "zmap";
-import type { LngLatTuple } from "zmap";
+import { Marker } from "zmapgl";
+import type { LngLatTuple } from "zmapgl";
 import type { RoutePoint } from "../lib/types";
 import Styles, { type WaypointRole } from "./waypoints.style";
 

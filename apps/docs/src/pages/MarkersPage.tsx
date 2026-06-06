@@ -10,7 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import type { MapMouseEvent } from "maplibre-gl";
-import { Map, Marker, useMap } from "zmap";
+import { Map, Marker, useMap } from "zmapgl";
 import DemoSection from "../components/DemoSection";
 import Styles from "./markersPage.style";
 import { cities } from "../data";
@@ -35,7 +35,7 @@ const ClickToAdd: FC<{ onAdd: (longitude: number, latitude: number) => void }> =
 };
 
 const playgroundCode = `import { useEffect, useState, type FC } from "react";
-import { Map, Marker, useMap } from "zmap";
+import { Map, Marker, useMap } from "zmapgl";
 import type { MapMouseEvent } from "maplibre-gl";
 
 type Pin = { id: number; longitude: number; latitude: number };
@@ -76,7 +76,7 @@ const MyMap: FC = () => {
 export default MyMap;`;
 
 const defaultCode = `import type { FC } from "react";
-import { Map, Marker } from "zmap";
+import { Map, Marker } from "zmapgl";
 
 const MyMap: FC = () => {
   return (
@@ -98,7 +98,7 @@ const customCode = `import type { FC } from "react";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
-import { Map, Marker } from "zmap";
+import { Map, Marker } from "zmapgl";
 
 const MyMap: FC = () => {
   return (
@@ -124,7 +124,7 @@ const MyMap: FC = () => {
 export default MyMap;`;
 
 const draggableCode = `import { useState, type FC } from "react";
-import { Map, Marker } from "zmap";
+import { Map, Marker } from "zmapgl";
 
 const MyMap: FC = () => {
   const [pos, setPos] = useState<[number, number]>([-74, 40.7]);

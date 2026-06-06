@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import LocationCity from "@mui/icons-material/LocationCity";
-import { Map, Marker, Popup, Tooltip } from "zmap";
+import { Map, Marker, Popup, Tooltip } from "zmapgl";
 import DemoSection from "../components/DemoSection";
 import Styles from "./popupsPage.style";
 import { cities } from "../data";
@@ -12,7 +12,7 @@ import { cities } from "../data";
 const popupCode = `import { useState, type FC } from "react";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { Map, Marker, Popup } from "zmap";
+import { Map, Marker, Popup } from "zmapgl";
 
 const MyMap: FC = () => {
   const [open, setOpen] = useState<string | null>(null);
@@ -52,7 +52,7 @@ export default MyMap;`;
 const tooltipCode = `import { useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import LocationCity from "@mui/icons-material/LocationCity";
-import { Map, Marker, Tooltip } from "zmap";
+import { Map, Marker, Tooltip } from "zmapgl";
 
 const MyMap: FC = () => {
   const [hover, setHover] = useState<string | null>(null);

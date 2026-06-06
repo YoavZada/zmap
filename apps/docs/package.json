@@ -19,7 +19,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.1.0",
-    "zmap": "workspace:*"
+    "zmapgl": "workspace:*"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.16",

@@ -55,7 +55,7 @@ jobs:
 
       - name: Deploy docs to Netlify
         run: >
-          pnpm dlx netlify-cli deploy
+          pnpm --package=netlify-cli dlx netlify deploy
           --prod
           --dir apps/docs/dist
           --site "$NETLIFY_DOCS_SITE_ID"
@@ -65,7 +65,7 @@ jobs:
 
       - name: Deploy pathfinder to Netlify
         run: >
-          pnpm dlx netlify-cli deploy
+          pnpm --package=netlify-cli dlx netlify deploy
           --prod
           --dir apps/pathfinder/dist
           --site "$NETLIFY_PATHFINDER_SITE_ID"

@@ -1,7 +1,7 @@
 import { useEffect, useRef, type FC } from "react";
 import type { MapMouseEvent } from "maplibre-gl";
-import { useMap } from "zmap";
-import type { LngLatTuple } from "zmap";
+import { useMap } from "zmapgl";
+import type { LngLatTuple } from "zmapgl";
 
 export type MapInteractionProps = {
   onPick: (lngLat: LngLatTuple) => void;

@@ -14,7 +14,7 @@ export default defineConfig({
   server: { port: 5174 },
   resolve: {
     alias: {
-      zmap: zmapSrc,
+      zmapgl: zmapSrc,
     },
   },
 });

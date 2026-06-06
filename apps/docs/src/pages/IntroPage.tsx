@@ -16,7 +16,7 @@ import TerminalIcon from "@mui/icons-material/Terminal";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import Check from "@mui/icons-material/Check";
 import { Link as RouterLink } from "react-router-dom";
-import { Map, Marker } from "zmap";
+import { Map, Marker } from "zmapgl";
 import CodeBlock from "../components/CodeBlock";
 import Styles from "./introPage.style";
 
@@ -45,11 +45,11 @@ const features = [
 
 const chips = ["Light & dark mode", "TypeScript-first", "MIT licensed"];
 
-const installCode = `npm install zmap @mui/material @mui/icons-material \\
+const installCode = `npm install zmapgl @mui/material @mui/icons-material \\
   @emotion/react @emotion/styled maplibre-gl`;
 
 const quickStart = `import type { FC } from "react";
-import { Map, MapControls, Marker } from "zmap";
+import { Map, MapControls, Marker } from "zmapgl";
 
 const MyMap: FC = () => {
   return (
@@ -65,7 +65,7 @@ export default MyMap;`;
 const InstallButton: FC = () => {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
-    await navigator.clipboard.writeText("npm install zmap");
+    await navigator.clipboard.writeText("npm install zmapgl");
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -78,7 +78,7 @@ const InstallButton: FC = () => {
       }
       sx={Styles.installButton}
     >
-      npm install zmap
+      npm install zmapgl
     </Button>
   );
 };

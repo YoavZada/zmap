@@ -6,7 +6,7 @@ import {
   lineFeature,
   type LayerInput,
   type LngLatTuple,
-} from "zmap";
+} from "zmapgl";
 import type { RoutePoint } from "../lib/types";
 
 export type ConnectorLayerProps = {

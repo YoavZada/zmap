@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { LngLatTuple } from "zmap";
+import type { LngLatTuple } from "zmapgl";
 import { fetchRoute, RoutingError } from "../lib/osrm";
 import type { RouteOrder, RoutePoint, RouteResult } from "../lib/types";
 

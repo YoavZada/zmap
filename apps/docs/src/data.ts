@@ -1,4 +1,4 @@
-import type { LngLatTuple } from "zmap";
+import type { LngLatTuple } from "zmapgl";
 
 export interface City {
   name: string;

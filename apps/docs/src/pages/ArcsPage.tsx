@@ -5,14 +5,14 @@ import Stack from "@mui/material/Stack";
 import Slider from "@mui/material/Slider";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { Map, Arc, Marker } from "zmap";
-import type { ArcType } from "zmap";
+import { Map, Arc, Marker } from "zmapgl";
+import type { ArcType } from "zmapgl";
 import DemoSection from "../components/DemoSection";
 import Styles from "./arcsPage.style";
 import { flights } from "../data";
 
 const code = `import type { FC } from "react";
-import { Map, Arc, Marker } from "zmap";
+import { Map, Arc, Marker } from "zmapgl";
 
 const MyMap: FC = () => {
   return (

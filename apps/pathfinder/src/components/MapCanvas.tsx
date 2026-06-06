@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { Map, MapControls } from "zmap";
+import { Map, MapControls } from "zmapgl";
 import type { City } from "../lib/cities";
 import type { Pathfinder } from "../hooks/usePathfinder";
 import MapInteraction from "./MapInteraction";

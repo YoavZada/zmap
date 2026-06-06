@@ -1,4 +1,4 @@
-import type { LngLatTuple } from "zmap";
+import type { LngLatTuple } from "zmapgl";
 
 /** A point the user dropped on the map (in any location, on or off a street). */
 export type RoutePoint = {

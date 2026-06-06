@@ -1,5 +1,5 @@
 {
-  "name": "zmap",
+  "name": "zmapgl",
   "version": "0.1.0",
   "description": "MUI-native, theme-aware map components built on MapLibre GL — markers, popups, controls, routes, arcs, clusters, and pluggable providers.",
   "license": "MIT",

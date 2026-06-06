@@ -59,7 +59,7 @@ importers:
       react-router-dom:
         specifier: ^7.1.0
         version: 7.17.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      zmap:
+      zmapgl:
         specifier: workspace:*
         version: link:../../packages/zmap
     devDependencies:
@@ -108,7 +108,7 @@ importers:
       react-dom:
         specifier: ^19.2.0
         version: 19.2.7(react@19.2.7)
-      zmap:
+      zmapgl:
         specifier: workspace:*
         version: link:../../packages/zmap
     devDependencies:

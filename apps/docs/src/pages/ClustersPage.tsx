@@ -4,13 +4,13 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Slider from "@mui/material/Slider";
 import Chip from "@mui/material/Chip";
-import { Map, Cluster, type ClusterPoint } from "zmap";
+import { Map, Cluster, type ClusterPoint } from "zmapgl";
 import DemoSection from "../components/DemoSection";
 import Styles from "./clustersPage.style";
 import { clusterPoints } from "../data";
 
 const code = `import type { FC } from "react";
-import { Map, Cluster } from "zmap";
+import { Map, Cluster } from "zmapgl";
 
 // points: { longitude, latitude, properties? }[]
 const MyMap: FC = () => {

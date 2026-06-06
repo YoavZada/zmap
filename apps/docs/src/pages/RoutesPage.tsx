@@ -5,13 +5,13 @@ import Stack from "@mui/material/Stack";
 import Slider from "@mui/material/Slider";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import { Map, Marker, Route } from "zmap";
+import { Map, Marker, Route } from "zmapgl";
 import DemoSection from "../components/DemoSection";
 import Styles from "./routesPage.style";
 import { londonRoute } from "../data";
 
 const code = `import type { FC } from "react";
-import { Map, Route, Marker } from "zmap";
+import { Map, Route, Marker } from "zmapgl";
 
 const path = [
   [-0.1419, 51.5014],

@@ -10,7 +10,7 @@ through MUI and wired into your theme (including automatic light/dark basemaps).
 ## Install
 
 ```bash
-npm install zmap @mui/material @mui/icons-material \
+npm install zmapgl @mui/material @mui/icons-material \
   @emotion/react @emotion/styled maplibre-gl
 ```
 
@@ -21,7 +21,7 @@ required with Vite, Next.js, or any bundler that handles library CSS imports.
 ## Quick start
 
 ```tsx
-import { Map, MapControls, Marker, Popup } from "zmap";
+import { Map, MapControls, Marker, Popup } from "zmapgl";
 
 export function MyMap() {
   return (
@@ -74,7 +74,7 @@ Switch basemaps with the `provider` prop:
 Bring your own provider by implementing `MapProvider`:
 
 ```ts
-import type { MapProvider } from "zmap";
+import type { MapProvider } from "zmapgl";
 
 export const maptiler: MapProvider = {
   id: "maptiler",
@@ -92,7 +92,7 @@ export const maptiler: MapProvider = {
 zmap stays close to MapLibre. Grab the instance whenever you need the raw API:
 
 ```tsx
-import { useMap } from "zmap";
+import { useMap } from "zmapgl";
 
 function FitBounds() {
   const map = useMap();

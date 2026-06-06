@@ -12,7 +12,7 @@ import {
   PointLayer,
   HeatmapLayer,
   ShapeLayer,
-} from "zmap";
+} from "zmapgl";
 import DemoSection from "../components/DemoSection";
 import Styles from "./layersPage.style";
 import { clusterPoints } from "../data";
@@ -58,7 +58,7 @@ import Whatshot from "@mui/icons-material/Whatshot";
 import Public from "@mui/icons-material/Public";
 import {
   Map, LayerControl, Layer, PointLayer, HeatmapLayer, ShapeLayer,
-} from "zmap";
+} from "zmapgl";
 
 const MyMap: FC = () => {
   return (

@@ -1,6 +1,6 @@
 import { useMemo, type FC } from "react";
-import { Route } from "zmap";
-import type { LngLatTuple } from "zmap";
+import { Route } from "zmapgl";
+import type { LngLatTuple } from "zmapgl";
 
 export type PathLayerProps = {
   coordinates: LngLatTuple[];

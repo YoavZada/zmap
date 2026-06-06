@@ -7,12 +7,12 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { Map, MapControls, type ControlPosition } from "zmap";
+import { Map, MapControls, type ControlPosition } from "zmapgl";
 import DemoSection from "../components/DemoSection";
 import Styles from "./controlsPage.style";
 
 const code = `import type { FC } from "react";
-import { Map, MapControls } from "zmap";
+import { Map, MapControls } from "zmapgl";
 
 const MyMap: FC = () => {
   return (

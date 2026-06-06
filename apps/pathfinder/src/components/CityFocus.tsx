@@ -1,6 +1,6 @@
 import { useEffect, useRef, type FC } from "react";
-import { useMap } from "zmap";
-import type { LngLatTuple } from "zmap";
+import { useMap } from "zmapgl";
+import type { LngLatTuple } from "zmapgl";
 
 export type CityFocusProps = {
   center: LngLatTuple;

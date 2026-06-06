@@ -4,7 +4,7 @@
     "noEmit": true,
     "types": ["vite/client", "node"],
     "paths": {
-      "zmap": ["../../packages/zmap/src/index.ts"]
+      "zmapgl": ["../../packages/zmap/src/index.ts"]
     }
   },
   "include": ["src", "vite.config.ts"]

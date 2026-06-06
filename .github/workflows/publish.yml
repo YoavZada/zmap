@@ -51,13 +51,13 @@ jobs:
           fi
 
       - name: Typecheck
-        run: pnpm --filter zmap typecheck
+        run: pnpm --filter zmapgl typecheck
 
       - name: Test
-        run: pnpm --filter zmap test
+        run: pnpm --filter zmapgl test
 
       - name: Build library
-        run: pnpm --filter zmap build
+        run: pnpm --filter zmapgl build
 
       # --access public is required for scoped packages (e.g. @you/zmap) and
       # harmless for unscoped names. --no-git-checks is needed because the

@@ -45,7 +45,7 @@ work. It stays close to MapLibre GL, so you can always reach the raw map instanc
 ## Installation
 
 ```bash
-npm install zmap @mui/material @mui/icons-material \
+npm install zmapgl @mui/material @mui/icons-material \
   @emotion/react @emotion/styled maplibre-gl
 ```
 
@@ -58,7 +58,7 @@ with Vite, Next.js, or any bundler that handles library CSS.
 Wrap your app in an MUI `ThemeProvider` (as you already do), then compose a map:
 
 ```tsx
-import { Map, MapControls, Marker, Popup } from "zmap";
+import { Map, MapControls, Marker, Popup } from "zmapgl";
 
 export function MyMap() {
   return (

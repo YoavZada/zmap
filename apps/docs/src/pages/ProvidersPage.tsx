@@ -5,12 +5,12 @@ import Stack from "@mui/material/Stack";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Alert from "@mui/material/Alert";
-import { Map, MapControls, type MapStyleInput } from "zmap";
+import { Map, MapControls, type MapStyleInput } from "zmapgl";
 import DemoSection from "../components/DemoSection";
 import Styles from "./providersPage.style";
 
 const code = `import type { FC } from "react";
-import { Map, MapControls } from "zmap";
+import { Map, MapControls } from "zmapgl";
 
 // provider: "carto" (default) | "osm" | a MapProvider | style URL | StyleSpecification
 // colorScheme: "auto" (follow MUI theme) | "light" | "dark"

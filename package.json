@@ -5,11 +5,11 @@
   "description": "zmap — MUI-native map components built on MapLibre GL",
   "type": "module",
   "scripts": {
-    "build": "pnpm --filter zmap build",
-    "dev": "pnpm --filter zmap dev",
+    "build": "pnpm --filter zmapgl build",
+    "dev": "pnpm --filter zmapgl dev",
     "docs": "pnpm --filter docs dev",
     "pathfinder": "pnpm --filter pathfinder dev",
-    "test": "pnpm --filter zmap test",
+    "test": "pnpm --filter zmapgl test",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
     "typecheck": "pnpm -r typecheck"
