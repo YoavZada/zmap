@@ -39,11 +39,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Vite inlines VITE_* env vars at build time. Each app links to its
+      # sibling's deployed URL; without these it falls back to the dev
+      # localhost ports baked into the source. Set these as repo (or
+      # production-environment) Actions *variables* — they're public URLs.
       - name: Build docs
         run: pnpm --filter docs build
+        env:
+          VITE_PATHFINDER_URL: ${{ vars.PATHFINDER_URL }}
 
       - name: Build pathfinder
         run: pnpm --filter pathfinder build
+        env:
+          VITE_DOCS_URL: ${{ vars.DOCS_URL }}
 
       - name: Deploy docs to Netlify
         run: >
