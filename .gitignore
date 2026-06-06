@@ -7,3 +7,10 @@ dist
 .env
 .env.local
 coverage
+
+# Local Claude tooling, internal docs, and generated screenshots — not public
+.claude/
+CLAUDE.md
+DEPLOYMENT.md
+DEVELOPMENT.md
+demo-screenshots/
