@@ -15,11 +15,8 @@ import MapCanvas from "./components/MapCanvas";
 import ControlPanel from "./components/ControlPanel";
 import { DEFAULT_CITY, type City } from "./lib/cities";
 import { useColorMode } from "./theme";
+import { DOCS_URL } from "./env";
 import Styles from "./app.style";
-
-// The zmap docs/showcase site runs as its own app. Defaults to the pinned dev
-// port; override with VITE_DOCS_URL for a deployed build.
-const DOCS_URL = import.meta.env.VITE_DOCS_URL ?? "http://localhost:5173";
 
 const App: FC = () => {
   const { mode, toggle } = useColorMode();
