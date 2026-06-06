@@ -18,6 +18,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import MapIcon from "@mui/icons-material/Map";
 import { navItems } from "../nav";
 import { useColorMode } from "../theme";
+import Footer from "./Footer";
 import Styles from "./layout.style";
 
 type NavListProps = { onNavigate?: () => void };
@@ -116,6 +117,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       <Box component="main" sx={Styles.main}>
         <Toolbar />
         <Box sx={Styles.content}>{children}</Box>
+        <Footer />
       </Box>
     </Box>
   );

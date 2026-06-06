@@ -46,10 +46,20 @@ function addAll(map: MapLibreMap, cfg: MapLayerConfig) {
 }
 
 function removeAll(map: MapLibreMap, cfg: MapLayerConfig) {
-  for (const layer of cfg.layers) {
-    if (map.getLayer(layer.id)) map.removeLayer(layer.id);
+  // The map instance may already be torn down by the time this cleanup runs —
+  // e.g. the parent <Map> reset its instance (map.remove() + setMap(null)) while
+  // these layers were still mounted, or during HMR / StrictMode re-invocation.
+  // Touching a removed map throws ("Cannot read properties of undefined
+  // (reading 'getLayer')" — its internal style is gone), so bail out.
+  if (!map || (map as { _removed?: boolean })._removed) return;
+  try {
+    for (const layer of cfg.layers) {
+      if (map.getLayer(layer.id)) map.removeLayer(layer.id);
+    }
+    if (map.getSource(cfg.id)) map.removeSource(cfg.id);
+  } catch {
+    // Style already gone — nothing left to clean up.
   }
-  if (map.getSource(cfg.id)) map.removeSource(cfg.id);
 }
 
 /**
