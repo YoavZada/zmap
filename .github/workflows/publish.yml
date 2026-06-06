@@ -11,7 +11,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write # required for npm provenance attestation
 
 # Don't let two publishes race.
 concurrency:
@@ -59,13 +58,15 @@ jobs:
       - name: Build library
         run: pnpm --filter zmapgl build
 
-      # --access public is required for scoped packages (e.g. @you/zmap) and
-      # harmless for unscoped names. --no-git-checks is needed because the
-      # release checkout is in detached-HEAD state. --provenance attaches a
-      # signed build attestation — it requires a PUBLIC repo; drop it if the
-      # repo is private.
+      # --access public publishes a normal public package (harmless for the
+      # unscoped `zmapgl` name). --no-git-checks is needed because the release
+      # checkout is in detached-HEAD state.
+      # NOTE: no --provenance — npm provenance requires a PUBLIC repo, and it
+      # would also leak this private repo's name/commit to the public Sigstore
+      # transparency log. Re-add it (plus `id-token: write` under permissions)
+      # if the repo ever goes public.
       - name: Publish to npm
-        run: pnpm publish --access public --no-git-checks --provenance
+        run: pnpm publish --access public --no-git-checks
         working-directory: packages/zmap
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
