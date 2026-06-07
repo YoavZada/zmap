@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import svgr from "vite-plugin-svgr";
 import { fileURLToPath } from "node:url";
 import { readFileSync } from "node:fs";
 
@@ -24,7 +25,9 @@ export default defineConfig({
   // and import.meta.env.BASE_URL, which the router's basename derives from —
   // resolve correctly under https://<user>.github.io/zmap/.
   base: process.env.BASE_PATH ?? "/",
-  plugins: [react()],
+  // svgr() enables `import Icon from "./foo.svg?react"` — SVGs as React
+  // components (see src/icons). Typed via vite-plugin-svgr/client in tsconfig.
+  plugins: [react(), svgr()],
   // Pinned so the pathfinder app's "Docs" link has a stable URL in dev.
   server: { port: 5173 },
   resolve: {

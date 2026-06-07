@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "noEmit": true,
-    "types": ["vite/client", "node"],
+    "types": ["vite/client", "node", "vite-plugin-svgr/client"],
     "paths": {
       "zmapgl": ["../../packages/zmap/src/index.ts"]
     }

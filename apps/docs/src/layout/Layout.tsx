@@ -21,6 +21,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import MapIcon from "@mui/icons-material/Map";
 import BoltOutlined from "@mui/icons-material/BoltOutlined";
 import RouteOutlined from "@mui/icons-material/RouteOutlined";
+import { NpmIcon } from "../icons";
 import { navItems } from "../nav";
 import { useColorMode } from "../theme";
 import { PATHFINDER_URL } from "../env";
@@ -32,6 +33,7 @@ import Styles from "./layout.style";
 // git tag in lockstep, so this reflects the published GitHub release.
 const ZMAP_VERSION = import.meta.env.VITE_ZMAP_VERSION ?? "dev";
 const RELEASE_URL = `https://github.com/YoavZada/zmap/releases/tag/v${ZMAP_VERSION}`;
+const NPM_URL = "https://www.npmjs.com/package/zmapgl";
 
 type DrawerBodyProps = { onNavigate?: () => void };
 
@@ -150,6 +152,17 @@ const Layout: FC<LayoutProps> = ({ children }) => {
           <Tooltip title={mode === "dark" ? "Light mode" : "Dark mode"}>
             <IconButton onClick={toggle} color="inherit">
               {mode === "dark" ? <LightMode /> : <DarkMode />}
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="View on npm">
+            <IconButton
+              color="inherit"
+              component="a"
+              href={NPM_URL}
+              target="_blank"
+              rel="noopener"
+            >
+              <NpmIcon />
             </IconButton>
           </Tooltip>
           <Tooltip title="GitHub">
