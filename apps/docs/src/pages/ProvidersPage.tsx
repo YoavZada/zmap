@@ -12,11 +12,12 @@ import Styles from "./providersPage.style";
 const code = `import type { FC } from "react";
 import { Map, MapControls } from "zmapgl";
 
-// provider: "carto" (default) | "osm" | a MapProvider | style URL | StyleSpecification
+// Built-in, no API key: "carto" (default) | "osm" | "versatiles".
+// Or bring your own: a style URL, a StyleSpecification, or a MapProvider.
 // colorScheme: "auto" (follow MUI theme) | "light" | "dark"
 const MyMap: FC = () => {
   return (
-    <Map provider="carto" colorScheme="auto" center={[2.2, 41]} zoom={4}>
+    <Map provider="versatiles" colorScheme="auto" center={[2.2, 41]} zoom={4}>
       <MapControls />
     </Map>
   );
@@ -39,16 +40,17 @@ export const ProvidersPage: FC = () => {
         Providers & Theming
       </Typography>
       <Typography color="text.secondary" sx={Styles.intro}>
-        Switch basemap providers with a single prop. CARTO and OpenStreetMap are
-        built in; anything MapLibre-compatible works via a style URL, spec, or a
-        custom <code>MapProvider</code>. With <code>colorScheme="auto"</code>{" "}
-        the basemap tracks the MUI theme — toggle the app theme (top-right) to
-        see it.
+        Switch basemap providers with a single prop. CARTO, OpenStreetMap, and
+        VersaTiles are built in and need no API key; anything
+        MapLibre-compatible also works via a style URL, spec, or a custom{" "}
+        <code>MapProvider</code>. With <code>colorScheme="auto"</code> the
+        basemap tracks the MUI theme — toggle the app theme (top-right) to see
+        it.
       </Typography>
 
       <DemoSection
         title="Live provider switcher"
-        description="CARTO swaps positron ↔ dark-matter with the theme. OpenStreetMap uses a single raster style."
+        description="CARTO and VersaTiles swap light ↔ dark with the theme. OpenStreetMap uses a single raster style."
         code={code}
         demo={
           <Box>
@@ -69,6 +71,7 @@ export const ProvidersPage: FC = () => {
                 >
                   <ToggleButton value="carto">CARTO</ToggleButton>
                   <ToggleButton value="osm">OpenStreetMap</ToggleButton>
+                  <ToggleButton value="versatiles">VersaTiles</ToggleButton>
                 </ToggleButtonGroup>
               </Stack>
               <Stack spacing={0.5}>
@@ -101,7 +104,8 @@ export const ProvidersPage: FC = () => {
             {provider === "osm" && scheme === "dark" && (
               <Alert severity="info" sx={Styles.alert}>
                 OpenStreetMap ships a single raster style, so it looks the same
-                in light and dark. CARTO provides dedicated dark tiles.
+                in light and dark. CARTO and VersaTiles provide dedicated dark
+                tiles.
               </Alert>
             )}
           </Box>

@@ -56,8 +56,17 @@ const DrawControl: FC<DrawControlProps> = ({
 }) => {
   const reactId = useId();
   const idPrefix = `zmap-draw-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
-  const { mode, setMode, features, draft, cursor, isDrawing, finish, undo, clear } =
-    useDraw({ modes, onChange, onCreate });
+  const {
+    mode,
+    setMode,
+    features,
+    draft,
+    cursor,
+    isDrawing,
+    finish,
+    undo,
+    clear,
+  } = useDraw({ modes, onChange, onCreate });
 
   const hasContent = features.length > 0 || draft.length > 0;
 
@@ -97,7 +106,11 @@ const DrawControl: FC<DrawControlProps> = ({
                 </IconButton>
               </Tooltip>
               <Tooltip title="Undo last point" placement="right">
-                <IconButton size="small" onClick={undo} aria-label="Undo last point">
+                <IconButton
+                  size="small"
+                  onClick={undo}
+                  aria-label="Undo last point"
+                >
                   <Undo fontSize="small" />
                 </IconButton>
               </Tooltip>

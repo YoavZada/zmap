@@ -20,7 +20,11 @@ import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import type { MapMouseEvent } from "maplibre-gl";
 import { useMapContext } from "../context/useMap";
 import { resolvePaletteColor } from "../utils/color";
-import { pointInBox, pointInPolygon, type ScreenPoint } from "../utils/geometry";
+import {
+  pointInBox,
+  pointInPolygon,
+  type ScreenPoint,
+} from "../utils/geometry";
 import type { ControlPosition } from "./MapControls";
 import PointLayer, { type LayerPoint } from "./PointLayer";
 import Styles from "./selectControl.style";
@@ -78,9 +82,10 @@ const SelectControl: FC<SelectControlProps> = ({
     showToolbar ? defaultTool : (defaultTool ?? tools[0] ?? "box"),
   );
   const [selected, setSelected] = useState<number[]>([]);
-  const [box, setBox] = useState<{ start: ScreenPoint; current: ScreenPoint } | null>(
-    null,
-  );
+  const [box, setBox] = useState<{
+    start: ScreenPoint;
+    current: ScreenPoint;
+  } | null>(null);
   const [lasso, setLasso] = useState<ScreenPoint[]>([]);
 
   // Refs so the (once-bound) map handlers always read current values.

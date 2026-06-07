@@ -107,6 +107,9 @@ export type {
 } from "./providers";
 export { carto } from "./providers/carto";
 export { osm } from "./providers/osm";
+export { versatiles } from "./providers/versatiles";
+export { opentopomap } from "./providers/opentopomap";
+export { maptiler } from "./providers/maptiler";
 
 // Utils
 export { generateArc } from "./utils/arc";

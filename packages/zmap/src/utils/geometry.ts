@@ -10,7 +10,10 @@ export interface ScreenPoint {
  * on an edge are reported inconsistently (as is standard for ray casting) —
  * fine for lasso selection, where pixel-perfect edges don't matter.
  */
-export function pointInPolygon(point: ScreenPoint, ring: ScreenPoint[]): boolean {
+export function pointInPolygon(
+  point: ScreenPoint,
+  ring: ScreenPoint[],
+): boolean {
   if (ring.length < 3) return false;
   let inside = false;
   for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
@@ -34,5 +37,7 @@ export function pointInBox(
   const maxX = Math.max(a.x, b.x);
   const minY = Math.min(a.y, b.y);
   const maxY = Math.max(a.y, b.y);
-  return point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY;
+  return (
+    point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY
+  );
 }

@@ -9,12 +9,42 @@ export interface City {
 }
 
 export const cities: City[] = [
-  { name: "New York", country: "USA", coordinates: [-74.006, 40.7128], population: "8.3M" },
-  { name: "London", country: "UK", coordinates: [-0.1276, 51.5072], population: "8.9M" },
-  { name: "Tokyo", country: "Japan", coordinates: [139.6917, 35.6895], population: "13.9M" },
-  { name: "Paris", country: "France", coordinates: [2.3522, 48.8566], population: "2.1M" },
-  { name: "Sydney", country: "Australia", coordinates: [151.2093, -33.8688], population: "5.3M" },
-  { name: "São Paulo", country: "Brazil", coordinates: [-46.6333, -23.5505], population: "12.3M" },
+  {
+    name: "New York",
+    country: "USA",
+    coordinates: [-74.006, 40.7128],
+    population: "8.3M",
+  },
+  {
+    name: "London",
+    country: "UK",
+    coordinates: [-0.1276, 51.5072],
+    population: "8.9M",
+  },
+  {
+    name: "Tokyo",
+    country: "Japan",
+    coordinates: [139.6917, 35.6895],
+    population: "13.9M",
+  },
+  {
+    name: "Paris",
+    country: "France",
+    coordinates: [2.3522, 48.8566],
+    population: "2.1M",
+  },
+  {
+    name: "Sydney",
+    country: "Australia",
+    coordinates: [151.2093, -33.8688],
+    population: "5.3M",
+  },
+  {
+    name: "São Paulo",
+    country: "Brazil",
+    coordinates: [-46.6333, -23.5505],
+    population: "12.3M",
+  },
 ];
 
 /** A walking route through central London (lng/lat waypoints). */
@@ -71,22 +101,23 @@ function scatter(
 const rng = mulberry32(42);
 
 /** Cluster-demo cities: New York + Tokyo, plus a dense scatter across Europe. */
-const clusterCities: { center: LngLatTuple; spread: number; count: number }[] = [
-  { center: [-74.006, 40.7128], spread: 1.2, count: 120 }, // New York
-  { center: [139.6917, 35.6895], spread: 1.0, count: 110 }, // Tokyo
-  { center: [-0.1276, 51.5072], spread: 0.9, count: 90 }, // London
-  { center: [2.3522, 48.8566], spread: 0.7, count: 70 }, // Paris
-  { center: [13.405, 52.52], spread: 0.7, count: 85 }, // Berlin
-  { center: [-3.7038, 40.4168], spread: 0.7, count: 70 }, // Madrid
-  { center: [2.1734, 41.3851], spread: 0.5, count: 55 }, // Barcelona
-  { center: [-9.1393, 38.7223], spread: 0.5, count: 45 }, // Lisbon
-  { center: [12.4964, 41.9028], spread: 0.6, count: 65 }, // Rome
-  { center: [9.19, 45.4642], spread: 0.5, count: 55 }, // Milan
-  { center: [4.9041, 52.3676], spread: 0.5, count: 55 }, // Amsterdam
-  { center: [11.582, 48.1351], spread: 0.45, count: 50 }, // Munich
-  { center: [16.3738, 48.2082], spread: 0.5, count: 50 }, // Vienna
-  { center: [18.0686, 59.3293], spread: 0.6, count: 45 }, // Stockholm
-];
+const clusterCities: { center: LngLatTuple; spread: number; count: number }[] =
+  [
+    { center: [-74.006, 40.7128], spread: 1.2, count: 120 }, // New York
+    { center: [139.6917, 35.6895], spread: 1.0, count: 110 }, // Tokyo
+    { center: [-0.1276, 51.5072], spread: 0.9, count: 90 }, // London
+    { center: [2.3522, 48.8566], spread: 0.7, count: 70 }, // Paris
+    { center: [13.405, 52.52], spread: 0.7, count: 85 }, // Berlin
+    { center: [-3.7038, 40.4168], spread: 0.7, count: 70 }, // Madrid
+    { center: [2.1734, 41.3851], spread: 0.5, count: 55 }, // Barcelona
+    { center: [-9.1393, 38.7223], spread: 0.5, count: 45 }, // Lisbon
+    { center: [12.4964, 41.9028], spread: 0.6, count: 65 }, // Rome
+    { center: [9.19, 45.4642], spread: 0.5, count: 55 }, // Milan
+    { center: [4.9041, 52.3676], spread: 0.5, count: 55 }, // Amsterdam
+    { center: [11.582, 48.1351], spread: 0.45, count: 50 }, // Munich
+    { center: [16.3738, 48.2082], spread: 0.5, count: 50 }, // Vienna
+    { center: [18.0686, 59.3293], spread: 0.6, count: 45 }, // Stockholm
+  ];
 
 /** How many cities the cluster demo scatters points across. */
 export const clusterCityCount = clusterCities.length;

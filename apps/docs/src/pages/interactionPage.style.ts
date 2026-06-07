@@ -8,12 +8,14 @@ const map: SxProps<Theme> = { height: 440, borderRadius: 2 };
 
 const readout: SxProps<Theme> = { mt: 2 };
 
-const styles: Record<"intro" | "controls" | "map" | "readout", SxProps<Theme>> =
-  {
-    intro,
-    controls,
-    map,
-    readout,
-  };
+const styles: Record<
+  "intro" | "controls" | "map" | "readout",
+  SxProps<Theme>
+> = {
+  intro,
+  controls,
+  map,
+  readout,
+};
 
 export default styles;

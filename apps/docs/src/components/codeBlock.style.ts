@@ -26,14 +26,16 @@ const preBase = (prismStyle: CSSProperties): CSSProperties & object => ({
   overflow: "auto",
 });
 
-const pre = (prismStyle: CSSProperties): SxProps<Theme> => (theme) => ({
-  ...preBase(prismStyle),
-  background: theme.tokens.codeBg,
-  p: 2,
-  borderRadius: 2,
-  border: 1,
-  borderColor: "divider",
-});
+const pre =
+  (prismStyle: CSSProperties): SxProps<Theme> =>
+  (theme) => ({
+    ...preBase(prismStyle),
+    background: theme.tokens.codeBg,
+    p: 2,
+    borderRadius: 2,
+    border: 1,
+    borderColor: "divider",
+  });
 
 // --- Windowed variant (the centerpiece "Demo & Preview Card") ---------------
 const windowBox: SxProps<Theme> = {
@@ -81,12 +83,14 @@ const copyInline: SxProps<Theme> = {
   textTransform: "none",
 };
 
-const preFlush = (prismStyle: CSSProperties): SxProps<Theme> => (theme) => ({
-  ...preBase(prismStyle),
-  background: theme.tokens.codeBg,
-  p: 2,
-  borderRadius: 0,
-});
+const preFlush =
+  (prismStyle: CSSProperties): SxProps<Theme> =>
+  (theme) => ({
+    ...preBase(prismStyle),
+    background: theme.tokens.codeBg,
+    p: 2,
+    borderRadius: 0,
+  });
 
 const note: SxProps<Theme> = (theme) => ({
   display: "flex",

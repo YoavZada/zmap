@@ -103,7 +103,11 @@ const CodeBlock: FC<CodeBlockProps> = ({
     <Box sx={Styles.container}>
       <Tooltip title={copied ? "Copied" : "Copy"}>
         <IconButton size="small" onClick={copy} sx={Styles.copyButton}>
-          {copied ? <Check fontSize="small" /> : <ContentCopy fontSize="small" />}
+          {copied ? (
+            <Check fontSize="small" />
+          ) : (
+            <ContentCopy fontSize="small" />
+          )}
         </IconButton>
       </Tooltip>
       {highlight(false)}

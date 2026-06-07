@@ -45,18 +45,14 @@ export function binPoints(
   }
 
   // Reference latitude → linear, invertible lng/lat ⇄ km projection.
-  const refLat =
-    points.reduce((sum, p) => sum + p.latitude, 0) / points.length;
+  const refLat = points.reduce((sum, p) => sum + p.latitude, 0) / points.length;
   const kx = kmPerDegLng(refLat) || 1e-9;
   const ky = KM_PER_DEG_LAT;
   const toKm = (p: BinPoint): [number, number] => [
     p.longitude * kx,
     p.latitude * ky,
   ];
-  const toLngLat = (x: number, y: number): [number, number] => [
-    x / kx,
-    y / ky,
-  ];
+  const toLngLat = (x: number, y: number): [number, number] => [x / kx, y / ky];
   const weightOf = (p: BinPoint): number => {
     if (!weightProperty) return 1;
     const w = p.properties?.[weightProperty];
@@ -131,7 +127,10 @@ export function binPoints(
                 ) as [number, number],
             ),
             // close the ring
-            toLngLat(bin.x + Math.sin(0) * radius, bin.y - Math.cos(0) * radius),
+            toLngLat(
+              bin.x + Math.sin(0) * radius,
+              bin.y - Math.cos(0) * radius,
+            ),
           ];
     features.push({
       type: "Feature",

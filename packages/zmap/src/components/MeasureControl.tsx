@@ -75,7 +75,10 @@ const MeasureControl: FC<MeasureControlProps> = ({
           ];
         }
         if (f.geometry.type === "Polygon") {
-          const ring = (f.geometry.coordinates[0] as LngLatTuple[]).slice(0, -1);
+          const ring = (f.geometry.coordinates[0] as LngLatTuple[]).slice(
+            0,
+            -1,
+          );
           return [
             {
               id: f.properties.id,

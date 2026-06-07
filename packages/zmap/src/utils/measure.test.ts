@@ -23,7 +23,10 @@ describe("haversineDistance", () => {
   });
 
   it("is symmetric", () => {
-    expect(haversineDistance(NY, LDN)).toBeCloseTo(haversineDistance(LDN, NY), 3);
+    expect(haversineDistance(NY, LDN)).toBeCloseTo(
+      haversineDistance(LDN, NY),
+      3,
+    );
   });
 });
 
@@ -43,7 +46,12 @@ describe("lineDistance", () => {
 describe("polygonArea", () => {
   it("is 0 for degenerate rings", () => {
     expect(polygonArea([])).toBe(0);
-    expect(polygonArea([[0, 0], [1, 1]])).toBe(0);
+    expect(
+      polygonArea([
+        [0, 0],
+        [1, 1],
+      ]),
+    ).toBe(0);
   });
 
   it("matches the analytic area of a 1°×1° box at the equator (~1.239e10 m²)", () => {
@@ -59,7 +67,12 @@ describe("polygonArea", () => {
   });
 
   it("ignores winding order", () => {
-    const cw: LngLatTuple[] = [[0, 0], [1, 0], [1, 1], [0, 1]];
+    const cw: LngLatTuple[] = [
+      [0, 0],
+      [1, 0],
+      [1, 1],
+      [0, 1],
+    ];
     const ccw: LngLatTuple[] = [...cw].reverse();
     expect(polygonArea(cw)).toBeCloseTo(polygonArea(ccw), 3);
   });

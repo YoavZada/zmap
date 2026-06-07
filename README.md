@@ -34,7 +34,7 @@ work. It stays close to MapLibre GL, so you can always reach the raw map instanc
 - 🎯 **Zero config** — sensible defaults and free CARTO tiles; no API key to get started.
 - 🧩 **Composable** — declarative React components you nest inside `<Map>`, the way you'd expect.
 - 🗺️ **MapLibre GL powered** — hardware-accelerated vector maps, no vendor lock-in; drop down to the raw instance via `useMap()`.
-- 📍 **Markers, popups & tooltips** — render *any* MUI element (icons, chips, avatars, cards) at a coordinate via portals.
+- 📍 **Markers, popups & tooltips** — render _any_ MUI element (icons, chips, avatars, cards) at a coordinate via portals.
 - 🎮 **Controls** — MUI zoom, compass, geolocate, fullscreen and a scale bar.
 - 🛤️ **Routes & arcs** — draw polylines and curved (bezier or great-circle) connection lines.
 - 🟣 **Clustering** — native MapLibre clustering rendered as themed MUI bubbles, click-to-expand.
@@ -86,17 +86,17 @@ export default MyMap;
 | `Map`          | Container; creates the MapLibre instance and provides context.     |
 | `Marker`       | Renders any MUI content at a coordinate (portal-based).            |
 | `Popup`        | Theme-aware popup anchored to a coordinate.                        |
-| `Tooltip`      | Lightweight, non-interactive label (a Popup variant).             |
+| `Tooltip`      | Lightweight, non-interactive label (a Popup variant).              |
 | `MapControls`  | MUI zoom / compass / geolocate / fullscreen / scale cluster.       |
-| `Route`        | Draws a polyline from coordinates.                                |
-| `Arc`          | Draws a curved (bezier or great-circle) line between two points.  |
-| `Cluster`      | Native MapLibre clustering rendered as themed MUI markers.        |
-| `LayerControl` | Collapsible MUI panel that toggles registered layers on/off.      |
+| `Route`        | Draws a polyline from coordinates.                                 |
+| `Arc`          | Draws a curved (bezier or great-circle) line between two points.   |
+| `Cluster`      | Native MapLibre clustering rendered as themed MUI markers.         |
+| `LayerControl` | Collapsible MUI panel that toggles registered layers on/off.       |
 | `Layer`        | Registers a named, toggleable overlay (pairs with `LayerControl`). |
-| `PointLayer`   | Renders many points as a single GPU circle layer.                 |
-| `HeatmapLayer` | Renders points as a density heatmap.                              |
-| `ShapeLayer`   | GeoJSON polygons / lines, with optional choropleth fill.          |
-| `GeoJSONLayer` | Low-level escape hatch for custom sources + layers.               |
+| `PointLayer`   | Renders many points as a single GPU circle layer.                  |
+| `HeatmapLayer` | Renders points as a density heatmap.                               |
+| `ShapeLayer`   | GeoJSON polygons / lines, with optional choropleth fill.           |
+| `GeoJSONLayer` | Low-level escape hatch for custom sources + layers.                |
 
 Hooks: `useMap()` (the raw MapLibre instance), `useMapLayer()`, `useColorScheme()`.
 

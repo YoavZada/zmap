@@ -79,7 +79,8 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
   const colorExpr = useMemo(() => {
     const top = max || 1;
     const stops =
-      colorRamp ?? DEFAULT_RAMP.map(([t, c]) => [t * top, c] as [number, string]);
+      colorRamp ??
+      DEFAULT_RAMP.map(([t, c]) => [t * top, c] as [number, string]);
     return buildColorExpression(
       { property: "value", stops, type: "interpolate" },
       theme,

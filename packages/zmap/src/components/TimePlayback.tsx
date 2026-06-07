@@ -166,7 +166,8 @@ const TimePlayback: FC<TimePlaybackProps> = ({
   const applyFilters = useCallback(() => {
     if (!map || !filtersRef.current) return;
     try {
-      if (map.getLayer(trailId)) map.setFilter(trailId, filtersRef.current.trail);
+      if (map.getLayer(trailId))
+        map.setFilter(trailId, filtersRef.current.trail);
       if (map.getLayer(headId)) map.setFilter(headId, filtersRef.current.head);
     } catch {
       // Layer/style torn down mid-update — nothing to filter.

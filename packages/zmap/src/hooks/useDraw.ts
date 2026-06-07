@@ -1,10 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type {
-  Feature,
-  LineString,
-  Point,
-  Polygon,
-} from "geojson";
+import type { Feature, LineString, Point, Polygon } from "geojson";
 import type { MapMouseEvent } from "maplibre-gl";
 import { useMapContext } from "../context/useMap";
 import type { LngLatTuple } from "../utils/geojson";

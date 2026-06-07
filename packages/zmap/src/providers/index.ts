@@ -2,9 +2,11 @@ import type { StyleSpecification } from "maplibre-gl";
 import type { ColorMode, MapProvider } from "./types";
 import { carto } from "./carto";
 import { osm } from "./osm";
+import { versatiles } from "./versatiles";
+import { opentopomap } from "./opentopomap";
 
 /** Built-in providers, keyed by id. */
-export const providers = { carto, osm } as const;
+export const providers = { carto, osm, versatiles, opentopomap } as const;
 
 export type ProviderId = keyof typeof providers;
 
@@ -56,4 +58,9 @@ export function resolveAttribution(input: MapStyleInput): string | undefined {
   return undefined;
 }
 
+export { carto } from "./carto";
+export { osm } from "./osm";
+export { versatiles } from "./versatiles";
+export { opentopomap } from "./opentopomap";
+export { maptiler } from "./maptiler";
 export type { ColorMode, MapProvider };

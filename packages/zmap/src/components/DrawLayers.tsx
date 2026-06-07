@@ -3,7 +3,11 @@ import { useTheme } from "@mui/material/styles";
 import type { Feature } from "geojson";
 import { useMapLayer, type LayerInput } from "../hooks/useMapLayer";
 import { resolvePaletteColor } from "../utils/color";
-import { featureCollection, pointFeature, type LngLatTuple } from "../utils/geojson";
+import {
+  featureCollection,
+  pointFeature,
+  type LngLatTuple,
+} from "../utils/geojson";
 import type { DrawFeature, DrawMode } from "../hooks/useDraw";
 import ShapeLayer from "./ShapeLayer";
 import PointLayer, { type LayerPoint } from "./PointLayer";
@@ -117,7 +121,11 @@ const DrawLayers: FC<DrawLayersProps> = ({
     [idPrefix, resolved, stroke, fillOpacity, lineWidth],
   );
 
-  useMapLayer({ id: `${idPrefix}-draft`, data: draftData, layers: draftLayers });
+  useMapLayer({
+    id: `${idPrefix}-draft`,
+    data: draftData,
+    layers: draftLayers,
+  });
 
   return (
     <>

@@ -49,7 +49,8 @@ const ExtrusionLayer: FC<ExtrusionLayerProps> = ({
   const theme = useTheme();
   const { map } = useMapContext();
   const reactId = useId();
-  const baseId = id ?? `zmap-extrusion-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
+  const baseId =
+    id ?? `zmap-extrusion-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const layerId = `${baseId}-extrusion`;
 
   const fillColor = useMemo(

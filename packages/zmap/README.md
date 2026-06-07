@@ -43,22 +43,22 @@ colors and to switch the basemap between light and dark.
 
 ## Components
 
-| Component       | Purpose                                                        |
-| --------------- | -------------------------------------------------------------- |
-| `Map`           | Container; creates the MapLibre instance and provides context. |
-| `Marker`        | Render any MUI content at a coordinate (portal-based).         |
-| `Popup`         | Theme-aware popup anchored to a coordinate.                    |
-| `Tooltip`       | Lightweight, non-interactive label (a Popup variant).          |
-| `MapControls`   | MUI zoom / compass / geolocate / fullscreen / scale cluster.   |
-| `Route`         | Draw a polyline from coordinates.                              |
-| `Arc`           | Draw a curved (bezier or great-circle) line between two points.|
-| `Cluster`       | Native MapLibre clustering rendered as themed MUI markers.     |
-| `LayerControl`  | Collapsible MUI panel that toggles registered layers on/off.   |
-| `Layer`         | Register a toggleable overlay; pairs with `LayerControl`.      |
-| `PointLayer`    | Render many points as a single GPU circle layer.              |
-| `HeatmapLayer`  | Render points as a density heatmap.                           |
-| `ShapeLayer`    | GeoJSON polygons / lines, with optional choropleth fill.      |
-| `GeoJSONLayer`  | Low-level escape hatch for custom sources + layers.            |
+| Component      | Purpose                                                         |
+| -------------- | --------------------------------------------------------------- |
+| `Map`          | Container; creates the MapLibre instance and provides context.  |
+| `Marker`       | Render any MUI content at a coordinate (portal-based).          |
+| `Popup`        | Theme-aware popup anchored to a coordinate.                     |
+| `Tooltip`      | Lightweight, non-interactive label (a Popup variant).           |
+| `MapControls`  | MUI zoom / compass / geolocate / fullscreen / scale cluster.    |
+| `Route`        | Draw a polyline from coordinates.                               |
+| `Arc`          | Draw a curved (bezier or great-circle) line between two points. |
+| `Cluster`      | Native MapLibre clustering rendered as themed MUI markers.      |
+| `LayerControl` | Collapsible MUI panel that toggles registered layers on/off.    |
+| `Layer`        | Register a toggleable overlay; pairs with `LayerControl`.       |
+| `PointLayer`   | Render many points as a single GPU circle layer.                |
+| `HeatmapLayer` | Render points as a density heatmap.                             |
+| `ShapeLayer`   | GeoJSON polygons / lines, with optional choropleth fill.        |
+| `GeoJSONLayer` | Low-level escape hatch for custom sources + layers.             |
 
 Hooks: `useMap()` (the raw MapLibre instance), `useMapLayer()`,
 `useColorScheme()`.
@@ -103,7 +103,10 @@ import { useMap } from "zmapgl";
 const FitBounds: FC = () => {
   const map = useMap();
   useEffect(() => {
-    map?.fitBounds([[-10, 35], [40, 60]]);
+    map?.fitBounds([
+      [-10, 35],
+      [40, 60],
+    ]);
   }, [map]);
   return null;
 };

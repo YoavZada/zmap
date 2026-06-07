@@ -224,7 +224,10 @@ const MapControls: FC<MapControlsProps> = ({
           )}
 
           {showPitch && (
-            <Tooltip title={tilted ? "Reset tilt" : "Tilt (3D)"} placement="left">
+            <Tooltip
+              title={tilted ? "Reset tilt" : "Tilt (3D)"}
+              placement="left"
+            >
               <IconButton
                 size="small"
                 onClick={togglePitch}

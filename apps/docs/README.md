@@ -30,7 +30,11 @@ pnpm typecheck        # tsc --noEmit
 (`../../packages/zmap/src/index.ts`), not its built output:
 
 ```ts
-resolve: { alias: { zmap: ".../packages/zmap/src/index.ts" } }
+resolve: {
+  alias: {
+    zmap: ".../packages/zmap/src/index.ts";
+  }
+}
 ```
 
 So editing a component in `packages/zmap/src` updates the docs instantly via HMR —
@@ -39,13 +43,13 @@ there's no need to run `pnpm build` while iterating.
 ## Structure
 
 | Path             | What                                                          |
-| ---------------- | ------------------------------------------------------------ |
-| `src/pages`      | One page per component/topic; each maps to a route.          |
-| `src/components` | Shared docs UI (`DemoSection`, `CodeBlock`).                 |
-| `src/layout`     | App shell (`Layout`) — app bar, nav drawer, dark-mode toggle.|
-| `src/nav.ts`     | The nav items / routes (add a page → add an entry here).     |
-| `src/data.ts`    | Sample geodata used by the demos.                            |
-| `src/theme.tsx`  | MUI theme + light/dark color-mode context.                   |
+| ---------------- | ------------------------------------------------------------- |
+| `src/pages`      | One page per component/topic; each maps to a route.           |
+| `src/components` | Shared docs UI (`DemoSection`, `CodeBlock`).                  |
+| `src/layout`     | App shell (`Layout`) — app bar, nav drawer, dark-mode toggle. |
+| `src/nav.ts`     | The nav items / routes (add a page → add an entry here).      |
+| `src/data.ts`    | Sample geodata used by the demos.                             |
+| `src/theme.tsx`  | MUI theme + light/dark color-mode context.                    |
 
 Routes (from `src/nav.ts`): Introduction, Providers & Theming, Markers,
 Popups & Tooltips, Controls, Routes, Arcs, Clusters.

@@ -11,9 +11,12 @@ const square: ScreenPoint[] = [
 describe("pointInPolygon", () => {
   it("returns false for degenerate rings", () => {
     expect(pointInPolygon({ x: 1, y: 1 }, [])).toBe(false);
-    expect(pointInPolygon({ x: 1, y: 1 }, [{ x: 0, y: 0 }, { x: 1, y: 1 }])).toBe(
-      false,
-    );
+    expect(
+      pointInPolygon({ x: 1, y: 1 }, [
+        { x: 0, y: 0 },
+        { x: 1, y: 1 },
+      ]),
+    ).toBe(false);
   });
 
   it("detects a point inside the ring", () => {

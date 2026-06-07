@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { binPoints, type BinPoint } from "./bin";
 
-const at = (longitude: number, latitude: number, props?: Record<string, unknown>): BinPoint => ({
+const at = (
+  longitude: number,
+  latitude: number,
+  props?: Record<string, unknown>,
+): BinPoint => ({
   longitude,
   latitude,
   properties: props,
@@ -28,7 +32,11 @@ describe("binPoints", () => {
 
   it("sums a weight property instead of counting", () => {
     const pts = [at(0, 0, { mag: 2 }), at(0.01, 0, { mag: 5 })];
-    const fc = binPoints(pts, { cell: "square", radius: 50, weightProperty: "mag" });
+    const fc = binPoints(pts, {
+      cell: "square",
+      radius: 50,
+      weightProperty: "mag",
+    });
     expect(fc.features).toHaveLength(1);
     expect(fc.features[0].properties.value).toBe(7);
     expect(fc.features[0].properties.count).toBe(2);
