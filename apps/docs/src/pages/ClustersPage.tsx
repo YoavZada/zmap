@@ -7,7 +7,7 @@ import Chip from "@mui/material/Chip";
 import { Map, Cluster, type ClusterPoint } from "zmapgl";
 import DemoSection from "../components/DemoSection";
 import Styles from "./clustersPage.style";
-import { clusterPoints } from "../data";
+import { clusterPoints, clusterCityCount } from "../data";
 
 const code = `import type { FC } from "react";
 import { Map, Cluster } from "zmapgl";
@@ -50,7 +50,8 @@ export function ClustersPage() {
         <code>Cluster</code> groups nearby points using MapLibre's native
         clustering and renders the bubbles and points as themed MUI markers.
         Click a cluster to zoom in and expand it. This demo plots{" "}
-        {clusterPoints.length} points across four cities.
+        {clusterPoints.length} points across {clusterCityCount} cities — a dense
+        spread over Europe, plus New York and Tokyo.
       </Typography>
 
       <DemoSection

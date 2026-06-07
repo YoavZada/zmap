@@ -70,12 +70,31 @@ function scatter(
 
 const rng = mulberry32(42);
 
-export const clusterPoints: { longitude: number; latitude: number }[] = [
-  ...scatter([-74.006, 40.7128], 1.2, 120, rng),
-  ...scatter([-0.1276, 51.5072], 0.9, 90, rng),
-  ...scatter([2.3522, 48.8566], 0.7, 70, rng),
-  ...scatter([139.6917, 35.6895], 1.0, 110, rng),
-].map(([longitude, latitude]) => ({ longitude, latitude }));
+/** Cluster-demo cities: New York + Tokyo, plus a dense scatter across Europe. */
+const clusterCities: { center: LngLatTuple; spread: number; count: number }[] = [
+  { center: [-74.006, 40.7128], spread: 1.2, count: 120 }, // New York
+  { center: [139.6917, 35.6895], spread: 1.0, count: 110 }, // Tokyo
+  { center: [-0.1276, 51.5072], spread: 0.9, count: 90 }, // London
+  { center: [2.3522, 48.8566], spread: 0.7, count: 70 }, // Paris
+  { center: [13.405, 52.52], spread: 0.7, count: 85 }, // Berlin
+  { center: [-3.7038, 40.4168], spread: 0.7, count: 70 }, // Madrid
+  { center: [2.1734, 41.3851], spread: 0.5, count: 55 }, // Barcelona
+  { center: [-9.1393, 38.7223], spread: 0.5, count: 45 }, // Lisbon
+  { center: [12.4964, 41.9028], spread: 0.6, count: 65 }, // Rome
+  { center: [9.19, 45.4642], spread: 0.5, count: 55 }, // Milan
+  { center: [4.9041, 52.3676], spread: 0.5, count: 55 }, // Amsterdam
+  { center: [11.582, 48.1351], spread: 0.45, count: 50 }, // Munich
+  { center: [16.3738, 48.2082], spread: 0.5, count: 50 }, // Vienna
+  { center: [18.0686, 59.3293], spread: 0.6, count: 45 }, // Stockholm
+];
+
+/** How many cities the cluster demo scatters points across. */
+export const clusterCityCount = clusterCities.length;
+
+export const clusterPoints: { longitude: number; latitude: number }[] =
+  clusterCities
+    .flatMap(({ center, spread, count }) => scatter(center, spread, count, rng))
+    .map(([longitude, latitude]) => ({ longitude, latitude }));
 
 // ---------------------------------------------------------------------------
 // Data-viz datasets: choropleth & 3D extrusion (usStates, buildings), hexbin

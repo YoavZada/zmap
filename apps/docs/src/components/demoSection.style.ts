@@ -38,9 +38,32 @@ const codeArea: SxProps<Theme> = {
   p: 2,
 };
 
-const styles: Record<
-  "section" | "description" | "panel" | "tabs" | "tab" | "preview" | "codeArea",
-  SxProps<Theme>
-> = { section, description, panel, tabs, tab, preview, codeArea };
+// Reserves the preview's height before its map is lazily mounted, so revealing
+// the real demo doesn't shift the page. Matches the map's rounded corners.
+const placeholder = (height: number): SxProps<Theme> => ({
+  height,
+  width: "100%",
+  borderRadius: 2,
+});
+
+const styles: {
+  section: SxProps<Theme>;
+  description: SxProps<Theme>;
+  panel: SxProps<Theme>;
+  tabs: SxProps<Theme>;
+  tab: SxProps<Theme>;
+  preview: SxProps<Theme>;
+  codeArea: SxProps<Theme>;
+  placeholder: (height: number) => SxProps<Theme>;
+} = {
+  section,
+  description,
+  panel,
+  tabs,
+  tab,
+  preview,
+  codeArea,
+  placeholder,
+};
 
 export default styles;
