@@ -20,17 +20,22 @@ required with Vite, Next.js, or any bundler that handles library CSS imports.
 
 ## Quick start
 
+Components are declared as a typed `FC` arrow, default-exported:
+
 ```tsx
+import type { FC } from "react";
 import { Map, MapControls, Marker, Popup } from "zmapgl";
 
-export function MyMap() {
+const MyMap: FC = () => {
   return (
     <Map center={[-0.1276, 51.5072]} zoom={11} sx={{ height: 420 }}>
       <MapControls position="top-right" />
       <Marker longitude={-0.1276} latitude={51.5072} />
     </Map>
   );
-}
+};
+
+export default MyMap;
 ```
 
 Wrap your app in an MUI `ThemeProvider` as usual — zmap reads the theme for
@@ -92,15 +97,18 @@ export const maptiler: MapProvider = {
 zmap stays close to MapLibre. Grab the instance whenever you need the raw API:
 
 ```tsx
+import { useEffect, type FC } from "react";
 import { useMap } from "zmapgl";
 
-function FitBounds() {
+const FitBounds: FC = () => {
   const map = useMap();
   useEffect(() => {
     map?.fitBounds([[-10, 35], [40, 60]]);
   }, [map]);
   return null;
-}
+};
+
+export default FitBounds;
 ```
 
 ## License

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -33,7 +33,7 @@ const MyMap: FC = () => {
 
 export default MyMap;`;
 
-export function RoutesPage() {
+export const RoutesPage: FC = () => {
   const [width, setWidth] = useState(5);
   const [dashed, setDashed] = useState(false);
 
@@ -86,11 +86,7 @@ export function RoutesPage() {
               />
             </Stack>
 
-            <Map
-              center={[-0.108, 51.506]}
-              zoom={13}
-              sx={Styles.map}
-            >
+            <Map center={[-0.108, 51.506]} zoom={13} sx={Styles.map}>
               <Route
                 coordinates={londonRoute}
                 color="primary.main"
@@ -105,4 +101,4 @@ export function RoutesPage() {
       />
     </Box>
   );
-}
+};

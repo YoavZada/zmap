@@ -57,10 +57,14 @@ with Vite, Next.js, or any bundler that handles library CSS.
 
 Wrap your app in an MUI `ThemeProvider` (as you already do), then compose a map:
 
+Components are declared as a typed `FC` arrow, default-exported (the repo
+convention — see [CLAUDE.md](CLAUDE.md)):
+
 ```tsx
+import type { FC } from "react";
 import { Map, MapControls, Marker, Popup } from "zmapgl";
 
-export function MyMap() {
+const MyMap: FC = () => {
   return (
     <Map center={[-0.1276, 51.5072]} zoom={11} sx={{ height: 420 }}>
       <MapControls position="top-right" />
@@ -70,7 +74,9 @@ export function MyMap() {
       </Popup>
     </Map>
   );
-}
+};
+
+export default MyMap;
 ```
 
 ## Components

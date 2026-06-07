@@ -1,3 +1,4 @@
+import type { FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Map, MapControls, HexbinLayer, Legend } from "zmapgl";
@@ -68,7 +69,7 @@ const MyMap: FC = () => {
 
 export default MyMap;`;
 
-export function HexbinPage() {
+export const HexbinPage: FC = () => {
   return (
     <Box>
       <Typography variant="h4" fontWeight={800} gutterBottom>
@@ -134,4 +135,4 @@ export function HexbinPage() {
       />
     </Box>
   );
-}
+};

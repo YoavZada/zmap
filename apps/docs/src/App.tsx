@@ -1,3 +1,4 @@
+import type { FC } from "react";
 import { Routes, Route } from "react-router-dom";
 import Layout from "./layout/Layout";
 import { IntroPage } from "./pages/IntroPage";
@@ -15,7 +16,7 @@ import { HexbinPage } from "./pages/HexbinPage";
 import { TimePlaybackPage } from "./pages/TimePlaybackPage";
 import { ExtrusionPage } from "./pages/ExtrusionPage";
 
-export function App() {
+export const App: FC = () => {
   return (
     <Layout>
       <Routes>
@@ -36,4 +37,4 @@ export function App() {
       </Routes>
     </Layout>
   );
-}
+};

@@ -1,3 +1,4 @@
+import type { FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Map, MapControls, ExtrusionLayer, Legend } from "zmapgl";
@@ -68,19 +69,20 @@ const MyMap: FC = () => {
 
 export default MyMap;`;
 
-export function ExtrusionPage() {
+export const ExtrusionPage: FC = () => {
   return (
     <Box>
       <Typography variant="h4" fontWeight={800} gutterBottom>
         3D Extrusion
       </Typography>
       <Typography color="text.secondary" sx={Styles.intro}>
-        <code>&lt;ExtrusionLayer&gt;</code> raises GeoJSON polygons into 3D prisms
-        (MapLibre <code>fill-extrusion</code>) — for buildings or any value mapped
-        to height. Height can be constant or driven by a feature property, and
-        the fill can be a flat color or a data-driven choropleth. Pair it with{" "}
-        <code>&lt;MapControls showPitch /&gt;</code>, which adds a tilt toggle so
-        you can drop into 3D. Hit the cube button (top-right) to tilt.
+        <code>&lt;ExtrusionLayer&gt;</code> raises GeoJSON polygons into 3D
+        prisms (MapLibre <code>fill-extrusion</code>) — for buildings or any
+        value mapped to height. Height can be constant or driven by a feature
+        property, and the fill can be a flat color or a data-driven choropleth.
+        Pair it with <code>&lt;MapControls showPitch /&gt;</code>, which adds a
+        tilt toggle so you can drop into 3D. Hit the cube button (top-right) to
+        tilt.
       </Typography>
 
       <DemoSection
@@ -134,4 +136,4 @@ export function ExtrusionPage() {
       />
     </Box>
   );
-}
+};

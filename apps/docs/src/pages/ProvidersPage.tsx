@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -29,7 +29,7 @@ export default MyMap;
 
 type Scheme = "auto" | "light" | "dark";
 
-export function ProvidersPage() {
+export const ProvidersPage: FC = () => {
   const [provider, setProvider] = useState<MapStyleInput>("carto");
   const [scheme, setScheme] = useState<Scheme>("auto");
 
@@ -41,8 +41,9 @@ export function ProvidersPage() {
       <Typography color="text.secondary" sx={Styles.intro}>
         Switch basemap providers with a single prop. CARTO and OpenStreetMap are
         built in; anything MapLibre-compatible works via a style URL, spec, or a
-        custom <code>MapProvider</code>. With <code>colorScheme="auto"</code> the
-        basemap tracks the MUI theme — toggle the app theme (top-right) to see it.
+        custom <code>MapProvider</code>. With <code>colorScheme="auto"</code>{" "}
+        the basemap tracks the MUI theme — toggle the app theme (top-right) to
+        see it.
       </Typography>
 
       <DemoSection
@@ -99,8 +100,8 @@ export function ProvidersPage() {
 
             {provider === "osm" && scheme === "dark" && (
               <Alert severity="info" sx={Styles.alert}>
-                OpenStreetMap ships a single raster style, so it looks the same in
-                light and dark. CARTO provides dedicated dark tiles.
+                OpenStreetMap ships a single raster style, so it looks the same
+                in light and dark. CARTO provides dedicated dark tiles.
               </Alert>
             )}
           </Box>
@@ -108,4 +109,4 @@ export function ProvidersPage() {
       />
     </Box>
   );
-}
+};

@@ -1,3 +1,4 @@
+import type { FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Map, ChoroplethLayer } from "zmapgl";
@@ -71,15 +72,15 @@ const MyMap: FC = () => {
 
 export default MyMap;`;
 
-export function ChoroplethPage() {
+export const ChoroplethPage: FC = () => {
   return (
     <Box>
       <Typography variant="h4" fontWeight={800} gutterBottom>
         Choropleth
       </Typography>
       <Typography color="text.secondary" sx={Styles.intro}>
-        <code>&lt;ChoroplethLayer&gt;</code> maps a numeric feature property to a
-        color — smoothly (<code>interpolate</code>) or in bands (
+        <code>&lt;ChoroplethLayer&gt;</code> maps a numeric feature property to
+        a color — smoothly (<code>interpolate</code>) or in bands (
         <code>step</code>) — and can drop a matching <code>&lt;Legend&gt;</code>{" "}
         built from the very same stops, so the key never drifts from the map.
         Stops accept MUI palette tokens, so the whole thing re-themes with your
@@ -108,7 +109,7 @@ export function ChoroplethPage() {
 
       <DemoSection
         title="Stepped bands"
-        description="Set scale=&quot;step&quot; for discrete bands; the legend switches to banded swatches automatically."
+        description='Set scale="step" for discrete bands; the legend switches to banded swatches automatically.'
         code={stepCode}
         demo={
           <Map center={[-96, 38]} zoom={3.2} sx={Styles.map}>
@@ -129,4 +130,4 @@ export function ChoroplethPage() {
       />
     </Box>
   );
-}
+};

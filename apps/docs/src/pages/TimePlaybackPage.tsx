@@ -1,3 +1,4 @@
+import type { FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Map, TimePlayback } from "zmapgl";
@@ -33,7 +34,7 @@ const MyMap: FC = () => {
 
 export default MyMap;`;
 
-export function TimePlaybackPage() {
+export const TimePlaybackPage: FC = () => {
   return (
     <Box>
       <Typography variant="h4" fontWeight={800} gutterBottom>
@@ -68,4 +69,4 @@ export function TimePlaybackPage() {
       />
     </Box>
   );
-}
+};

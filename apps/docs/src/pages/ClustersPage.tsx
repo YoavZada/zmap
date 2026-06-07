@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -37,7 +37,7 @@ export default MyMap;
 //   )}
 // />`;
 
-export function ClustersPage() {
+export const ClustersPage: FC = () => {
   const [radius, setRadius] = useState(50);
   const [selected, setSelected] = useState<ClusterPoint | null>(null);
 
@@ -104,4 +104,4 @@ export function ClustersPage() {
       />
     </Box>
   );
-}
+};

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -95,7 +95,7 @@ function countByMode(shapes: DrawFeature[]) {
   return counts;
 }
 
-export function InteractionPage() {
+export const InteractionPage: FC = () => {
   const [shapes, setShapes] = useState<DrawFeature[]>([]);
   const [unit, setUnit] = useState<MeasureUnit>("metric");
   const [selected, setSelected] = useState<LayerPoint[]>([]);
@@ -119,12 +119,12 @@ export function InteractionPage() {
         description={
           <>
             <code>&lt;DrawControl&gt;</code> drops a point/line/polygon palette
-            on the map. Click to add vertices; double-click or <code>Enter</code>{" "}
-            finishes a shape, <code>Backspace</code> removes the last vertex, and{" "}
-            <code>Esc</code> cancels. Completed shapes render through{" "}
-            <code>&lt;ShapeLayer&gt;</code> / <code>&lt;PointLayer&gt;</code> and
-            are emitted as plain GeoJSON via <code>onChange</code> /{" "}
-            <code>onCreate</code>.
+            on the map. Click to add vertices; double-click or{" "}
+            <code>Enter</code> finishes a shape, <code>Backspace</code> removes
+            the last vertex, and <code>Esc</code> cancels. Completed shapes
+            render through <code>&lt;ShapeLayer&gt;</code> /{" "}
+            <code>&lt;PointLayer&gt;</code> and are emitted as plain GeoJSON via{" "}
+            <code>onChange</code> / <code>onCreate</code>.
           </>
         }
         code={drawCode}
@@ -150,10 +150,10 @@ export function InteractionPage() {
         title="Measure distance & area"
         description={
           <>
-            <code>&lt;MeasureControl&gt;</code> is the same drawing engine with a
-            tape measure attached: draw a line to read its length, or a polygon
-            to read its area. Values update live as you move and stick around in
-            deletable chips. Switch the unit system below.
+            <code>&lt;MeasureControl&gt;</code> is the same drawing engine with
+            a tape measure attached: draw a line to read its length, or a
+            polygon to read its area. Values update live as you move and stick
+            around in deletable chips. Switch the unit system below.
           </>
         }
         code={measureCode}
@@ -205,18 +205,22 @@ export function InteractionPage() {
         description={
           <>
             <code>&lt;SelectControl&gt;</code> selects{" "}
-            <code>&lt;PointLayer&gt;</code> features by dragging a marquee box or
-            a freehand lasso. While a tool is armed, panning is suspended so the
-            drag draws the selection; the hits are highlighted and reported via{" "}
-            <code>onSelect</code>. Arm a tool (top-left), then drag across the
-            cluster.
+            <code>&lt;PointLayer&gt;</code> features by dragging a marquee box
+            or a freehand lasso. While a tool is armed, panning is suspended so
+            the drag draws the selection; the hits are highlighted and reported
+            via <code>onSelect</code>. Arm a tool (top-left), then drag across
+            the cluster.
           </>
         }
         code={selectCode}
         demo={
           <Box>
             <Map center={[-74.006, 40.7128]} zoom={8.5} sx={Styles.map}>
-              <PointLayer points={clusterPoints} color="primary.main" radius={4} />
+              <PointLayer
+                points={clusterPoints}
+                color="primary.main"
+                radius={4}
+              />
               <SelectControl points={clusterPoints} onSelect={setSelected} />
             </Map>
             <Typography
@@ -224,11 +228,12 @@ export function InteractionPage() {
               color="text.secondary"
               sx={Styles.readout}
             >
-              {selected.length} point{selected.length === 1 ? "" : "s"} selected.
+              {selected.length} point{selected.length === 1 ? "" : "s"}{" "}
+              selected.
             </Typography>
           </Box>
         }
       />
     </Box>
   );
-}
+};

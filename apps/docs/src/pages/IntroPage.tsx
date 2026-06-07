@@ -110,11 +110,16 @@ const ThemeShowcase: FC = () => {
   );
 };
 
-export function IntroPage() {
+export const IntroPage: FC = () => {
   return (
     <Box>
       {/* Hero */}
-      <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center" sx={Styles.hero}>
+      <Grid
+        container
+        spacing={{ xs: 4, md: 6 }}
+        alignItems="center"
+        sx={Styles.hero}
+      >
         <Grid size={{ xs: 12, md: 6 }}>
           <Typography variant="h2" gutterBottom>
             Beautiful maps for{" "}
@@ -123,12 +128,22 @@ export function IntroPage() {
             </Box>
             .
           </Typography>
-          <Typography variant="subtitle1" color="text.secondary" sx={Styles.heroLead}>
+          <Typography
+            variant="subtitle1"
+            color="text.secondary"
+            sx={Styles.heroLead}
+          >
             zmap inherits your Material UI theme, giving you a unified design
-            system from your buttons to your base maps. No custom styling
-            hacks — just declarative, composable mapping components.
+            system from your buttons to your base maps. No custom styling hacks
+            — just declarative, composable mapping components.
           </Typography>
-          <Stack direction="row" spacing={1.5} sx={Styles.heroActions} flexWrap="wrap" useFlexGap>
+          <Stack
+            direction="row"
+            spacing={1.5}
+            sx={Styles.heroActions}
+            flexWrap="wrap"
+            useFlexGap
+          >
             <Button
               variant="contained"
               endIcon={<ArrowForward />}
@@ -199,8 +214,8 @@ export function IntroPage() {
           Quick start
         </Typography>
         <Typography color="text.secondary" sx={Styles.sectionLead}>
-          Wrap your app in an MUI <code>ThemeProvider</code>, then compose a map.
-          The basemap follows the theme automatically.
+          Wrap your app in an MUI <code>ThemeProvider</code>, then compose a
+          map. The basemap follows the theme automatically.
         </Typography>
         <CodeBlock
           code={quickStart}
@@ -210,4 +225,4 @@ export function IntroPage() {
       </Box>
     </Box>
   );
-}
+};

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -32,7 +32,7 @@ const MyMap: FC = () => {
 
 export default MyMap;`;
 
-export function ControlsPage() {
+export const ControlsPage: FC = () => {
   const [position, setPosition] = useState<ControlPosition>("top-right");
   const [showZoom, setShowZoom] = useState(true);
   const [showCompass, setShowCompass] = useState(true);
@@ -144,4 +144,4 @@ export function ControlsPage() {
       />
     </Box>
   );
-}
+};

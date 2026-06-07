@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -31,7 +31,7 @@ const MyMap: FC = () => {
 
 export default MyMap;`;
 
-export function ArcsPage() {
+export const ArcsPage: FC = () => {
   const [curvature, setCurvature] = useState(0.3);
   const [type, setType] = useState<ArcType>("bezier");
 
@@ -44,8 +44,8 @@ export function ArcsPage() {
       </Typography>
       <Typography color="text.secondary" sx={Styles.intro}>
         <code>Arc</code> draws a curved line between two points — perfect for
-        flight paths and connection maps. Choose a <code>"bezier"</code> bulge or
-        a <code>"geodesic"</code> great-circle path.
+        flight paths and connection maps. Choose a <code>"bezier"</code> bulge
+        or a <code>"geodesic"</code> great-circle path.
       </Typography>
 
       <DemoSection
@@ -114,4 +114,4 @@ export function ArcsPage() {
       />
     </Box>
   );
-}
+};

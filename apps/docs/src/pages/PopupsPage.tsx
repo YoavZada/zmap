@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -93,7 +93,7 @@ const MyMap: FC = () => {
 
 export default MyMap;`;
 
-export function PopupsPage() {
+export const PopupsPage: FC = () => {
   const [open, setOpen] = useState<string | null>("Tokyo");
   const [hover, setHover] = useState<string | null>(null);
 
@@ -103,9 +103,9 @@ export function PopupsPage() {
         Popups & Tooltips
       </Typography>
       <Typography color="text.secondary" sx={Styles.intro}>
-        Popups and tooltips render MUI content into a MapLibre overlay, styled to
-        match your theme's surface — including dark mode and rounded corners. A{" "}
-        <code>Tooltip</code> is a non-interactive popup with no close button.
+        Popups and tooltips render MUI content into a MapLibre overlay, styled
+        to match your theme's surface — including dark mode and rounded corners.
+        A <code>Tooltip</code> is a non-interactive popup with no close button.
       </Typography>
 
       <DemoSection
@@ -186,4 +186,4 @@ export function PopupsPage() {
       />
     </Box>
   );
-}
+};

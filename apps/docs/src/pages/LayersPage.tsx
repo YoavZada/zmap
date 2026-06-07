@@ -1,3 +1,4 @@
+import type { FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import LayersOutlined from "@mui/icons-material/LayersOutlined";
@@ -130,7 +131,7 @@ const MyMap: FC = () => {
 
 export default MyMap;`;
 
-export function LayersPage() {
+export const LayersPage: FC = () => {
   return (
     <Box>
       <Typography variant="h4" fontWeight={800} gutterBottom>
@@ -138,10 +139,10 @@ export function LayersPage() {
       </Typography>
       <Typography color="text.secondary" sx={Styles.intro}>
         Wrap any map content in a <code>&lt;Layer&gt;</code> and drop in a{" "}
-        <code>&lt;LayerControl&gt;</code> to get a checkbox panel that toggles each
-        overlay. A layer can be anything — points, a heatmap, GeoJSON shapes
-        (here with a data-driven choropleth fill), clusters, routes. Open the panel
-        (top-right) and toggle the overlays.
+        <code>&lt;LayerControl&gt;</code> to get a checkbox panel that toggles
+        each overlay. A layer can be anything — points, a heatmap, GeoJSON
+        shapes (here with a data-driven choropleth fill), clusters, routes. Open
+        the panel (top-right) and toggle the overlays.
       </Typography>
 
       <DemoSection
@@ -164,7 +165,11 @@ export function LayersPage() {
               icon={<Place fontSize="small" color="primary" />}
               group="Overlays"
             >
-              <PointLayer points={clusterPoints} color="primary.main" radius={4} />
+              <PointLayer
+                points={clusterPoints}
+                color="primary.main"
+                radius={4}
+              />
             </Layer>
 
             <Layer
@@ -227,4 +232,4 @@ export function LayersPage() {
       />
     </Box>
   );
-}
+};

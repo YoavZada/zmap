@@ -4,6 +4,7 @@ import {
   useMemo,
   useState,
   type ReactNode,
+  type FC,
 } from "react";
 import { createTheme, ThemeProvider, type Theme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -187,7 +188,7 @@ export function useColorMode() {
   return useContext(ColorModeContext);
 }
 
-export function AppThemeProvider({ children }: { children: ReactNode }) {
+export const AppThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [mode, setMode] = useState<Mode>("dark");
 
   const colorMode = useMemo<ColorModeValue>(
@@ -208,4 +209,4 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
       </ThemeProvider>
     </ColorModeContext.Provider>
   );
-}
+};

@@ -19,9 +19,9 @@ type Pin = { id: number; longitude: number; latitude: number };
 
 // Adds a pin wherever the user clicks the map. Rendered inside <Map>, so it can
 // reach the underlying MapLibre instance through useMap().
-const ClickToAdd: FC<{ onAdd: (longitude: number, latitude: number) => void }> = ({
-  onAdd,
-}) => {
+const ClickToAdd: FC<{
+  onAdd: (longitude: number, latitude: number) => void;
+}> = ({ onAdd }) => {
   const map = useMap();
   useEffect(() => {
     if (!map) return;
@@ -143,7 +143,7 @@ const MyMap: FC = () => {
 
 export default MyMap;`;
 
-export function MarkersPage() {
+export const MarkersPage: FC = () => {
   const [pos, setPos] = useState<[number, number]>([-74.006, 40.7128]);
   const [pins, setPins] = useState<Pin[]>([
     { id: 1, longitude: -0.118, latitude: 51.509 },
@@ -171,8 +171,8 @@ export function MarkersPage() {
       </Typography>
       <Typography color="text.secondary" sx={Styles.intro}>
         A <code>Marker</code> places content at a coordinate via a React portal,
-        so you can render any MUI element — icons, chips, avatars, cards. With no
-        children it falls back to a themed pin.
+        so you can render any MUI element — icons, chips, avatars, cards. With
+        no children it falls back to a themed pin.
       </Typography>
 
       <DemoSection
@@ -331,4 +331,4 @@ export function MarkersPage() {
       />
     </Box>
   );
-}
+};
