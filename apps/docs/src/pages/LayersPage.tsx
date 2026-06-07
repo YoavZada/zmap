@@ -12,7 +12,9 @@ import {
   PointLayer,
   HeatmapLayer,
   ShapeLayer,
+  Legend,
 } from "zmapgl";
+import type { ChoroplethSpec } from "zmapgl";
 import DemoSection from "../components/DemoSection";
 import Styles from "./layersPage.style";
 import { clusterPoints } from "../data";
@@ -51,6 +53,18 @@ const regions: FeatureCollection = {
   ],
 };
 
+// One spec drives both the choropleth fill and the <Legend> below it, so the
+// swatches can never drift from the colors actually painted on the map.
+const salesSpec: ChoroplethSpec = {
+  property: "value",
+  type: "interpolate",
+  stops: [
+    [0, "info.light"],
+    [50, "warning.main"],
+    [100, "error.main"],
+  ],
+};
+
 const code = `import type { FC } from "react";
 import LayersOutlined from "@mui/icons-material/LayersOutlined";
 import Place from "@mui/icons-material/Place";
@@ -82,6 +96,34 @@ const MyMap: FC = () => {
           lineColor="secondary.main"
         />
       </Layer>
+    </Map>
+  );
+};
+
+export default MyMap;`;
+
+const legendCode = `import type { FC } from "react";
+import { Map, ShapeLayer, Legend } from "zmapgl";
+import type { ChoroplethSpec } from "zmapgl";
+
+// One spec → both the fill and the legend. They can't drift apart.
+const sales: ChoroplethSpec = {
+  property: "value",
+  type: "interpolate", // or "step" for banded swatches
+  stops: [
+    [0, "info.light"],
+    [50, "warning.main"],
+    [100, "error.main"],
+  ],
+};
+
+const MyMap: FC = () => {
+  return (
+    <Map center={[6, 46]} zoom={3.4}>
+      <ShapeLayer data={regions} fillColor={sales} lineColor="secondary.main" fillOpacity={0.55} />
+
+      {/* spec-driven ramp; also: items={[{ color, label }]} for a categorical key */}
+      <Legend title="Sales by region" spec={sales} position="bottom-right" formatValue={(v) => \`$\${v}M\`} />
     </Map>
   );
 };
@@ -144,19 +186,42 @@ export function LayersPage() {
             >
               <ShapeLayer
                 data={regions}
-                fillColor={{
-                  property: "value",
-                  type: "interpolate",
-                  stops: [
-                    [0, "info.light"],
-                    [50, "warning.main"],
-                    [100, "error.main"],
-                  ],
-                }}
+                fillColor={salesSpec}
                 lineColor="secondary.main"
                 fillOpacity={0.45}
               />
             </Layer>
+          </Map>
+        }
+      />
+
+      <DemoSection
+        title="Themed legend"
+        description={
+          <>
+            A <code>&lt;Legend&gt;</code> reads the same{" "}
+            <code>ChoroplethSpec</code> you hand the layer, so its swatches stay
+            in lock-step with the fill — pass <code>spec</code> for a continuous
+            ramp (or banded <code>step</code> swatches), or an{" "}
+            <code>items</code> list for a categorical key. Like every zmap
+            control, it's plain MUI, so it follows the theme. Toggle dark mode.
+          </>
+        }
+        code={legendCode}
+        demo={
+          <Map center={[6, 46]} zoom={3.4} sx={Styles.map}>
+            <ShapeLayer
+              data={regions}
+              fillColor={salesSpec}
+              lineColor="secondary.main"
+              fillOpacity={0.55}
+            />
+            <Legend
+              title="Sales by region"
+              spec={salesSpec}
+              position="bottom-right"
+              formatValue={(v) => `$${v}M`}
+            />
           </Map>
         }
       />

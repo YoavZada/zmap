@@ -5,10 +5,15 @@ import { ProvidersPage } from "./pages/ProvidersPage";
 import { MarkersPage } from "./pages/MarkersPage";
 import { PopupsPage } from "./pages/PopupsPage";
 import { ControlsPage } from "./pages/ControlsPage";
+import { InteractionPage } from "./pages/InteractionPage";
 import { RoutesPage } from "./pages/RoutesPage";
 import { ArcsPage } from "./pages/ArcsPage";
 import { ClustersPage } from "./pages/ClustersPage";
 import { LayersPage } from "./pages/LayersPage";
+import { ChoroplethPage } from "./pages/ChoroplethPage";
+import { HexbinPage } from "./pages/HexbinPage";
+import { TimePlaybackPage } from "./pages/TimePlaybackPage";
+import { ExtrusionPage } from "./pages/ExtrusionPage";
 
 export function App() {
   return (
@@ -19,10 +24,15 @@ export function App() {
         <Route path="/markers" element={<MarkersPage />} />
         <Route path="/popups" element={<PopupsPage />} />
         <Route path="/controls" element={<ControlsPage />} />
+        <Route path="/interaction" element={<InteractionPage />} />
         <Route path="/routes" element={<RoutesPage />} />
         <Route path="/arcs" element={<ArcsPage />} />
         <Route path="/clusters" element={<ClustersPage />} />
         <Route path="/layers" element={<LayersPage />} />
+        <Route path="/choropleth" element={<ChoroplethPage />} />
+        <Route path="/hexbins" element={<HexbinPage />} />
+        <Route path="/time" element={<TimePlaybackPage />} />
+        <Route path="/extrusion" element={<ExtrusionPage />} />
       </Routes>
     </Layout>
   );

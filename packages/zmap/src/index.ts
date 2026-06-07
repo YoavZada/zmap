@@ -36,6 +36,37 @@ export { default as HeatmapLayer } from "./components/HeatmapLayer";
 export type { HeatmapLayerProps } from "./components/HeatmapLayer";
 export { default as ShapeLayer } from "./components/ShapeLayer";
 export type { ShapeLayerProps } from "./components/ShapeLayer";
+export { default as Legend } from "./components/Legend";
+export type { LegendProps, LegendItem } from "./components/Legend";
+export { default as ChoroplethLayer } from "./components/ChoroplethLayer";
+export type {
+  ChoroplethLayerProps,
+  ChoroplethLegendConfig,
+} from "./components/ChoroplethLayer";
+export { default as ExtrusionLayer } from "./components/ExtrusionLayer";
+export type { ExtrusionLayerProps } from "./components/ExtrusionLayer";
+export { default as HexbinLayer } from "./components/HexbinLayer";
+export type { HexbinLayerProps } from "./components/HexbinLayer";
+export { default as TimePlayback } from "./components/TimePlayback";
+export type { TimePlaybackProps } from "./components/TimePlayback";
+export { default as DrawControl } from "./components/DrawControl";
+export type { DrawControlProps } from "./components/DrawControl";
+export { default as MeasureControl } from "./components/MeasureControl";
+export type {
+  MeasureControlProps,
+  MeasureMode,
+} from "./components/MeasureControl";
+export { default as ContextMenu } from "./components/ContextMenu";
+export type {
+  ContextMenuProps,
+  ContextMenuItem,
+  ContextMenuItemContext,
+} from "./components/ContextMenu";
+export { default as SelectControl } from "./components/SelectControl";
+export type {
+  SelectControlProps,
+  SelectTool,
+} from "./components/SelectControl";
 
 // Hooks & context
 export { useMap, useMapContext } from "./context/useMap";
@@ -52,6 +83,14 @@ export type {
   LayerEntry,
   LayerRegistryValue,
 } from "./context/LayerRegistryContext";
+export { useDraw } from "./hooks/useDraw";
+export type {
+  DrawMode,
+  DrawFeature,
+  DrawFeatureProperties,
+  DrawEngine,
+  UseDrawOptions,
+} from "./hooks/useDraw";
 
 // Providers
 export {
@@ -77,6 +116,23 @@ export type { LngLatTuple } from "./utils/geojson";
 export { resolvePaletteColor } from "./utils/color";
 export { buildColorExpression, isChoroplethSpec } from "./utils/choropleth";
 export type { ChoroplethSpec } from "./utils/choropleth";
+export { binPoints } from "./utils/bin";
+export type {
+  BinPoint,
+  BinOptions,
+  BinProperties,
+  BinnedFeatureCollection,
+} from "./utils/bin";
+export {
+  haversineDistance,
+  lineDistance,
+  polygonArea,
+  formatDistance,
+  formatArea,
+} from "./utils/measure";
+export type { MeasureUnit } from "./utils/measure";
+export { pointInPolygon, pointInBox } from "./utils/geometry";
+export type { ScreenPoint } from "./utils/geometry";
 
 // Re-export the underlying MapLibre namespace for power users.
 export { default as maplibregl } from "maplibre-gl";

@@ -12,6 +12,7 @@ import Navigation from "@mui/icons-material/Navigation";
 import MyLocation from "@mui/icons-material/MyLocation";
 import Fullscreen from "@mui/icons-material/Fullscreen";
 import FullscreenExit from "@mui/icons-material/FullscreenExit";
+import ViewInAr from "@mui/icons-material/ViewInAr";
 import { useMapContext } from "../context/useMap";
 import Styles from "./mapControls.style";
 
@@ -28,6 +29,10 @@ export interface MapControlsProps {
   showCompass?: boolean;
   showGeolocate?: boolean;
   showFullscreen?: boolean;
+  /** Show a 3D tilt toggle that pitches the camera (for fill-extrusion layers). */
+  showPitch?: boolean;
+  /** Pitch (degrees) the tilt toggle eases to. Default 60. */
+  pitchAmount?: number;
   showScale?: boolean;
   scalePosition?: ControlPosition;
   scaleUnit?: "metric" | "imperial";
@@ -113,12 +118,15 @@ const MapControls: FC<MapControlsProps> = ({
   showCompass = true,
   showGeolocate = true,
   showFullscreen = true,
+  showPitch = false,
+  pitchAmount = 60,
   showScale = false,
   scalePosition = "bottom-left",
   scaleUnit = "metric",
 }) => {
   const { map } = useMapContext();
   const [bearing, setBearing] = useState(0);
+  const [pitch, setPitch] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
@@ -132,6 +140,16 @@ const MapControls: FC<MapControlsProps> = ({
   }, [map]);
 
   useEffect(() => {
+    if (!map) return;
+    const onPitch = () => setPitch(map.getPitch());
+    onPitch();
+    map.on("pitch", onPitch);
+    return () => {
+      map.off("pitch", onPitch);
+    };
+  }, [map]);
+
+  useEffect(() => {
     const onChange = () => setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener("fullscreenchange", onChange);
     return () => document.removeEventListener("fullscreenchange", onChange);
@@ -140,6 +158,11 @@ const MapControls: FC<MapControlsProps> = ({
   const zoomIn = useCallback(() => map?.zoomIn(), [map]);
   const zoomOut = useCallback(() => map?.zoomOut(), [map]);
   const resetNorth = useCallback(() => map?.resetNorth(), [map]);
+
+  const tilted = pitch > 1;
+  const togglePitch = useCallback(() => {
+    map?.easeTo({ pitch: map.getPitch() > 1 ? 0 : pitchAmount });
+  }, [map, pitchAmount]);
 
   const geolocate = useCallback(() => {
     if (!map || !("geolocation" in navigator)) return;
@@ -196,6 +219,19 @@ const MapControls: FC<MapControlsProps> = ({
                 aria-label="Reset bearing to north"
               >
                 <Navigation fontSize="small" sx={Styles.compass(bearing)} />
+              </IconButton>
+            </Tooltip>
+          )}
+
+          {showPitch && (
+            <Tooltip title={tilted ? "Reset tilt" : "Tilt (3D)"} placement="left">
+              <IconButton
+                size="small"
+                onClick={togglePitch}
+                aria-label="Toggle 3D tilt"
+                color={tilted ? "primary" : "default"}
+              >
+                <ViewInAr fontSize="small" />
               </IconButton>
             </Tooltip>
           )}

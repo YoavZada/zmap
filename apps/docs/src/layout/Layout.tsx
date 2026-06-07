@@ -154,7 +154,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
               {mode === "dark" ? <LightMode /> : <DarkMode />}
             </IconButton>
           </Tooltip>
-          <Tooltip title="View on npm">
+          <Tooltip title="npm">
             <IconButton
               color="inherit"
               component="a"
