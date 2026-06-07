@@ -1,11 +1,15 @@
-name: Deploy docs to GitHub Pages
+name: Deploy to GitHub Pages
 
-# Builds the docs showcase and publishes it to GitHub Pages at
-# https://<owner>.github.io/zmap/. Runs alongside the Netlify deploy
-# (deploy.yml) — this is an additional public mirror, not a replacement.
+# Publishes both demo apps to a single GitHub Pages site, assembled side by
+# side under one repo subpath:
+#   docs       → https://<owner>.github.io/zmap/
+#   pathfinder → https://<owner>.github.io/zmap/pathfinder/
+# Each app's cross-link points at the other's path, so you can navigate
+# between them. Runs alongside the Netlify deploy (deploy.yml) — an additional
+# public mirror, not a replacement.
 #
 # One-time setup: repo Settings → Pages → "Build and deployment" → Source:
-# "GitHub Actions". (Private repos need GitHub Pro/Team/Enterprise for Pages.)
+# "GitHub Actions".
 on:
   push:
     branches: [main]
@@ -44,21 +48,33 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # BASE_PATH must match the Pages project subpath (/<repo>/) so assets and
-      # the client router resolve correctly. VITE_PATHFINDER_URL points the
-      # "Pathfinder" link at the deployed pathfinder (set it as a repo Actions
-      # *variable*); without it the link falls back to the dev localhost port.
+      # BASE_PATH must match each app's path on the shared Pages site so its
+      # asset URLs (and, for docs, the client router's basename) resolve. The
+      # cross-link env vars are the SIBLING app's path on this same site —
+      # docs links to the pathfinder subpath, pathfinder links back to root.
       - name: Build docs
         run: pnpm --filter docs build
         env:
           BASE_PATH: /zmap/
-          VITE_PATHFINDER_URL: ${{ vars.PATHFINDER_URL }}
+          VITE_PATHFINDER_URL: /zmap/pathfinder/
 
-      # GitHub Pages has no SPA rewrite rule (unlike Netlify's _redirects).
-      # Serving index.html as 404.html lets a deep link like /zmap/markers boot
-      # the app so react-router (basename=/zmap) can resolve it client-side.
-      - name: Add SPA fallback
-        run: cp apps/docs/dist/index.html apps/docs/dist/404.html
+      - name: Build pathfinder
+        run: pnpm --filter pathfinder build
+        env:
+          BASE_PATH: /zmap/pathfinder/
+          VITE_DOCS_URL: /zmap/
+
+      # Assemble one site: docs at the root, pathfinder nested under it. Then
+      # serve docs' index.html as 404.html — GitHub Pages has no SPA rewrite
+      # rule (unlike Netlify's _redirects), so a deep link like /zmap/markers
+      # falls through to it and boots the app for react-router (basename=/zmap)
+      # to resolve client-side. pathfinder has no client routing, so its real
+      # /zmap/pathfinder/index.html is served directly and needs no fallback.
+      - name: Assemble site
+        run: |
+          mkdir -p apps/docs/dist/pathfinder
+          cp -r apps/pathfinder/dist/. apps/docs/dist/pathfinder/
+          cp apps/docs/dist/index.html apps/docs/dist/404.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

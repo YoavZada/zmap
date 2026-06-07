@@ -8,7 +8,7 @@
     "url": "git+https://github.com/YoavZada/zmap.git",
     "directory": "packages/zmap"
   },
-  "homepage": "https://zmap-dev.netlify.app",
+  "homepage": "https://yoavzada.github.io/zmap",
   "bugs": "https://github.com/YoavZada/zmap/issues",
   "type": "module",
   "sideEffects": ["**/*.css"],
