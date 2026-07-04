@@ -10,7 +10,7 @@ MUI and follow your theme, including automatic light/dark basemaps.
 
 [Quick start](#quick-start) · [Components](#components) · [Providers & theming](#providers--theming) · [Development](DEVELOPMENT.md)
 
-[![npm version](https://img.shields.io/npm/v/zmap.svg)]([https://www.npmjs.com/package/zmap](https://www.npmjs.com/package/zmapgl))
+[![npm version](https://img.shields.io/npm/v/zmap.svg)](https://www.npmjs.com/package/zmapgl)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![MapLibre GL](https://img.shields.io/badge/MapLibre%20GL-1A1A2E)](https://maplibre.org/)
 [![MUI](https://img.shields.io/badge/MUI-007FFF?logo=mui&logoColor=white)](https://mui.com/)
