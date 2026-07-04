@@ -74,7 +74,9 @@ export interface MapProps extends Omit<
   fitBounds?: LngLatBoundsLike;
   /** Options for `fitBounds` (padding, maxZoom…). */
   fitBoundsOptions?: FitBoundsOptions;
+  /** Lowest zoom level the camera allows. */
   minZoom?: number;
+  /** Highest zoom level the camera allows. */
   maxZoom?: number;
   /** Allow user pan/zoom/rotate. Default true. */
   interactive?: boolean;
@@ -342,6 +344,7 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     <MapContext.Provider value={value}>
       <Box
         ref={containerRef}
+        aria-label="Interactive map"
         sx={[Styles.container, ...(Array.isArray(sx) ? sx : [sx])]}
         {...boxProps}
       >

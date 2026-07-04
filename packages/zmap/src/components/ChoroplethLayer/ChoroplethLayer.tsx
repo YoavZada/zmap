@@ -15,6 +15,7 @@ export type ChoroplethLegendConfig = {
 };
 
 export type ChoroplethLayerProps = {
+  /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;
   /** GeoJSON polygons to color. */
   data: GeoJSON;
@@ -24,11 +25,15 @@ export type ChoroplethLayerProps = {
   stops: [number, string][];
   /** "interpolate" (smooth ramp, default) or "step" (banded). */
   scale?: "interpolate" | "step";
+  /** Fill opacity, 0–1. Default 0.6. */
   fillOpacity?: number;
   /** Outline color (palette token or CSS). Default "divider". */
   lineColor?: string;
+  /** Outline width in pixels. Default 1. */
   lineWidth?: number;
+  /** Outline opacity, 0–1. Default 1. */
   lineOpacity?: number;
+  /** Fired with the clicked GeoJSON feature. */
   onClick?: (feature: any) => void;
   /**
    * Render a matching <Legend> from the same stops — pass `true` for defaults,

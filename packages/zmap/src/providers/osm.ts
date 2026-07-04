@@ -4,10 +4,7 @@ import type { MapProvider } from "./types";
 const OSM_ATTRIBUTION =
   '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
 
-/**
- * Standard OpenStreetMap raster tiles, built as a MapLibre style on the fly.
- * One style serves both modes (OSM has no native dark raster set in v1).
- */
+// Built as a MapLibre style on the fly.
 function osmStyle(): StyleSpecification {
   return {
     version: 8,
@@ -28,6 +25,10 @@ function osmStyle(): StyleSpecification {
   };
 }
 
+/**
+ * Standard OpenStreetMap raster tiles — free, no API key. One style serves both
+ * modes (OSM has no native dark raster set in v1).
+ */
 export const osm: MapProvider = {
   id: "osm",
   getStyle: () => osmStyle(),

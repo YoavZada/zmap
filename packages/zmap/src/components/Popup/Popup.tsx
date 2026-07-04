@@ -9,13 +9,17 @@ import {
 } from "../../utils/overlayTheme";
 
 export interface PopupProps {
+  /** Longitude of the anchor coordinate. */
   longitude: number;
+  /** Latitude of the anchor coordinate. */
   latitude: number;
   /** Controlled visibility. Default true. */
   open?: boolean;
   /** Fired when MapLibre closes the popup (X button, click, or move). */
   onClose?: () => void;
+  /** Edge to pin to the coordinate (e.g. "bottom"). Auto-chosen to fit the view when omitted. */
   anchor?: PopupOptions["anchor"];
+  /** Pixel offset from the coordinate — a number, [x, y], or a per-anchor map. */
   offset?: PopupOptions["offset"];
   /** Show the X button. Default true. */
   closeButton?: boolean;
@@ -23,7 +27,9 @@ export interface PopupProps {
   closeOnClick?: boolean;
   /** Close when the map moves. Default false. */
   closeOnMove?: boolean;
+  /** CSS max-width of the popup. Default "320px". */
   maxWidth?: string;
+  /** Extra class name(s) for the popup container. */
   className?: string;
   children?: ReactNode;
 }

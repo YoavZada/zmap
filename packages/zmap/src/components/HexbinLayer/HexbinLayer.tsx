@@ -9,7 +9,9 @@ import { binPoints } from "../../utils/bin";
 import type { LayerPoint } from "../PointLayer";
 
 export type HexbinLayerProps = {
+  /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;
+  /** The points to aggregate into cells. */
   points: LayerPoint[];
   /** Cell shape — "hex" (default) or "square" grid. */
   cell?: "hex" | "square";
@@ -22,6 +24,7 @@ export type HexbinLayerProps = {
    * Omit to auto-build a ramp spanning the data's `[0, max]`.
    */
   colorRamp?: [number, string][];
+  /** Cell opacity, 0–1. Default 0.75. */
   opacity?: number;
   /** Render bins as 3D columns (height ∝ value). Pitch the camera to see them. */
   extruded?: boolean;
@@ -29,7 +32,9 @@ export type HexbinLayerProps = {
   heightScale?: number;
   /** Cell outline color (flat mode). Default "background.paper". */
   lineColor?: string;
+  /** Cell outline width in pixels (flat mode). Default 0.5. */
   lineWidth?: number;
+  /** Fired with the clicked cell's aggregated value and point count. */
   onClick?: (bin: { value: number; count: number }) => void;
 };
 

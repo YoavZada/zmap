@@ -11,15 +11,21 @@ import {
 } from "../../utils/choropleth";
 
 export type ShapeLayerProps = {
+  /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;
   /** GeoJSON polygons and/or lines. */
   data: GeoJSON;
   /** A palette token / CSS color, or a choropleth spec for data-driven fill. */
   fillColor?: string | ChoroplethSpec;
+  /** Fill opacity, 0–1. Default 0.4. */
   fillOpacity?: number;
+  /** Outline color (palette token or CSS). Default "primary.main". */
   lineColor?: string;
+  /** Outline width in pixels. Default 1.5. */
   lineWidth?: number;
+  /** Outline opacity, 0–1. Default 1. */
   lineOpacity?: number;
+  /** Fired with the clicked GeoJSON feature. */
   onClick?: (feature: any) => void;
 };
 

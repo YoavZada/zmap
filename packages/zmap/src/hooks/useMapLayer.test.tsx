@@ -112,6 +112,20 @@ describe("useMapLayer", () => {
     expect(map.getSource("src-1")).toBeDefined();
   });
 
+  it("accepts a URL string as data and passes it straight to the source", () => {
+    const map = new FakeMap();
+    const { rerender } = renderMapLayer(
+      map,
+      baseConfig({ data: "https://x.test/a.geojson" }),
+    );
+
+    const source = map.getSource("src-1")!;
+    expect(source.data).toBe("https://x.test/a.geojson");
+
+    rerender(baseConfig({ data: "https://x.test/b.geojson" }));
+    expect(source.setData).toHaveBeenCalledWith("https://x.test/b.geojson");
+  });
+
   it("updates data in place via setData instead of re-adding", () => {
     const map = new FakeMap();
     const { rerender } = renderMapLayer(map, baseConfig());

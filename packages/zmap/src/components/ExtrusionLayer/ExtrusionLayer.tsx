@@ -12,6 +12,7 @@ import {
 } from "../../utils/choropleth";
 
 export type ExtrusionLayerProps = {
+  /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;
   /** GeoJSON polygons to extrude. */
   data: GeoJSON;
@@ -25,7 +26,9 @@ export type ExtrusionLayerProps = {
   heightScale?: number;
   /** Base height in meters — the floor the extrusion rises from. Default 0. */
   base?: number;
+  /** Extrusion opacity, 0–1. Default 0.9. */
   opacity?: number;
+  /** Fired with the clicked GeoJSON feature. */
   onClick?: (feature: any) => void;
 };
 

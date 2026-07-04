@@ -19,6 +19,7 @@ export type LayerProps = {
   defaultVisible?: boolean;
   /** Controlled visibility — when set, the parent owns the state. */
   visible?: boolean;
+  /** Fired when the LayerControl toggles a controlled layer — update `visible` here. */
   onVisibleChange?: (visible: boolean) => void;
   children?: ReactNode;
 };

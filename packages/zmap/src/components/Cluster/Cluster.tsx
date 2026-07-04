@@ -26,7 +26,9 @@ export interface ClusterPoint {
 }
 
 export interface ClusterProps {
+  /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;
+  /** The points to cluster. */
   points: ClusterPoint[];
   /** Cluster radius in pixels. Default 50. */
   radius?: number;
@@ -36,9 +38,24 @@ export interface ClusterProps {
   color?: string;
   /** Unclustered point color. Default "secondary.main". */
   pointColor?: string;
+  /**
+   * Aggregate point properties into each cluster (MapLibre
+   * `clusterProperties`): a map of name → [operator, mapExpression], e.g.
+   * `{ sales: ["+", ["get", "sales"]] }`. Aggregates arrive in
+   * `renderCluster`'s third argument.
+   */
+  clusterProperties?: Record<string, unknown>;
+  /** Fired with the clicked unclustered point. */
   onPointClick?: (point: ClusterPoint) => void;
-  /** Custom cluster bubble. Receives the count and a zoom-to-expand callback. */
-  renderCluster?: (count: number, expand: () => void) => ReactNode;
+  /**
+   * Custom cluster bubble. Receives the count, a zoom-to-expand callback, and
+   * the cluster's aggregated properties (see `clusterProperties`).
+   */
+  renderCluster?: (
+    count: number,
+    expand: () => void,
+    properties: Record<string, unknown>,
+  ) => ReactNode;
   /** Custom single-point marker. */
   renderPoint?: (point: ClusterPoint) => ReactNode;
 }
@@ -50,6 +67,7 @@ type ClusterItem = {
   lng: number;
   lat: number;
   count: number;
+  properties: Record<string, unknown>;
 };
 type PointItem = {
   kind: "point";
@@ -104,6 +122,11 @@ function DefaultPointDot({ color }: { color: string }) {
  * Clusters a set of points using MapLibre's native clustering, rendering cluster
  * bubbles and single points as themed MUI markers. Clicking a cluster zooms in
  * to expand it.
+ *
+ * Scaling note: the bubbles are DOM markers, so performance is bounded by how
+ * many are *on screen* (comfortably hundreds), not by the dataset size. If a
+ * view legitimately shows thousands of unclustered points at once, render them
+ * with `PointLayer` or aggregate with `HexbinLayer` instead.
  */
 const Cluster: FC<ClusterProps> = ({
   id,
@@ -112,6 +135,7 @@ const Cluster: FC<ClusterProps> = ({
   maxZoom = 14,
   color = "primary.main",
   pointColor = "secondary.main",
+  clusterProperties,
   onPointClick,
   renderCluster,
   renderPoint,
@@ -157,6 +181,9 @@ const Cluster: FC<ClusterProps> = ({
       cluster: true,
       clusterRadius: radius,
       clusterMaxZoom: maxZoom,
+      ...(clusterProperties
+        ? { clusterProperties: clusterProperties as never }
+        : undefined),
     },
     layers,
   });
@@ -190,6 +217,7 @@ const Cluster: FC<ClusterProps> = ({
               lng,
               lat,
               count: props.point_count as number,
+              properties: props as Record<string, unknown>,
             });
           }
         } else {
@@ -241,8 +269,10 @@ const Cluster: FC<ClusterProps> = ({
             anchor="center"
           >
             {renderCluster ? (
-              renderCluster(item.count, () =>
-                expand(item.clusterId, [item.lng, item.lat]),
+              renderCluster(
+                item.count,
+                () => expand(item.clusterId, [item.lng, item.lat]),
+                item.properties,
               )
             ) : (
               <DefaultClusterBubble

@@ -36,9 +36,11 @@ export interface LayerItemControls {
 }
 
 export type LayerControlProps = {
+  /** Corner to anchor the control. Default "top-right". */
   position?: ControlPosition;
   /** Start with the panel expanded. Default false (just the icon button). */
   defaultOpen?: boolean;
+  /** Heading for the panel (and the trigger's tooltip). Default "Layers". */
   title?: string;
   /** Optional config-driven layers, in addition to any declarative <Layer>s. */
   layers?: LayerConfig[];

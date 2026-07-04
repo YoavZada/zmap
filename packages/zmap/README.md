@@ -63,18 +63,19 @@ MUI palette tokens (`color="primary.main"`) as well as CSS colors.
 
 ### Lines & shapes
 
-| Component      | Purpose                                                         |
-| -------------- | --------------------------------------------------------------- |
-| `Route`        | Draw a polyline from coordinates.                               |
-| `Arc`          | Draw a curved (bezier or great-circle) line between two points. |
-| `ShapeLayer`   | GeoJSON polygons / lines, with optional choropleth fill.        |
-| `GeoJSONLayer` | Low-level escape hatch for custom sources + layers.             |
+| Component      | Purpose                                                                                            |
+| -------------- | -------------------------------------------------------------------------------------------------- |
+| `Route`        | Draw a polyline from coordinates.                                                                  |
+| `Arc`          | Draw a curved (bezier or great-circle) line between two points.                                    |
+| `ShapeLayer`   | GeoJSON polygons / lines, with optional choropleth fill.                                           |
+| `GeoJSONLayer` | Low-level escape hatch for custom sources + layers. `data` accepts inline GeoJSON or a URL string. |
 
 ### Data visualization
 
 | Component         | Purpose                                                    |
 | ----------------- | ---------------------------------------------------------- |
 | `PointLayer`      | Render many points as a single GPU circle layer.           |
+| `SymbolLayer`     | GPU text labels (+ optional icon), auto-decluttered.       |
 | `HeatmapLayer`    | Render points as a density heatmap.                        |
 | `Cluster`         | Native MapLibre clustering rendered as themed MUI markers. |
 | `ChoroplethLayer` | Data-driven polygon fill with an optional synced legend.   |
@@ -102,6 +103,7 @@ MUI palette tokens (`color="primary.main"`) as well as CSS colors.
 | `useMapContext()`        | `{ map, loaded }` — gate work behind `loaded`.              |
 | `useMapLayer()`          | Add a source + layers that survive theme/style swaps.       |
 | `useDraw()`              | Headless drawing state machine behind `DrawControl`.        |
+| `useFeatureState()`      | Mirror pointer hover into feature-state for paint effects.  |
 | `useColorScheme()`       | The resolved `"light"` / `"dark"` scheme of the map.        |
 | `useLayerVisibility(id)` | Read/toggle one registered layer's visibility.              |
 | `useLayerRegistry()`     | The full toggleable-layer registry (powers `LayerControl`). |

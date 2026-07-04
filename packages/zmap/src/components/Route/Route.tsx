@@ -11,13 +11,19 @@ import {
 export interface RouteProps {
   /** Explicit source/layer id. Auto-generated when omitted. */
   id?: string;
+  /** The line's vertices as [longitude, latitude] pairs, in draw order. */
   coordinates: LngLatTuple[];
   /** MUI palette token ("primary.main") or any CSS color. Default "primary.main". */
   color?: string;
+  /** Line width in pixels. Default 4. */
   width?: number;
+  /** Line opacity, 0–1. Default 1. */
   opacity?: number;
+  /** Draw the line dashed instead of solid. Default false. */
   dashed?: boolean;
+  /** How line ends are capped. Default "round". */
   lineCap?: "butt" | "round" | "square";
+  /** How line corners are joined. Default "round". */
   lineJoin?: "bevel" | "round" | "miter";
   /** Insert before this existing layer id. */
   beforeId?: string;

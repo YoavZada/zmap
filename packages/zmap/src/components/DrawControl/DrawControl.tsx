@@ -22,7 +22,9 @@ export type DrawControlProps = {
   modes?: DrawMode[];
   /** Palette token or CSS color for the drawn shapes. Default "primary.main". */
   color?: string;
+  /** Fill opacity for drawn polygons, 0–1. Default 0.3. */
   fillOpacity?: number;
+  /** Width of drawn lines and outlines in pixels. Default 2. */
   lineWidth?: number;
   /** Show the "clear all" button. Default true. */
   showClear?: boolean;

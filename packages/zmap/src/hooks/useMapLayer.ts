@@ -25,8 +25,11 @@ export type LayerInput = DistributiveOmit<LayerSpecification, "source"> & {
 export interface MapLayerConfig {
   /** Unique id for the GeoJSON source backing these layers. */
   id: string;
-  /** GeoJSON data rendered by the layers. */
-  data: GeoJSON;
+  /**
+   * GeoJSON rendered by the layers — inline data, or a URL string the map
+   * fetches itself (any endpoint serving GeoJSON).
+   */
+  data: GeoJSON | string;
   /** Extra source options (clustering, generateId, …). */
   sourceOptions?: Partial<Omit<GeoJSONSourceSpecification, "type" | "data">>;
   /** One or more layers to render. Memoize this array to avoid churn. */

@@ -6,6 +6,32 @@ adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Marker accessibility**: markers with `onClick` are now keyboard-accessible
+  — focusable with `role="button"`, activated by Enter/Space — and a new
+  `label` prop sets their accessible name. The `Map` container carries a
+  default `aria-label` (override via the usual Box props).
+- JSDoc on every public prop and export (surfaced in the docs props tables).
+
+## [0.3.0] — 2026-07-04
+
+### Added
+
+- **`SymbolLayer`** — text labels (optionally with an icon image loaded from a
+  URL) rendered as a single GPU symbol layer, with MapLibre decluttering,
+  palette-token text/halo colors, and `onClick`. Icons re-register themselves
+  after theme-driven style swaps.
+- **`useFeatureState`** — tracks pointer hover over a layer and mirrors it
+  into MapLibre feature-state, so paint expressions can react per feature
+  (`["feature-state", "hover"]`). Returns the hovered feature; handles cursor
+  and cleanup.
+- **GeoJSON from a URL** — `useMapLayer` / `GeoJSONLayer` `data` now also
+  accepts a URL string, fetched by the map itself.
+- **`clusterProperties` on `Cluster`** — aggregate point properties into each
+  cluster (e.g. `{ sales: ["+", ["get", "sales"]] }`); aggregates arrive as
+  `renderCluster`'s new third argument.
+
 ### Fixed
 
 - `LayerInput` (the `useMapLayer` / `GeoJSONLayer` layer spec) no longer drops
@@ -93,7 +119,8 @@ adheres to [Semantic Versioning](https://semver.org/).
   `opentopomap`, `maptiler`); geo utils; MUI theme integration with
   automatic light/dark basemap swapping.
 
-[Unreleased]: https://github.com/YoavZada/zmap/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/YoavZada/zmap/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/YoavZada/zmap/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/YoavZada/zmap/compare/v0.1.5...v0.2.0
 [0.1.5]: https://github.com/YoavZada/zmap/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/YoavZada/zmap/compare/v0.1.3...v0.1.4

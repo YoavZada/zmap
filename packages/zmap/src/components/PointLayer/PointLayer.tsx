@@ -12,14 +12,21 @@ export type LayerPoint = {
 };
 
 export type PointLayerProps = {
+  /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;
+  /** The points to draw as circles. */
   points: LayerPoint[];
   /** Palette token or CSS color. Default "primary.main". */
   color?: string;
+  /** Circle radius in pixels. Default 6. */
   radius?: number;
+  /** Circle opacity, 0–1. Default 1. */
   opacity?: number;
+  /** Circle outline color (palette token or CSS). Default "background.paper". */
   strokeColor?: string;
+  /** Circle outline width in pixels. Default 1.5. */
   strokeWidth?: number;
+  /** Fired with the clicked point and its index in `points`. */
   onClick?: (point: LayerPoint, index: number) => void;
 };
 

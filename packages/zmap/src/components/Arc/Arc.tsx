@@ -4,7 +4,9 @@ import { generateArc, type ArcType } from "../../utils/arc";
 import type { LngLatTuple } from "../../utils/geojson";
 
 export interface ArcProps extends Omit<RouteProps, "coordinates"> {
+  /** Start of the arc as [longitude, latitude]. */
   from: LngLatTuple;
+  /** End of the arc as [longitude, latitude]. */
   to: LngLatTuple;
   /** Bulge factor for "bezier" arcs (0 = straight). Default 0.3. */
   curvature?: number;

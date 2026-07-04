@@ -25,16 +25,23 @@ export type ControlPosition =
 export interface MapControlsProps {
   /** Corner for the zoom/compass/geolocate/fullscreen cluster. */
   position?: ControlPosition;
+  /** Show the zoom in/out buttons. Default true. */
   showZoom?: boolean;
+  /** Show the compass (reset-north) button. Default true. */
   showCompass?: boolean;
+  /** Show the "my location" button. Default true. */
   showGeolocate?: boolean;
+  /** Show the fullscreen toggle. Default true. */
   showFullscreen?: boolean;
   /** Show a 3D tilt toggle that pitches the camera (for fill-extrusion layers). */
   showPitch?: boolean;
   /** Pitch (degrees) the tilt toggle eases to. Default 60. */
   pitchAmount?: number;
+  /** Show a scale bar. Default false. */
   showScale?: boolean;
+  /** Corner for the scale bar. Default "bottom-left". */
   scalePosition?: ControlPosition;
+  /** Scale bar units. Default "metric". */
   scaleUnit?: "metric" | "imperial";
 }
 

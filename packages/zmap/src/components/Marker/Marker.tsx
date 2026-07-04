@@ -8,7 +8,9 @@ import type { LngLatTuple } from "../../utils/geojson";
 import Styles from "./marker.style";
 
 export interface MarkerProps {
+  /** Longitude of the marker position. */
   longitude: number;
+  /** Latitude of the marker position. */
   latitude: number;
   /** Which part of the marker sits on the coordinate. Set at creation time. */
   anchor?: MarkerOptions["anchor"];
@@ -18,7 +20,17 @@ export interface MarkerProps {
   draggable?: boolean;
   /** Rotation in degrees. */
   rotation?: number;
+  /**
+   * Accessible name for the marker (`aria-label`). Recommended whenever
+   * `onClick` is set — interactive markers are keyboard-focusable buttons.
+   */
+  label?: string;
+  /**
+   * Click handler. Also makes the marker keyboard-accessible: it becomes
+   * focusable with `role="button"`, and Enter/Space activate it.
+   */
   onClick?: (event: MouseEvent) => void;
+  /** Fired after a drag ends, with the marker's new [lng, lat]. */
   onDragEnd?: (lngLat: LngLatTuple) => void;
   /** Custom marker content (any MUI element). Falls back to a themed pin. */
   children?: ReactNode;
@@ -43,6 +55,7 @@ const Marker: FC<MarkerProps> = ({
   offset,
   draggable = false,
   rotation,
+  label,
   onClick,
   onDragEnd,
   children,
@@ -81,6 +94,16 @@ const Marker: FC<MarkerProps> = ({
     const handleClick = (event: MouseEvent) => onClickRef.current?.(event);
     element.addEventListener("click", handleClick);
 
+    // Keyboard activation for interactive markers: Enter/Space re-dispatch as
+    // a real click, so the click path above stays the single source of truth.
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!onClickRef.current) return;
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      element.click();
+    };
+    element.addEventListener("keydown", handleKeyDown);
+
     const handleDragEnd = () => {
       const { lng, lat } = marker.getLngLat();
       onDragEndRef.current?.([lng, lat]);
@@ -89,12 +112,30 @@ const Marker: FC<MarkerProps> = ({
 
     return () => {
       element.removeEventListener("click", handleClick);
+      element.removeEventListener("keydown", handleKeyDown);
       marker.off("dragend", handleDragEnd);
       marker.remove();
       markerRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map]);
+
+  // Reflect interactivity onto the element: interactive markers are
+  // keyboard-focusable buttons; static ones stay out of the tab order.
+  const interactive = onClick != null;
+  useEffect(() => {
+    const element = elRef.current;
+    if (!element) return;
+    if (interactive) {
+      element.setAttribute("role", "button");
+      element.tabIndex = 0;
+    } else {
+      element.removeAttribute("role");
+      element.removeAttribute("tabindex");
+    }
+    if (label) element.setAttribute("aria-label", label);
+    else element.removeAttribute("aria-label");
+  }, [interactive, label]);
 
   useEffect(() => {
     markerRef.current?.setLngLat([longitude, latitude]);

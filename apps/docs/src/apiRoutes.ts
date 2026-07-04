@@ -1,0 +1,28 @@
+/** Where each library component is demoed — used by the API page's "Demo"
+ * links and the search palette. */
+export const DEMO_ROUTE: Record<string, string> = {
+  Map: "/providers",
+  Marker: "/markers",
+  SymbolLayer: "/markers",
+  Popup: "/popups",
+  Tooltip: "/popups",
+  MapControls: "/controls",
+  Route: "/routes",
+  Arc: "/arcs",
+  Cluster: "/clusters",
+  GeoJSONLayer: "/layers",
+  Layer: "/layers",
+  LayerControl: "/layers",
+  PointLayer: "/layers",
+  HeatmapLayer: "/layers",
+  ShapeLayer: "/layers",
+  Legend: "/layers",
+  ChoroplethLayer: "/choropleth",
+  ExtrusionLayer: "/extrusion",
+  HexbinLayer: "/hexbins",
+  TimePlayback: "/time",
+  DrawControl: "/interaction",
+  MeasureControl: "/interaction",
+  ContextMenu: "/interaction",
+  SelectControl: "/interaction",
+};

@@ -10,25 +10,16 @@ import {
 import { useTheme } from "@mui/material/styles";
 import type { FilterSpecification } from "maplibre-gl";
 import type { FeatureCollection } from "geojson";
-import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
-import Slider from "@mui/material/Slider";
-import IconButton from "@mui/material/IconButton";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
-import PlayArrow from "@mui/icons-material/PlayArrow";
-import Pause from "@mui/icons-material/Pause";
-import Replay from "@mui/icons-material/Replay";
 import { useMapContext } from "../../context/useMap";
 import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
 import { resolvePaletteColor } from "../../utils/color";
 import type { ControlPosition } from "../MapControls";
-import Styles from "./timePlayback.style";
+import TransportBar from "./components/TransportBar";
 
 const SPEEDS = [0.5, 1, 2, 4];
 
 export type TimePlaybackProps = {
+  /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;
   /** GeoJSON points, each carrying a numeric timestamp property. */
   data: FeatureCollection;
@@ -253,50 +244,19 @@ const TimePlayback: FC<TimePlaybackProps> = ({
   if (!showTransport) return null;
 
   return (
-    <Paper elevation={3} sx={Styles.transport(position)}>
-      <Stack direction="row" alignItems="center" spacing={0.5}>
-        <Tooltip title={playing ? "Pause" : "Play"} placement="top">
-          <IconButton
-            size="small"
-            onClick={toggle}
-            aria-label={playing ? "Pause" : "Play"}
-          >
-            {atEnd && !playing ? (
-              <Replay fontSize="small" />
-            ) : playing ? (
-              <Pause fontSize="small" />
-            ) : (
-              <PlayArrow fontSize="small" />
-            )}
-          </IconButton>
-        </Tooltip>
-
-        <Slider
-          size="small"
-          min={bounds.min}
-          max={bounds.max}
-          value={playhead}
-          onChange={(_, v) => setPlayhead(v as number)}
-          aria-label="Playhead"
-          sx={Styles.slider}
-        />
-
-        <Typography variant="caption" sx={Styles.time}>
-          {format(playhead)}
-        </Typography>
-
-        <Tooltip title="Playback speed" placement="top">
-          <Button
-            size="small"
-            color="inherit"
-            onClick={cycleSpeed}
-            sx={Styles.speed}
-          >
-            {speed}×
-          </Button>
-        </Tooltip>
-      </Stack>
-    </Paper>
+    <TransportBar
+      position={position}
+      playing={playing}
+      atEnd={atEnd}
+      playhead={playhead}
+      min={bounds.min}
+      max={bounds.max}
+      speed={speed}
+      format={format}
+      onToggle={toggle}
+      onScrub={setPlayhead}
+      onCycleSpeed={cycleSpeed}
+    />
   );
 };
 

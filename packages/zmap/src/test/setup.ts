@@ -1,5 +1,12 @@
 // Shared vitest setup. Runs for every test file; the stubs only apply in
 // jsdom (React-surface tests) and are no-ops for node-env util tests.
+import { afterEach } from "vitest";
+import { cleanup } from "@testing-library/react";
+
+// RTL can't auto-register cleanup without vitest globals — do it explicitly,
+// or portaled DOM (markers) leaks across tests.
+afterEach(cleanup);
+
 if (typeof window !== "undefined") {
   // React Testing Library drives updates through act().
   (

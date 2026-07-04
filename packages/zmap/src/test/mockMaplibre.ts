@@ -70,22 +70,45 @@ export class FakeMap {
     fakeMaps.push(this);
   }
 
-  // --- events ---
-  on(event: string, handler: Handler): this {
-    if (!this.handlers.has(event)) this.handlers.set(event, new Set());
-    this.handlers.get(event)!.add(handler);
+  // --- events (plain `on(event, fn)` and layer-scoped `on(event, layerId, fn)`) ---
+  private key(event: string, layerId?: string): string {
+    return layerId === undefined ? event : `${event}#${layerId}`;
+  }
+  on(event: string, layerOrHandler: string | Handler, handler?: Handler): this {
+    const k =
+      typeof layerOrHandler === "string"
+        ? this.key(event, layerOrHandler)
+        : this.key(event);
+    const h = typeof layerOrHandler === "string" ? handler! : layerOrHandler;
+    if (!this.handlers.has(k)) this.handlers.set(k, new Set());
+    this.handlers.get(k)!.add(h);
     return this;
   }
-  off(event: string, handler: Handler): this {
-    this.handlers.get(event)?.delete(handler);
+  off(
+    event: string,
+    layerOrHandler: string | Handler,
+    handler?: Handler,
+  ): this {
+    const k =
+      typeof layerOrHandler === "string"
+        ? this.key(event, layerOrHandler)
+        : this.key(event);
+    const h = typeof layerOrHandler === "string" ? handler! : layerOrHandler;
+    this.handlers.get(k)?.delete(h);
     return this;
   }
   fire(event: string, payload?: unknown): this {
     for (const h of [...(this.handlers.get(event) ?? [])]) h(payload);
     return this;
   }
-  handlerCount(event: string): number {
-    return this.handlers.get(event)?.size ?? 0;
+  /** Fire a layer-scoped event (what `map.on(event, layerId, fn)` receives). */
+  fireLayer(event: string, layerId: string, payload?: unknown): this {
+    for (const h of [...(this.handlers.get(this.key(event, layerId)) ?? [])])
+      h(payload);
+    return this;
+  }
+  handlerCount(event: string, layerId?: string): number {
+    return this.handlers.get(this.key(event, layerId))?.size ?? 0;
   }
 
   // --- camera ---
@@ -143,6 +166,53 @@ export class FakeMap {
     return this;
   }
 
+  // --- feature state ---
+  featureStates = new Map<string, Record<string, unknown>>();
+  setFeatureState(
+    target: { source: string; id: string | number },
+    state: Record<string, unknown>,
+  ): void {
+    const k = `${target.source}:${target.id}`;
+    this.featureStates.set(k, { ...this.featureStates.get(k), ...state });
+  }
+  removeFeatureState(
+    target: { source: string; id: string | number },
+    key?: string,
+  ): void {
+    const k = `${target.source}:${target.id}`;
+    if (key === undefined) {
+      this.featureStates.delete(k);
+      return;
+    }
+    const state = this.featureStates.get(k);
+    if (state) delete state[key];
+  }
+  getFeatureState(target: {
+    source: string;
+    id: string | number;
+  }): Record<string, unknown> {
+    return this.featureStates.get(`${target.source}:${target.id}`) ?? {};
+  }
+
+  // --- images ---
+  images = new Map<string, unknown>();
+  loadImage = vi.fn(async (_src: string) => ({ data: { fake: "image" } }));
+  addImage(id: string, image: unknown): void {
+    this.images.set(id, image);
+  }
+  hasImage(id: string): boolean {
+    return this.images.has(id);
+  }
+  removeImage(id: string): void {
+    this.images.delete(id);
+  }
+
+  // --- source features (stub what querySourceFeatures should return) ---
+  sourceFeatures: unknown[] = [];
+  querySourceFeatures(_sourceId: string): unknown[] {
+    return this.sourceFeatures;
+  }
+
   // --- style & lifecycle ---
   isStyleLoaded(): boolean {
     return this.styleLoaded;
@@ -165,7 +235,63 @@ export class FakeMap {
   }
 }
 
+/** Stand-in for maplibregl.Marker — enough for the Marker portal component. */
+export class FakeMarker {
+  options: Record<string, unknown>;
+  lngLat: [number, number] = [0, 0];
+  removed = false;
+  private handlers = new Map<string, Set<Handler>>();
+
+  constructor(options: Record<string, unknown> = {}) {
+    this.options = options;
+  }
+  setLngLat(lngLat: [number, number]): this {
+    this.lngLat = lngLat;
+    return this;
+  }
+  getLngLat() {
+    return { lng: this.lngLat[0], lat: this.lngLat[1] };
+  }
+  addTo(_map: unknown): this {
+    // The real Marker mounts its element into the map container; attaching to
+    // the body makes portal content reachable by DOM queries in tests.
+    const el = this.options.element as HTMLElement | undefined;
+    if (el) document.body.appendChild(el);
+    return this;
+  }
+  remove(): this {
+    this.removed = true;
+    (this.options.element as HTMLElement | undefined)?.remove();
+    return this;
+  }
+  on(event: string, handler: Handler): this {
+    if (!this.handlers.has(event)) this.handlers.set(event, new Set());
+    this.handlers.get(event)!.add(handler);
+    return this;
+  }
+  off(event: string, handler: Handler): this {
+    this.handlers.get(event)?.delete(handler);
+    return this;
+  }
+  fire(event: string, payload?: unknown): this {
+    for (const h of [...(this.handlers.get(event) ?? [])]) h(payload);
+    return this;
+  }
+  setDraggable(_v: boolean): this {
+    return this;
+  }
+  setOffset(_v: unknown): this {
+    return this;
+  }
+  setRotation(_v: number): this {
+    return this;
+  }
+  getElement(): HTMLElement | undefined {
+    return this.options.element as HTMLElement | undefined;
+  }
+}
+
 // Module shape for vi.mock("maplibre-gl", ...): the library only uses the
-// default export's Map constructor at runtime (everything else it imports
-// from maplibre-gl is types, which are erased).
-export default { Map: FakeMap };
+// default export's Map and Marker constructors at runtime (everything else it
+// imports from maplibre-gl is types, which are erased).
+export default { Map: FakeMap, Marker: FakeMarker };

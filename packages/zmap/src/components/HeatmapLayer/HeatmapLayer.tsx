@@ -7,12 +7,17 @@ import { featureCollection, pointFeature } from "../../utils/geojson";
 import type { LayerPoint } from "../PointLayer";
 
 export type HeatmapLayerProps = {
+  /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;
+  /** The points that feed the density surface. */
   points: LayerPoint[];
   /** Feature property to weight points by (defaults to equal weight). */
   weightProperty?: string;
+  /** Influence radius of each point in pixels. Default 20. */
   radius?: number;
+  /** Global density multiplier — higher reads hotter. Default 1. */
   intensity?: number;
+  /** Heatmap opacity, 0–1. Default 0.85. */
   opacity?: number;
   /** Override the density→color ramp (a MapLibre expression). */
   colorRamp?: ExpressionSpecification;
