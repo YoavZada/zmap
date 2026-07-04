@@ -26,6 +26,19 @@ const panel: SxProps<Theme> = (theme) => ({
   overflow: "hidden",
   borderRadius: 3,
   boxShadow: theme.tokens.cardShadow,
+  transition: theme.transitions.create(["box-shadow", "border-color"], {
+    duration: 200,
+  }),
+  "&:hover": {
+    borderColor:
+      theme.palette.mode === "dark"
+        ? "rgba(148,163,184,0.35)"
+        : "rgba(19,27,46,0.22)",
+    boxShadow:
+      theme.palette.mode === "dark"
+        ? "0px 8px 24px -6px rgba(0,0,0,0.5)"
+        : "0px 8px 24px -6px rgba(19,27,46,0.14)",
+  },
 });
 
 const tabs: SxProps<Theme> = (theme) => ({

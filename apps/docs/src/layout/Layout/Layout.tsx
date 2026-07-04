@@ -13,7 +13,6 @@ import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import Link from "@mui/material/Link";
-import Chip from "@mui/material/Chip";
 import DarkMode from "@mui/icons-material/DarkMode";
 import LightMode from "@mui/icons-material/LightMode";
 import GitHub from "@mui/icons-material/GitHub";
@@ -133,12 +132,6 @@ const Layout: FC<LayoutProps> = ({ children }) => {
           <Typography variant="h6" fontWeight={800} sx={Styles.title}>
             zmap
           </Typography>
-          <Chip
-            label="MUI × MapLibre"
-            size="small"
-            variant="outlined"
-            sx={Styles.chip}
-          />
           <Box sx={Styles.spacer} />
           <Search />
           <Button

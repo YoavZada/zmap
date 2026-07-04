@@ -2,7 +2,13 @@ import type { SxProps, Theme } from "@mui/material/styles";
 
 const hero: SxProps<Theme> = { mb: 10 };
 
-const accent: SxProps<Theme> = { color: "primary.main" };
+// Gradient ink on the headline's key phrase — primary flowing into secondary.
+const accent: SxProps<Theme> = (theme) => ({
+  background: `linear-gradient(92deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+  backgroundClip: "text",
+  WebkitBackgroundClip: "text",
+  color: "transparent",
+});
 
 const heroLead: SxProps<Theme> = { mb: 3, maxWidth: 520 };
 

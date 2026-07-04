@@ -7,15 +7,19 @@ const root: SxProps<Theme> = {
   minHeight: "100vh",
 };
 
+// Frosted-glass bar: saturated blur + a hairline that reads as etched, not drawn.
 const appBar: SxProps<Theme> = (theme) => ({
   zIndex: theme.zIndex.drawer + 1,
-  borderBottom: 1,
-  borderColor: "divider",
-  backdropFilter: "blur(8px)",
+  borderBottom: "1px solid",
+  borderColor:
+    theme.palette.mode === "dark"
+      ? "rgba(148,163,184,0.14)"
+      : "rgba(19,27,46,0.08)",
+  backdropFilter: "saturate(180%) blur(14px)",
   bgcolor:
     theme.palette.mode === "dark"
-      ? "rgba(15,23,42,0.8)"
-      : "rgba(255,255,255,0.8)",
+      ? "rgba(11,17,32,0.72)"
+      : "rgba(246,248,251,0.72)",
 });
 
 const menuButton: SxProps<Theme> = {
@@ -27,14 +31,14 @@ const logo: SxProps<Theme> = {
   mr: 1,
 };
 
-const title: SxProps<Theme> = {
+// Wordmark: quiet gradient from text into the primary accent.
+const title: SxProps<Theme> = (theme) => ({
   letterSpacing: "-0.03em",
-};
-
-const chip: SxProps<Theme> = {
-  ml: 1.5,
-  display: { xs: "none", sm: "flex" },
-};
+  background: `linear-gradient(90deg, ${theme.palette.text.primary} 30%, ${theme.palette.primary.main} 130%)`,
+  backgroundClip: "text",
+  WebkitBackgroundClip: "text",
+  color: "transparent",
+});
 
 const spacer: SxProps<Theme> = {
   flexGrow: 1,
@@ -104,18 +108,27 @@ const navList: SxProps<Theme> = {
 };
 
 // Active item: 2px primary left rail + subtle tint (design's nav spec).
+// Motion is quick and quiet — background/indent ease rather than snap.
 const navItem: SxProps<Theme> = (theme) => ({
   borderRadius: 2,
   mb: 0.5,
   pl: 1.5,
   borderLeft: "2px solid transparent",
   color: "text.secondary",
+  transition: theme.transitions.create(
+    ["background-color", "color", "border-color", "padding-left"],
+    { duration: 150 },
+  ),
   "& .MuiListItemIcon-root": { minWidth: 34, color: "inherit" },
+  "&:hover": {
+    color: "text.primary",
+    pl: 1.75,
+  },
   "&.Mui-selected": {
     borderLeftColor: theme.palette.primary.main,
     bgcolor: theme.tokens.surfaceContainerHigh,
     color: "text.primary",
-    "&:hover": { bgcolor: theme.tokens.surfaceContainerHigh },
+    "&:hover": { bgcolor: theme.tokens.surfaceContainerHigh, pl: 1.5 },
   },
 });
 
@@ -135,7 +148,6 @@ const styles: {
   menuButton: SxProps<Theme>;
   logo: SxProps<Theme>;
   title: SxProps<Theme>;
-  chip: SxProps<Theme>;
   spacer: SxProps<Theme>;
   demoLink: SxProps<Theme>;
   desktopDrawer: SxProps<Theme>;
@@ -155,7 +167,6 @@ const styles: {
   menuButton,
   logo,
   title,
-  chip,
   spacer,
   demoLink,
   desktopDrawer,
