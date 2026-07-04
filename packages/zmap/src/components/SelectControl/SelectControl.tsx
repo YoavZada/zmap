@@ -18,15 +18,15 @@ import HighlightAltOutlined from "@mui/icons-material/HighlightAltOutlined";
 import GestureOutlined from "@mui/icons-material/GestureOutlined";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import type { MapMouseEvent } from "maplibre-gl";
-import { useMapContext } from "../context/useMap";
-import { resolvePaletteColor } from "../utils/color";
+import { useMapContext } from "../../context/useMap";
+import { resolvePaletteColor } from "../../utils/color";
 import {
   pointInBox,
   pointInPolygon,
   type ScreenPoint,
-} from "../utils/geometry";
-import type { ControlPosition } from "./MapControls";
-import PointLayer, { type LayerPoint } from "./PointLayer";
+} from "../../utils/geometry";
+import type { ControlPosition } from "../MapControls";
+import PointLayer, { type LayerPoint } from "../PointLayer";
 import Styles from "./selectControl.style";
 
 export type SelectTool = "box" | "lasso";
@@ -245,7 +245,7 @@ const SelectControl: FC<SelectControlProps> = ({
 
       {(box || lasso.length > 0) && (
         <Box sx={Styles.overlay}>
-          <svg style={{ width: "100%", height: "100%", display: "block" }}>
+          <Box component="svg" sx={Styles.svg}>
             {box && (
               <rect
                 x={Math.min(box.start.x, box.current.x)}
@@ -267,7 +267,7 @@ const SelectControl: FC<SelectControlProps> = ({
                 strokeWidth={1.5}
               />
             )}
-          </svg>
+          </Box>
         </Box>
       )}
 

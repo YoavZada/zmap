@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { useMapLayer, type MapLayerConfig } from "../hooks/useMapLayer";
+import { useMapLayer, type MapLayerConfig } from "../../hooks/useMapLayer";
 
 export type GeoJSONLayerProps = MapLayerConfig;
 

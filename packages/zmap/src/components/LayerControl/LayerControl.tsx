@@ -9,11 +9,11 @@ import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import LayersIcon from "@mui/icons-material/LayersOutlined";
 import Close from "@mui/icons-material/Close";
-import { useLayerRegistry } from "../context/useLayerRegistry";
-import type { LayerEntry } from "../context/LayerRegistryContext";
-import { resolvePaletteColor } from "../utils/color";
-import type { ControlPosition } from "./MapControls";
-import Layer from "./Layer";
+import { useLayerRegistry } from "../../context/useLayerRegistry";
+import type { LayerEntry } from "../../context/LayerRegistryContext";
+import { resolvePaletteColor } from "../../utils/color";
+import type { ControlPosition } from "../MapControls";
+import Layer from "../Layer";
 import Styles from "./layerControl.style";
 
 /** A fully-controlled layer definition for the `layers` config API. */

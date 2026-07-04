@@ -9,6 +9,19 @@ const description: SxProps<Theme> = {
   maxWidth: 720,
 };
 
+// The title doubles as its own anchor link; the "#" affordance shows on hover.
+const titleLink: SxProps<Theme> = {
+  color: "inherit",
+  textDecoration: "none",
+  "&:hover .anchor-hash": { opacity: 1 },
+  "& .anchor-hash": {
+    opacity: 0,
+    transition: "opacity 120ms",
+    color: "text.disabled",
+    ml: 1,
+  },
+};
+
 const panel: SxProps<Theme> = (theme) => ({
   overflow: "hidden",
   borderRadius: 3,
@@ -49,6 +62,7 @@ const placeholder = (height: number): SxProps<Theme> => ({
 const styles: {
   section: SxProps<Theme>;
   description: SxProps<Theme>;
+  titleLink: SxProps<Theme>;
   panel: SxProps<Theme>;
   tabs: SxProps<Theme>;
   tab: SxProps<Theme>;
@@ -58,6 +72,7 @@ const styles: {
 } = {
   section,
   description,
+  titleLink,
   panel,
   tabs,
   tab,

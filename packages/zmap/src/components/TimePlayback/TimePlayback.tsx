@@ -20,10 +20,10 @@ import Tooltip from "@mui/material/Tooltip";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import Pause from "@mui/icons-material/Pause";
 import Replay from "@mui/icons-material/Replay";
-import { useMapContext } from "../context/useMap";
-import { useMapLayer, type LayerInput } from "../hooks/useMapLayer";
-import { resolvePaletteColor } from "../utils/color";
-import type { ControlPosition } from "./MapControls";
+import { useMapContext } from "../../context/useMap";
+import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
+import { resolvePaletteColor } from "../../utils/color";
+import type { ControlPosition } from "../MapControls";
 import Styles from "./timePlayback.style";
 
 const SPEEDS = [0.5, 1, 2, 4];

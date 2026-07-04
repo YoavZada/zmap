@@ -1,5 +1,5 @@
 import type { SxProps, Theme } from "@mui/material/styles";
-import type { ControlPosition } from "./MapControls";
+import type { ControlPosition } from "../MapControls";
 
 const OFFSETS: Record<ControlPosition, Record<string, number>> = {
   "top-left": { top: 8, left: 8 },

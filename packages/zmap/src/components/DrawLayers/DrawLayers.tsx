@@ -1,16 +1,16 @@
 import { useMemo, type FC } from "react";
 import { useTheme } from "@mui/material/styles";
 import type { Feature } from "geojson";
-import { useMapLayer, type LayerInput } from "../hooks/useMapLayer";
-import { resolvePaletteColor } from "../utils/color";
+import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
+import { resolvePaletteColor } from "../../utils/color";
 import {
   featureCollection,
   pointFeature,
   type LngLatTuple,
-} from "../utils/geojson";
-import type { DrawFeature, DrawMode } from "../hooks/useDraw";
-import ShapeLayer from "./ShapeLayer";
-import PointLayer, { type LayerPoint } from "./PointLayer";
+} from "../../utils/geojson";
+import type { DrawFeature, DrawMode } from "../../hooks/useDraw";
+import ShapeLayer from "../ShapeLayer";
+import PointLayer, { type LayerPoint } from "../PointLayer";
 
 export interface DrawLayersProps {
   features: DrawFeature[];

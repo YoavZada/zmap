@@ -3,9 +3,9 @@ import { useTheme } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { resolvePaletteColor } from "../utils/color";
-import type { ChoroplethSpec } from "../utils/choropleth";
-import type { ControlPosition } from "./MapControls";
+import { resolvePaletteColor } from "../../utils/color";
+import type { ChoroplethSpec } from "../../utils/choropleth";
+import type { ControlPosition } from "../MapControls";
 import Styles from "./legend.style";
 
 export type LegendItem = {

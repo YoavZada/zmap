@@ -10,9 +10,9 @@ import PentagonOutlined from "@mui/icons-material/PentagonOutlined";
 import Check from "@mui/icons-material/Check";
 import Undo from "@mui/icons-material/Undo";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
-import { useDraw, type DrawFeature, type DrawMode } from "../hooks/useDraw";
-import type { ControlPosition } from "./MapControls";
-import DrawLayers from "./DrawLayers";
+import { useDraw, type DrawFeature, type DrawMode } from "../../hooks/useDraw";
+import type { ControlPosition } from "../MapControls";
+import DrawLayers from "../DrawLayers";
 import Styles from "./drawControl.style";
 
 export type DrawControlProps = {

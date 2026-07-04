@@ -1,9 +1,9 @@
 import { useEffect, useId, useMemo, type FC } from "react";
 import { useTheme } from "@mui/material/styles";
-import { useMapContext } from "../context/useMap";
-import { useMapLayer, type LayerInput } from "../hooks/useMapLayer";
-import { resolvePaletteColor } from "../utils/color";
-import { featureCollection, pointFeature } from "../utils/geojson";
+import { useMapContext } from "../../context/useMap";
+import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
+import { resolvePaletteColor } from "../../utils/color";
+import { featureCollection, pointFeature } from "../../utils/geojson";
 
 export type LayerPoint = {
   longitude: number;

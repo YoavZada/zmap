@@ -11,11 +11,11 @@ import { useTheme, type Theme } from "@mui/material/styles";
 import type { GeoJSONSource } from "maplibre-gl";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { useMapContext } from "../context/useMap";
-import { useMapLayer, type LayerInput } from "../hooks/useMapLayer";
-import Marker from "./Marker";
-import { resolvePaletteColor } from "../utils/color";
-import { featureCollection, pointFeature } from "../utils/geojson";
+import { useMapContext } from "../../context/useMap";
+import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
+import Marker from "../Marker";
+import { resolvePaletteColor } from "../../utils/color";
+import { featureCollection, pointFeature } from "../../utils/geojson";
 import Styles from "./cluster.style";
 
 export interface ClusterPoint {

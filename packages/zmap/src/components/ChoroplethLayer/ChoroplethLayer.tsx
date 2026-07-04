@@ -1,9 +1,9 @@
 import { useMemo, type FC, type ReactNode } from "react";
 import type { GeoJSON } from "geojson";
-import ShapeLayer from "./ShapeLayer";
-import Legend from "./Legend";
-import type { ChoroplethSpec } from "../utils/choropleth";
-import type { ControlPosition } from "./MapControls";
+import ShapeLayer from "../ShapeLayer";
+import Legend from "../Legend";
+import type { ChoroplethSpec } from "../../utils/choropleth";
+import type { ControlPosition } from "../MapControls";
 
 export type ChoroplethLegendConfig = {
   /** Heading shown above the legend. */

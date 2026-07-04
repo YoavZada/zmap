@@ -3,8 +3,8 @@ import { createPortal } from "react-dom";
 import maplibregl, { type MarkerOptions, type PointLike } from "maplibre-gl";
 import Box from "@mui/material/Box";
 import LocationOn from "@mui/icons-material/LocationOn";
-import { useMapContext } from "../context/useMap";
-import type { LngLatTuple } from "../utils/geojson";
+import { useMapContext } from "../../context/useMap";
+import type { LngLatTuple } from "../../utils/geojson";
 import Styles from "./marker.style";
 
 export interface MarkerProps {

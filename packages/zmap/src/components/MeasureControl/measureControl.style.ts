@@ -1,6 +1,6 @@
 import type { SxProps, Theme } from "@mui/material/styles";
-import type { ControlPosition } from "./MapControls";
-import { CONTROL_OFFSETS, controlPanel } from "../utils/controlPosition";
+import type { ControlPosition } from "../MapControls";
+import { CONTROL_OFFSETS, controlPanel } from "../../utils/controlPosition";
 
 const panel = (position: ControlPosition): SxProps<Theme> =>
   controlPanel(position);

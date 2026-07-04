@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import Popup, { type PopupProps } from "./Popup";
+import Popup, { type PopupProps } from "../Popup";
 
 export type TooltipProps = Omit<PopupProps, "closeButton" | "closeOnClick">;
 

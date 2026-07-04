@@ -1,0 +1,171 @@
+// A minimal in-memory stand-in for maplibre-gl's Map, for jsdom tests.
+// Real maplibre can't run in jsdom (WebGL, workers), so React-surface tests
+// mock the module boundary:
+//
+//   vi.mock("maplibre-gl", () => import("../test/mockMaplibre"));
+//
+// FakeMap models exactly what the library touches: an event emitter, source +
+// layer bookkeeping, camera state, and style/cleanup flags. Tests reach the
+// created instance via `lastFakeMap()` (or construct one directly) and drive
+// it with `fire()`.
+import { vi } from "vitest";
+
+type Handler = (ev?: unknown) => void;
+
+export interface FakeSource {
+  id: string;
+  type: string;
+  data: unknown;
+  options: Record<string, unknown>;
+  setData: ReturnType<typeof vi.fn>;
+}
+
+export const fakeMaps: FakeMap[] = [];
+
+/** The most recently constructed FakeMap (what a just-rendered <Map> owns). */
+export function lastFakeMap(): FakeMap {
+  const map = fakeMaps[fakeMaps.length - 1];
+  if (!map) throw new Error("no FakeMap constructed yet");
+  return map;
+}
+
+export function resetFakeMaps(): void {
+  fakeMaps.length = 0;
+}
+
+export class FakeMap {
+  options: Record<string, unknown>;
+  handlers = new Map<string, Set<Handler>>();
+  sources = new Map<string, FakeSource>();
+  layers = new Map<string, Record<string, unknown>>();
+  layerOrder: string[] = [];
+  _removed = false;
+  private styleLoaded = true;
+
+  private center: [number, number];
+  private zoom: number;
+  private bearing: number;
+  private pitch: number;
+
+  doubleClickZoom = { disable: vi.fn(), enable: vi.fn() };
+  private canvas = Object.assign(document.createElement("canvas"), {});
+
+  setStyle = vi.fn((_style: unknown) => {
+    // Real setStyle wipes custom sources/layers; tests that need the wipe +
+    // styledata re-add flow call wipeStyle()/fire("styledata") explicitly.
+  });
+  setRenderWorldCopies = vi.fn();
+  setPaintProperty = vi.fn();
+  setLayoutProperty = vi.fn();
+  fitBounds = vi.fn();
+  easeTo = vi.fn((opts: Record<string, unknown>) => this.applyCamera(opts));
+  jumpTo = vi.fn((opts: Record<string, unknown>) => this.applyCamera(opts));
+
+  constructor(options: Record<string, unknown> = {}) {
+    this.options = options;
+    this.center = (options.center as [number, number]) ?? [0, 0];
+    this.zoom = (options.zoom as number) ?? 0;
+    this.bearing = (options.bearing as number) ?? 0;
+    this.pitch = (options.pitch as number) ?? 0;
+    fakeMaps.push(this);
+  }
+
+  // --- events ---
+  on(event: string, handler: Handler): this {
+    if (!this.handlers.has(event)) this.handlers.set(event, new Set());
+    this.handlers.get(event)!.add(handler);
+    return this;
+  }
+  off(event: string, handler: Handler): this {
+    this.handlers.get(event)?.delete(handler);
+    return this;
+  }
+  fire(event: string, payload?: unknown): this {
+    for (const h of [...(this.handlers.get(event) ?? [])]) h(payload);
+    return this;
+  }
+  handlerCount(event: string): number {
+    return this.handlers.get(event)?.size ?? 0;
+  }
+
+  // --- camera ---
+  applyCamera(opts: Record<string, unknown>): void {
+    if (opts.center) this.center = opts.center as [number, number];
+    if (opts.zoom !== undefined) this.zoom = opts.zoom as number;
+    if (opts.bearing !== undefined) this.bearing = opts.bearing as number;
+    if (opts.pitch !== undefined) this.pitch = opts.pitch as number;
+  }
+  getCenter() {
+    return { lng: this.center[0], lat: this.center[1] };
+  }
+  getZoom() {
+    return this.zoom;
+  }
+  getBearing() {
+    return this.bearing;
+  }
+  getPitch() {
+    return this.pitch;
+  }
+
+  // --- sources & layers ---
+  addSource(id: string, spec: Record<string, unknown>): this {
+    const { type, data, ...options } = spec;
+    this.sources.set(id, {
+      id,
+      type: type as string,
+      data,
+      options,
+      setData: vi.fn(),
+    });
+    return this;
+  }
+  getSource(id: string): FakeSource | undefined {
+    return this.sources.get(id);
+  }
+  removeSource(id: string): this {
+    this.sources.delete(id);
+    return this;
+  }
+  addLayer(layer: { id: string }, beforeId?: string): this {
+    this.layers.set(layer.id, layer as Record<string, unknown>);
+    const at = beforeId ? this.layerOrder.indexOf(beforeId) : -1;
+    if (at >= 0) this.layerOrder.splice(at, 0, layer.id);
+    else this.layerOrder.push(layer.id);
+    return this;
+  }
+  getLayer(id: string): Record<string, unknown> | undefined {
+    return this.layers.get(id);
+  }
+  removeLayer(id: string): this {
+    this.layers.delete(id);
+    this.layerOrder = this.layerOrder.filter((l) => l !== id);
+    return this;
+  }
+
+  // --- style & lifecycle ---
+  isStyleLoaded(): boolean {
+    return this.styleLoaded;
+  }
+  setStyleLoaded(v: boolean): void {
+    this.styleLoaded = v;
+  }
+  /** Simulate what a real setStyle does: wipe all custom sources and layers. */
+  wipeStyle(): void {
+    this.sources.clear();
+    this.layers.clear();
+    this.layerOrder = [];
+  }
+  getCanvas(): HTMLCanvasElement {
+    return this.canvas;
+  }
+  remove(): void {
+    this._removed = true;
+    this.handlers.clear();
+  }
+}
+
+// Module shape for vi.mock("maplibre-gl", ...): the library only uses the
+// default export's Map constructor at runtime (everything else it imports
+// from maplibre-gl is types, which are erased).
+export default { Map: FakeMap };

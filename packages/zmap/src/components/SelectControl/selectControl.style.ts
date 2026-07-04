@@ -1,6 +1,6 @@
 import type { SxProps, Theme } from "@mui/material/styles";
-import type { ControlPosition } from "./MapControls";
-import { controlPanel } from "../utils/controlPosition";
+import type { ControlPosition } from "../MapControls";
+import { controlPanel } from "../../utils/controlPosition";
 
 const panel = (position: ControlPosition): SxProps<Theme> =>
   controlPanel(position);
@@ -22,10 +22,17 @@ const overlay: SxProps<Theme> = {
   overflow: "hidden",
 };
 
+const svg: SxProps<Theme> = {
+  width: "100%",
+  height: "100%",
+  display: "block",
+};
+
 const styles: {
   panel: (position: ControlPosition) => SxProps<Theme>;
   toolButton: (active: boolean) => SxProps<Theme>;
   overlay: SxProps<Theme>;
-} = { panel, toolButton, overlay };
+  svg: SxProps<Theme>;
+} = { panel, toolButton, overlay, svg };
 
 export default styles;

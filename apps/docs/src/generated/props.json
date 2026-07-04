@@ -1,0 +1,2336 @@
+{
+  "components": {
+    "Arc": {
+      "description": "Draws a curved line between two points (great-circle or bezier).",
+      "props": [
+        {
+          "name": "from",
+          "type": "LngLatTuple",
+          "required": true,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "to",
+          "type": "LngLatTuple",
+          "required": true,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "beforeId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Insert before this existing layer id."
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "MUI palette token (\"primary.main\") or any CSS color. Default \"primary.main\"."
+        },
+        {
+          "name": "curvature",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Bulge factor for \"bezier\" arcs (0 = straight). Default 0.3."
+        },
+        {
+          "name": "dashed",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Explicit source/layer id. Auto-generated when omitted."
+        },
+        {
+          "name": "lineCap",
+          "type": "enum",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "lineJoin",
+          "type": "enum",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "opacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "points",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Number of points sampled along the arc. Default 64."
+        },
+        {
+          "name": "type",
+          "type": "enum",
+          "required": false,
+          "defaultValue": null,
+          "description": "\"bezier\" (flight-path bulge) or \"geodesic\" (great-circle). Default bezier."
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        }
+      ]
+    },
+    "ChoroplethLayer": {
+      "description": "Data-driven polygon fill — a choropleth. Maps a numeric feature property to a\ncolor ramp (smooth) or bands (\"step\"), painting GeoJSON polygons accordingly,\nand optionally drops a themed <Legend> built from the same stops.",
+      "props": [
+        {
+          "name": "data",
+          "type": "GeoJSON",
+          "required": true,
+          "defaultValue": null,
+          "description": "GeoJSON polygons to color."
+        },
+        {
+          "name": "property",
+          "type": "string",
+          "required": true,
+          "defaultValue": null,
+          "description": "Feature property whose numeric value drives the fill color."
+        },
+        {
+          "name": "stops",
+          "type": "[number, string][]",
+          "required": true,
+          "defaultValue": null,
+          "description": "`[value, color]` stops in ascending order; colors may be palette tokens."
+        },
+        {
+          "name": "fillOpacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "0.6",
+          "description": ""
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "legend",
+          "type": "boolean | ChoroplethLegendConfig",
+          "required": false,
+          "defaultValue": null,
+          "description": "Render a matching <Legend> from the same stops — pass `true` for defaults,\nor a config object to set its title, corner, and number format. The legend\nshares this layer's stops, so the two can never drift apart."
+        },
+        {
+          "name": "lineColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": "divider",
+          "description": "Outline color (palette token or CSS). Default \"divider\"."
+        },
+        {
+          "name": "lineOpacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "1",
+          "description": ""
+        },
+        {
+          "name": "lineWidth",
+          "type": "number",
+          "required": false,
+          "defaultValue": "1",
+          "description": ""
+        },
+        {
+          "name": "onClick",
+          "type": "((feature: any) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "scale",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "interpolate",
+          "description": "\"interpolate\" (smooth ramp, default) or \"step\" (banded)."
+        }
+      ]
+    },
+    "Cluster": {
+      "description": "Clusters a set of points using MapLibre's native clustering, rendering cluster\nbubbles and single points as themed MUI markers. Clicking a cluster zooms in\nto expand it.",
+      "props": [
+        {
+          "name": "points",
+          "type": "ClusterPoint[]",
+          "required": true,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "required": false,
+          "defaultValue": "primary.main",
+          "description": "Cluster bubble color (palette token or CSS). Default \"primary.main\"."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "maxZoom",
+          "type": "number",
+          "required": false,
+          "defaultValue": "14",
+          "description": "Max zoom at which points cluster. Default 14."
+        },
+        {
+          "name": "onPointClick",
+          "type": "((point: ClusterPoint) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "pointColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": "secondary.main",
+          "description": "Unclustered point color. Default \"secondary.main\"."
+        },
+        {
+          "name": "radius",
+          "type": "number",
+          "required": false,
+          "defaultValue": "50",
+          "description": "Cluster radius in pixels. Default 50."
+        },
+        {
+          "name": "renderCluster",
+          "type": "((count: number, expand: () => void) => ReactNode)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Custom cluster bubble. Receives the count and a zoom-to-expand callback."
+        },
+        {
+          "name": "renderPoint",
+          "type": "((point: ClusterPoint) => ReactNode)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Custom single-point marker."
+        }
+      ]
+    },
+    "ContextMenu": {
+      "description": "A theme-aware right-click menu anchored to a map coordinate. Ships with\ncenter-here / copy-coordinates / drop-marker actions, or pass your own\n`items`. Because it's a plain MUI <Menu>, it inherits the app theme.",
+      "props": [
+        {
+          "name": "defaultItems",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Include the built-in items. Defaults to true when `items` is omitted and\nfalse when custom items are supplied (set true to append the defaults)."
+        },
+        {
+          "name": "items",
+          "type": "ContextMenuItem[] | ((lngLat: LngLatTuple) => ContextMenuItem[])",
+          "required": false,
+          "defaultValue": null,
+          "description": "Menu entries — a static array or a builder called with the click\ncoordinate. When omitted, the built-in center / copy / drop items show."
+        },
+        {
+          "name": "onDropMarker",
+          "type": "((lngLat: LngLatTuple) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Handle the built-in \"Drop marker\" action. When omitted, the menu drops and\nrenders its own draggable markers (click one to remove it)."
+        },
+        {
+          "name": "precision",
+          "type": "number",
+          "required": false,
+          "defaultValue": "5",
+          "description": "Decimal places for the copied / displayed coordinate. Default 5."
+        }
+      ]
+    },
+    "DrawControl": {
+      "description": "A drawing palette: pick point / line / polygon, then click the map to add\nvertices (double-click or Enter to finish, Backspace to undo, Esc to cancel).\nCompleted shapes render through <ShapeLayer> / <PointLayer> and are emitted\nvia onChange / onCreate as plain GeoJSON.",
+      "props": [
+        {
+          "name": "color",
+          "type": "string",
+          "required": false,
+          "defaultValue": "primary.main",
+          "description": "Palette token or CSS color for the drawn shapes. Default \"primary.main\"."
+        },
+        {
+          "name": "fillOpacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "0.3",
+          "description": ""
+        },
+        {
+          "name": "lineWidth",
+          "type": "number",
+          "required": false,
+          "defaultValue": "2",
+          "description": ""
+        },
+        {
+          "name": "modes",
+          "type": "DrawMode[]",
+          "required": false,
+          "defaultValue": "[\"point\", \"line\", \"polygon\"]",
+          "description": "Which drawing tools to offer. Default point + line + polygon."
+        },
+        {
+          "name": "onChange",
+          "type": "((features: DrawFeature[]) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the full feature list on every add / undo / clear."
+        },
+        {
+          "name": "onCreate",
+          "type": "((feature: DrawFeature) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired once when a single shape is completed."
+        },
+        {
+          "name": "position",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "top-left",
+          "description": "Corner for the tool palette. Default \"top-left\"."
+        },
+        {
+          "name": "showClear",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": "Show the \"clear all\" button. Default true."
+        }
+      ]
+    },
+    "ExtrusionLayer": {
+      "description": "Extrudes GeoJSON polygons into 3D prisms (MapLibre `fill-extrusion`) — for\nbuildings or any value mapped to height. Height can be constant or driven by\na feature property; color can be a palette token or a data-driven choropleth.\nPitch the camera (e.g. MapControls' tilt button) to see the relief.",
+      "props": [
+        {
+          "name": "data",
+          "type": "GeoJSON",
+          "required": true,
+          "defaultValue": null,
+          "description": "GeoJSON polygons to extrude."
+        },
+        {
+          "name": "base",
+          "type": "number",
+          "required": false,
+          "defaultValue": "0",
+          "description": "Base height in meters — the floor the extrusion rises from. Default 0."
+        },
+        {
+          "name": "color",
+          "type": "string | ChoroplethSpec",
+          "required": false,
+          "defaultValue": "primary.main",
+          "description": "Fill — a palette token / CSS color, or a choropleth spec for data-driven color."
+        },
+        {
+          "name": "height",
+          "type": "number",
+          "required": false,
+          "defaultValue": "0",
+          "description": "Constant height in meters. Ignored when `heightProperty` is set. Default 0."
+        },
+        {
+          "name": "heightProperty",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to drive height from (e.g. building floors × meters)."
+        },
+        {
+          "name": "heightScale",
+          "type": "number",
+          "required": false,
+          "defaultValue": "1",
+          "description": "Multiplier applied to `heightProperty` values. Default 1."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "onClick",
+          "type": "((feature: any) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "opacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "0.9",
+          "description": ""
+        }
+      ]
+    },
+    "GeoJSONLayer": {
+      "description": "Low-level escape hatch: declaratively add a GeoJSON source + layers, kept\nalive across theme-driven style swaps. Build Route/Arc/Cluster-style features\nyourself when the higher-level components don't fit.",
+      "props": [
+        {
+          "name": "data",
+          "type": "GeoJSON",
+          "required": true,
+          "defaultValue": null,
+          "description": "GeoJSON data rendered by the layers."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": true,
+          "defaultValue": null,
+          "description": "Unique id for the GeoJSON source backing these layers."
+        },
+        {
+          "name": "layers",
+          "type": "LayerInput[]",
+          "required": true,
+          "defaultValue": null,
+          "description": "One or more layers to render. Memoize this array to avoid churn."
+        },
+        {
+          "name": "beforeId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Insert the layers before this existing layer id (e.g. a label layer)."
+        },
+        {
+          "name": "sourceOptions",
+          "type": "Partial<Omit<GeoJSONSourceSpecification, \"type\" | \"data\">>",
+          "required": false,
+          "defaultValue": null,
+          "description": "Extra source options (clustering, generateId, …)."
+        }
+      ]
+    },
+    "HeatmapLayer": {
+      "description": "Renders points as a density heatmap (MapLibre `heatmap` layer).",
+      "props": [
+        {
+          "name": "points",
+          "type": "LayerPoint[]",
+          "required": true,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "colorRamp",
+          "type": "ExpressionSpecification",
+          "required": false,
+          "defaultValue": null,
+          "description": "Override the density→color ramp (a MapLibre expression)."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "intensity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "1",
+          "description": ""
+        },
+        {
+          "name": "opacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "0.85",
+          "description": ""
+        },
+        {
+          "name": "radius",
+          "type": "number",
+          "required": false,
+          "defaultValue": "20",
+          "description": ""
+        },
+        {
+          "name": "weightProperty",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to weight points by (defaults to equal weight)."
+        }
+      ]
+    },
+    "HexbinLayer": {
+      "description": "Aggregates points into hexagonal or square cells colored by count (or a summed\nweight) — a clearer read of density than a heatmap at a glance, and steadier\nthan clustering as you pan. Optionally extrudes each cell into a 3D column.",
+      "props": [
+        {
+          "name": "points",
+          "type": "LayerPoint[]",
+          "required": true,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "cell",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "hex",
+          "description": "Cell shape — \"hex\" (default) or \"square\" grid."
+        },
+        {
+          "name": "colorRamp",
+          "type": "[number, string][]",
+          "required": false,
+          "defaultValue": null,
+          "description": "`[value, color]` stops for the bin color ramp; colors may be palette tokens.\nOmit to auto-build a ramp spanning the data's `[0, max]`."
+        },
+        {
+          "name": "extruded",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": "Render bins as 3D columns (height ∝ value). Pitch the camera to see them."
+        },
+        {
+          "name": "heightScale",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Meters of column height per unit value when extruded. Default scales max → ~1500m."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "lineColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": "background.paper",
+          "description": "Cell outline color (flat mode). Default \"background.paper\"."
+        },
+        {
+          "name": "lineWidth",
+          "type": "number",
+          "required": false,
+          "defaultValue": "0.5",
+          "description": ""
+        },
+        {
+          "name": "onClick",
+          "type": "((bin: { value: number; count: number; }) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "opacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "0.75",
+          "description": ""
+        },
+        {
+          "name": "radius",
+          "type": "number",
+          "required": false,
+          "defaultValue": "50",
+          "description": "Approximate cell size in kilometers. Default 50."
+        },
+        {
+          "name": "weightProperty",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Sum this point property instead of counting points."
+        }
+      ]
+    },
+    "Layer": {
+      "description": "Registers a named, toggleable overlay with the map's layer registry and shows\nor hides its children based on visibility. Pair with <LayerControl>.",
+      "props": [
+        {
+          "name": "id",
+          "type": "string",
+          "required": true,
+          "defaultValue": null,
+          "description": "Unique id, used as the checkbox key in the control."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "defaultValue": null,
+          "description": "Label shown in the LayerControl."
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Palette token or CSS color for the control's swatch."
+        },
+        {
+          "name": "defaultVisible",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": "Initial visibility for uncontrolled usage. Default true."
+        },
+        {
+          "name": "group",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Optional section heading to group the layer under in the control."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "defaultValue": null,
+          "description": "Optional icon shown in the control (set once at registration)."
+        },
+        {
+          "name": "onVisibleChange",
+          "type": "((visible: boolean) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "visible",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Controlled visibility — when set, the parent owns the state."
+        }
+      ]
+    },
+    "LayerControl": {
+      "description": "A collapsible MUI panel that lists registered overlay layers as checkboxes and\ntoggles their visibility. Layers come from declarative <Layer> children and/or\nthe `layers` config prop — both feed the same registry. Heavily customizable\nvia icons, slot props, and `renderItem` / `renderTrigger` render props.",
+      "props": [
+        {
+          "name": "collapseIcon",
+          "type": "ReactNode",
+          "required": false,
+          "defaultValue": null,
+          "description": "Icon for the collapse button. Default a close (×) icon."
+        },
+        {
+          "name": "colorCheckbox",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": "Tint each checkbox with its layer `color`. Default uses the theme primary."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": "Start with the panel expanded. Default false (just the icon button)."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "defaultValue": null,
+          "description": "Icon for the trigger button + header. Default a layers icon."
+        },
+        {
+          "name": "layers",
+          "type": "LayerConfig[]",
+          "required": false,
+          "defaultValue": null,
+          "description": "Optional config-driven layers, in addition to any declarative <Layer>s."
+        },
+        {
+          "name": "position",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "top-right",
+          "description": ""
+        },
+        {
+          "name": "renderItem",
+          "type": "((entry: LayerEntry, controls: LayerItemControls) => ReactNode)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fully render a row yourself (icon, badges, actions, …)."
+        },
+        {
+          "name": "renderTrigger",
+          "type": "((open: () => void) => ReactNode)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Replace the collapsed trigger button entirely."
+        },
+        {
+          "name": "slotProps",
+          "type": "{ paper?: PaperProps; checkbox?: CheckboxProps; } | undefined",
+          "required": false,
+          "defaultValue": null,
+          "description": "Props forwarded to the inner MUI Paper / Checkbox."
+        },
+        {
+          "name": "sx",
+          "type": "SxProps<Theme>",
+          "required": false,
+          "defaultValue": null,
+          "description": "sx applied to the expanded panel (Paper)."
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": false,
+          "defaultValue": "Layers",
+          "description": ""
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Panel width in px."
+        }
+      ]
+    },
+    "Legend": {
+      "description": "A themed map legend. Because it is plain MUI it inherits the app's theme\n(light/dark, palette, shape) automatically. Pass the same `ChoroplethSpec`\nyour `ShapeLayer` uses to keep the legend in sync with the layer, or an\n`items` list for a categorical legend.",
+      "props": [
+        {
+          "name": "formatValue",
+          "type": "((value: number) => string)",
+          "required": false,
+          "defaultValue": "(value) => String(value)",
+          "description": "Format numeric stop values shown on a `spec`-driven legend."
+        },
+        {
+          "name": "items",
+          "type": "LegendItem[]",
+          "required": false,
+          "defaultValue": null,
+          "description": "Discrete swatches for a categorical legend. Takes precedence over `spec`."
+        },
+        {
+          "name": "position",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "bottom-right",
+          "description": "Corner to anchor the legend. Default \"bottom-right\"."
+        },
+        {
+          "name": "spec",
+          "type": "ChoroplethSpec",
+          "required": false,
+          "defaultValue": null,
+          "description": "Drive the legend from the same `ChoroplethSpec` a `ShapeLayer` fill takes,\nso the legend and its layer share one source of truth. \"interpolate\"\n(default) renders a continuous gradient ramp; \"step\" renders banded swatches."
+        },
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": false,
+          "defaultValue": null,
+          "description": "Optional heading shown above the legend body."
+        }
+      ]
+    },
+    "Map": {
+      "description": "The map container. Creates a MapLibre GL instance, exposes it via context to\nchildren (markers, controls, layers…), and swaps the basemap style when the\nMUI theme mode changes.",
+      "props": [
+        {
+          "name": "animate",
+          "type": "boolean | AnimationOptions",
+          "required": false,
+          "defaultValue": "true",
+          "description": "How `view` changes move the camera: `true` (default) eases with MapLibre's\ndefault animation, `false` jumps instantly, or pass `AnimationOptions`\n(duration, easing…) for a custom transition."
+        },
+        {
+          "name": "center",
+          "type": "LngLatTuple",
+          "required": false,
+          "defaultValue": null,
+          "description": "Shorthand for `initialView.center`. Initial-only, like `initialView`."
+        },
+        {
+          "name": "colorScheme",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "auto",
+          "description": "\"auto\" follows the MUI theme (default); \"light\"/\"dark\" force a basemap."
+        },
+        {
+          "name": "fitBounds",
+          "type": "LngLatBoundsLike",
+          "required": false,
+          "defaultValue": null,
+          "description": "Declarative fitBounds: whenever this prop changes, the camera adjusts to\nfit the bounds. For one-off imperative moves, use the map ref instead."
+        },
+        {
+          "name": "fitBoundsOptions",
+          "type": "FitBoundsOptions",
+          "required": false,
+          "defaultValue": null,
+          "description": "Options for `fitBounds` (padding, maxZoom…)."
+        },
+        {
+          "name": "hideAttribution",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": "Hide MapLibre's built-in attribution control (attribute elsewhere)."
+        },
+        {
+          "name": "infinite",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": "Let the map wrap/repeat horizontally and scroll forever. Default false —\nthe map shows a single, non-wrapping world (a barrier), instead of the\ninfinite east-west repetition MapLibre renders by default."
+        },
+        {
+          "name": "initialView",
+          "type": "MapViewState",
+          "required": false,
+          "defaultValue": null,
+          "description": "Initial camera position. Applied once at creation — use `view` to move the camera later."
+        },
+        {
+          "name": "interactive",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": "Allow user pan/zoom/rotate. Default true."
+        },
+        {
+          "name": "mapOptions",
+          "type": "Partial<MapOptions>",
+          "required": false,
+          "defaultValue": null,
+          "description": "Escape hatch for any other MapLibre map option."
+        },
+        {
+          "name": "maxZoom",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "minZoom",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "onClick",
+          "type": "((e: MapMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Click on the map. `e.lngLat` has the clicked coordinate."
+        },
+        {
+          "name": "onContextMenu",
+          "type": "((e: MapMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Right-click / long-press on the map."
+        },
+        {
+          "name": "onDblClick",
+          "type": "((e: MapMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Double-click on the map."
+        },
+        {
+          "name": "onLoad",
+          "type": "((map: Map$1) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Called once with the map instance after the \"load\" event."
+        },
+        {
+          "name": "onMove",
+          "type": "MapViewEventHandler",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fires continuously while the camera moves (pan, zoom, rotate)."
+        },
+        {
+          "name": "onMoveEnd",
+          "type": "MapViewEventHandler",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fires once when a camera movement settles."
+        },
+        {
+          "name": "onZoomEnd",
+          "type": "MapViewEventHandler",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fires once when a zoom gesture/animation settles."
+        },
+        {
+          "name": "provider",
+          "type": "MapStyleInput",
+          "required": false,
+          "defaultValue": "carto",
+          "description": "Basemap source: a built-in id (\"carto\" | \"osm\"), a custom MapProvider,\na raw style URL, or a full MapLibre StyleSpecification. Defaults to \"carto\"."
+        },
+        {
+          "name": "view",
+          "type": "MapViewState",
+          "required": false,
+          "defaultValue": null,
+          "description": "Reactive camera position: whenever this prop changes, the map eases to it\n(only the fields you provide are applied). Unlike `initialView`, the user\ncan still pan/zoom freely between changes — pair with `onMoveEnd` to track\nwhere they went. Changes that match the current camera are ignored, so\nfeeding `onMoveEnd`'s view state back into `view` doesn't loop."
+        },
+        {
+          "name": "zoom",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Shorthand for `initialView.zoom`. Initial-only, like `initialView`."
+        }
+      ]
+    },
+    "MapControls": {
+      "description": "A cluster of MUI-styled map controls. Because it is plain MUI, it inherits the\napp's theme automatically (light/dark, colors, shape).",
+      "props": [
+        {
+          "name": "pitchAmount",
+          "type": "number",
+          "required": false,
+          "defaultValue": "60",
+          "description": "Pitch (degrees) the tilt toggle eases to. Default 60."
+        },
+        {
+          "name": "position",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "top-right",
+          "description": "Corner for the zoom/compass/geolocate/fullscreen cluster."
+        },
+        {
+          "name": "scalePosition",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "bottom-left",
+          "description": ""
+        },
+        {
+          "name": "scaleUnit",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "metric",
+          "description": ""
+        },
+        {
+          "name": "showCompass",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": ""
+        },
+        {
+          "name": "showFullscreen",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": ""
+        },
+        {
+          "name": "showGeolocate",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": ""
+        },
+        {
+          "name": "showPitch",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": "Show a 3D tilt toggle that pitches the camera (for fill-extrusion layers)."
+        },
+        {
+          "name": "showScale",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": ""
+        },
+        {
+          "name": "showZoom",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": ""
+        }
+      ]
+    },
+    "Marker": {
+      "description": "A map marker that renders arbitrary MUI content via a React portal into a\nMapLibre marker. With no children it shows a themed pin.",
+      "props": [
+        {
+          "name": "latitude",
+          "type": "number",
+          "required": true,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "longitude",
+          "type": "number",
+          "required": true,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "anchor",
+          "type": "enum",
+          "required": false,
+          "defaultValue": null,
+          "description": "Which part of the marker sits on the coordinate. Set at creation time."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "defaultValue": null,
+          "description": "Custom marker content (any MUI element). Falls back to a themed pin."
+        },
+        {
+          "name": "draggable",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": "Allow the user to drag the marker."
+        },
+        {
+          "name": "offset",
+          "type": "PointLike",
+          "required": false,
+          "defaultValue": null,
+          "description": "Pixel offset from the anchor point."
+        },
+        {
+          "name": "onClick",
+          "type": "((event: MouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "onDragEnd",
+          "type": "((lngLat: LngLatTuple) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "rotation",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Rotation in degrees."
+        }
+      ]
+    },
+    "MeasureControl": {
+      "description": "A measuring tape: draw a line to read its length, or a polygon to read its\narea. Values surface live (while drawing) and per-shape in deletable MUI\nchips. Built on the same engine as <DrawControl>.",
+      "props": [
+        {
+          "name": "color",
+          "type": "string",
+          "required": false,
+          "defaultValue": "secondary.main",
+          "description": "Palette token or CSS color for the drawn measurements."
+        },
+        {
+          "name": "modes",
+          "type": "MeasureMode[]",
+          "required": false,
+          "defaultValue": "[\"line\", \"polygon\"]",
+          "description": "Tools to offer. Default distance (line) + area (polygon)."
+        },
+        {
+          "name": "position",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "top-left",
+          "description": "Corner for the tool palette. Default \"top-left\"."
+        },
+        {
+          "name": "readoutPosition",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "top-right",
+          "description": "Corner for the measurement readout chips. Default \"top-right\"."
+        },
+        {
+          "name": "unit",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "metric",
+          "description": "Unit system for the readouts. Default \"metric\"."
+        }
+      ]
+    },
+    "PointLayer": {
+      "description": "Renders many points as a single GPU circle layer — cheaper than one DOM\nMarker per point. For rich/interactive content, use Marker instead.",
+      "props": [
+        {
+          "name": "points",
+          "type": "LayerPoint[]",
+          "required": true,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "required": false,
+          "defaultValue": "primary.main",
+          "description": "Palette token or CSS color. Default \"primary.main\"."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "onClick",
+          "type": "((point: LayerPoint, index: number) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "opacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "1",
+          "description": ""
+        },
+        {
+          "name": "radius",
+          "type": "number",
+          "required": false,
+          "defaultValue": "6",
+          "description": ""
+        },
+        {
+          "name": "strokeColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": "background.paper",
+          "description": ""
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "required": false,
+          "defaultValue": "1.5",
+          "description": ""
+        }
+      ]
+    },
+    "Popup": {
+      "description": "A theme-aware popup anchored to a coordinate. Renders MUI content via a portal\ninto a MapLibre popup, styled to match the current MUI surface (incl. dark).",
+      "props": [
+        {
+          "name": "latitude",
+          "type": "number",
+          "required": true,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "longitude",
+          "type": "number",
+          "required": true,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "anchor",
+          "type": "enum",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "closeButton",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": "Show the X button. Default true."
+        },
+        {
+          "name": "closeOnClick",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": "Close when the map is clicked. Default true."
+        },
+        {
+          "name": "closeOnMove",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": "Close when the map moves. Default false."
+        },
+        {
+          "name": "maxWidth",
+          "type": "string",
+          "required": false,
+          "defaultValue": "320px",
+          "description": ""
+        },
+        {
+          "name": "offset",
+          "type": "Offset",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "onClose",
+          "type": "(() => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired when MapLibre closes the popup (X button, click, or move)."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": "Controlled visibility. Default true."
+        }
+      ]
+    },
+    "Route": {
+      "description": "Draws a polyline (LineString) on the map from a list of coordinates.",
+      "props": [
+        {
+          "name": "coordinates",
+          "type": "LngLatTuple[]",
+          "required": true,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "beforeId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Insert before this existing layer id."
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "required": false,
+          "defaultValue": "primary.main",
+          "description": "MUI palette token (\"primary.main\") or any CSS color. Default \"primary.main\"."
+        },
+        {
+          "name": "dashed",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": ""
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Explicit source/layer id. Auto-generated when omitted."
+        },
+        {
+          "name": "lineCap",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "round",
+          "description": ""
+        },
+        {
+          "name": "lineJoin",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "round",
+          "description": ""
+        },
+        {
+          "name": "opacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "1",
+          "description": ""
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "required": false,
+          "defaultValue": "4",
+          "description": ""
+        }
+      ]
+    },
+    "SelectControl": {
+      "description": "Drag a marquee box or freehand lasso to select <PointLayer> features. While a\ntool is armed, panning is suspended so the drag draws a selection; release to\nselect. Selected points are highlighted and reported via onSelect.",
+      "props": [
+        {
+          "name": "points",
+          "type": "LayerPoint[]",
+          "required": true,
+          "defaultValue": null,
+          "description": "The same points fed to your <PointLayer>. Selection runs against these."
+        },
+        {
+          "name": "defaultTool",
+          "type": "SelectTool | null",
+          "required": false,
+          "defaultValue": "null",
+          "description": "Tool armed on mount. Default none (with a toolbar) / the first tool (without)."
+        },
+        {
+          "name": "highlight",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": "Highlight the selected points. Default true."
+        },
+        {
+          "name": "highlightColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": "secondary.main",
+          "description": "Palette token or CSS color for the highlight. Default \"secondary.main\"."
+        },
+        {
+          "name": "onSelect",
+          "type": "((selected: LayerPoint[], indices: number[]) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired on every completed selection with the hit points and their indices."
+        },
+        {
+          "name": "position",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "top-left",
+          "description": "Corner for the tool palette. Default \"top-left\"."
+        },
+        {
+          "name": "selectionColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": "primary.main",
+          "description": "Palette token or CSS color for the marquee / lasso. Default \"primary.main\"."
+        },
+        {
+          "name": "showToolbar",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": "Show the toolbar. When false, `defaultTool` (or the first tool) stays armed."
+        },
+        {
+          "name": "tools",
+          "type": "SelectTool[]",
+          "required": false,
+          "defaultValue": "[\"box\", \"lasso\"]",
+          "description": "Tools to offer. Default box + lasso."
+        }
+      ]
+    },
+    "ShapeLayer": {
+      "description": "Renders GeoJSON polygons/lines as fill + outline layers, with optional choropleth fill.",
+      "props": [
+        {
+          "name": "data",
+          "type": "GeoJSON",
+          "required": true,
+          "defaultValue": null,
+          "description": "GeoJSON polygons and/or lines."
+        },
+        {
+          "name": "fillColor",
+          "type": "string | ChoroplethSpec",
+          "required": false,
+          "defaultValue": "primary.main",
+          "description": "A palette token / CSS color, or a choropleth spec for data-driven fill."
+        },
+        {
+          "name": "fillOpacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "0.4",
+          "description": ""
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "lineColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": "primary.main",
+          "description": ""
+        },
+        {
+          "name": "lineOpacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "1",
+          "description": ""
+        },
+        {
+          "name": "lineWidth",
+          "type": "number",
+          "required": false,
+          "defaultValue": "1.5",
+          "description": ""
+        },
+        {
+          "name": "onClick",
+          "type": "((feature: any) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        }
+      ]
+    },
+    "TimePlayback": {
+      "description": "Animates time-stamped GeoJSON points along a playhead — great for trips and\ntrajectories. Renders a faint cumulative (or trailing) trail plus a bright\n\"head\" of the most-recent points, driven by a themed MUI transport bar\n(play/pause, scrubber, speed). Filtering happens on the GPU, so it stays\nsmooth with many points.",
+      "props": [
+        {
+          "name": "data",
+          "type": "FeatureCollection<Geometry, GeoJsonProperties>",
+          "required": true,
+          "defaultValue": null,
+          "description": "GeoJSON points, each carrying a numeric timestamp property."
+        },
+        {
+          "name": "autoplay",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": "Start playing on mount. Default false."
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "required": false,
+          "defaultValue": "primary.main",
+          "description": "Head (most-recent) point color — palette token or CSS. Default \"primary.main\"."
+        },
+        {
+          "name": "duration",
+          "type": "number",
+          "required": false,
+          "defaultValue": "12",
+          "description": "Seconds for one full playthrough at 1×. Default 12."
+        },
+        {
+          "name": "formatTime",
+          "type": "((value: number) => string)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Format the playhead value shown on the transport bar."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "loop",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": "Loop back to the start at the end. Default true."
+        },
+        {
+          "name": "onTimeChange",
+          "type": "((value: number) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Called whenever the playhead advances or is scrubbed."
+        },
+        {
+          "name": "position",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "bottom-left",
+          "description": "Corner to anchor the transport bar. Default \"bottom-left\"."
+        },
+        {
+          "name": "radius",
+          "type": "number",
+          "required": false,
+          "defaultValue": "6",
+          "description": "Head point radius in px. Default 6."
+        },
+        {
+          "name": "showTransport",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": "Render the transport bar. Default true."
+        },
+        {
+          "name": "timeProperty",
+          "type": "string",
+          "required": false,
+          "defaultValue": "time",
+          "description": "Name of the numeric timestamp property. Default \"time\"."
+        },
+        {
+          "name": "trail",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Visible trailing window, in the same units as the timestamps: only points\nwith `playhead - trail ≤ t ≤ playhead` show. Omit for a cumulative trail —\neverything up to the playhead stays on screen."
+        },
+        {
+          "name": "trailColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Trail point color. Defaults to `color`."
+        }
+      ]
+    },
+    "Tooltip": {
+      "description": "A lightweight, non-interactive label anchored to a coordinate — a Popup with\nno close button and tighter padding. Pair it with a Marker's hover state.",
+      "props": [
+        {
+          "name": "latitude",
+          "type": "number",
+          "required": true,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "longitude",
+          "type": "number",
+          "required": true,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "anchor",
+          "type": "enum",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "closeOnMove",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Close when the map moves. Default false."
+        },
+        {
+          "name": "maxWidth",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "offset",
+          "type": "Offset",
+          "required": false,
+          "defaultValue": null,
+          "description": ""
+        },
+        {
+          "name": "onClose",
+          "type": "(() => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired when MapLibre closes the popup (X button, click, or move)."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Controlled visibility. Default true."
+        }
+      ]
+    }
+  },
+  "exports": [
+    {
+      "name": "Arc",
+      "kind": "value",
+      "category": "component",
+      "description": "Draws a curved line between two points (great-circle or bezier)."
+    },
+    {
+      "name": "ArcOptions",
+      "kind": "type",
+      "category": "util",
+      "description": ""
+    },
+    {
+      "name": "ArcProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "ArcType",
+      "kind": "type",
+      "category": "util",
+      "description": ""
+    },
+    {
+      "name": "BinnedFeatureCollection",
+      "kind": "type",
+      "category": "util",
+      "description": ""
+    },
+    {
+      "name": "BinOptions",
+      "kind": "type",
+      "category": "util",
+      "description": ""
+    },
+    {
+      "name": "BinPoint",
+      "kind": "type",
+      "category": "util",
+      "description": ""
+    },
+    {
+      "name": "binPoints",
+      "kind": "value",
+      "category": "util",
+      "description": "Aggregates scattered lng/lat points into hexagonal or square cells, returning a GeoJSON polygon per non-empty cell with `{ value, count }`. Binning happens on a local equirectangular plane (km) centered on the data's mean latitude — exact enough for city/region-scale views, approximate near the poles or across very wide extents."
+    },
+    {
+      "name": "BinProperties",
+      "kind": "type",
+      "category": "util",
+      "description": "Aggregated value (`count`, or summed `weightProperty`) carried by each bin."
+    },
+    {
+      "name": "buildColorExpression",
+      "kind": "value",
+      "category": "util",
+      "description": "Builds a MapLibre paint expression from a choropleth spec."
+    },
+    {
+      "name": "carto",
+      "kind": "value",
+      "category": "provider",
+      "description": ""
+    },
+    {
+      "name": "ChoroplethLayer",
+      "kind": "value",
+      "category": "component",
+      "description": "Data-driven polygon fill — a choropleth. Maps a numeric feature property to a color ramp (smooth) or bands (\"step\"), painting GeoJSON polygons accordingly, and optionally drops a themed <Legend> built from the same stops."
+    },
+    {
+      "name": "ChoroplethLayerProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "ChoroplethLegendConfig",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "ChoroplethSpec",
+      "kind": "type",
+      "category": "util",
+      "description": "Drives a layer's fill color from a feature property — a choropleth. `stops` are `[value, color]` pairs in ascending order; colors may be palette tokens."
+    },
+    {
+      "name": "Cluster",
+      "kind": "value",
+      "category": "component",
+      "description": "Clusters a set of points using MapLibre's native clustering, rendering cluster bubbles and single points as themed MUI markers. Clicking a cluster zooms in to expand it."
+    },
+    {
+      "name": "ClusterPoint",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "ClusterProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "ColorMode",
+      "kind": "type",
+      "category": "provider",
+      "description": "The effective color mode a basemap is rendered in."
+    },
+    {
+      "name": "ColorScheme",
+      "kind": "type",
+      "category": "hook",
+      "description": "\"auto\" follows the MUI theme; \"light\"/\"dark\" force a basemap."
+    },
+    {
+      "name": "ContextMenu",
+      "kind": "value",
+      "category": "component",
+      "description": "A theme-aware right-click menu anchored to a map coordinate. Ships with center-here / copy-coordinates / drop-marker actions, or pass your own `items`. Because it's a plain MUI <Menu>, it inherits the app theme."
+    },
+    {
+      "name": "ContextMenuItem",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "ContextMenuItemContext",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "ContextMenuProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "ControlPosition",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "DrawControl",
+      "kind": "value",
+      "category": "component",
+      "description": "A drawing palette: pick point / line / polygon, then click the map to add vertices (double-click or Enter to finish, Backspace to undo, Esc to cancel). Completed shapes render through <ShapeLayer> / <PointLayer> and are emitted via onChange / onCreate as plain GeoJSON."
+    },
+    {
+      "name": "DrawControlProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "DrawEngine",
+      "kind": "type",
+      "category": "hook",
+      "description": ""
+    },
+    {
+      "name": "DrawFeature",
+      "kind": "type",
+      "category": "hook",
+      "description": ""
+    },
+    {
+      "name": "DrawFeatureProperties",
+      "kind": "type",
+      "category": "hook",
+      "description": ""
+    },
+    {
+      "name": "DrawMode",
+      "kind": "type",
+      "category": "hook",
+      "description": ""
+    },
+    {
+      "name": "ExtrusionLayer",
+      "kind": "value",
+      "category": "component",
+      "description": "Extrudes GeoJSON polygons into 3D prisms (MapLibre `fill-extrusion`) — for buildings or any value mapped to height. Height can be constant or driven by a feature property; color can be a palette token or a data-driven choropleth. Pitch the camera (e.g. MapControls' tilt button) to see the relief."
+    },
+    {
+      "name": "ExtrusionLayerProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "featureCollection",
+      "kind": "value",
+      "category": "util",
+      "description": ""
+    },
+    {
+      "name": "formatArea",
+      "kind": "value",
+      "category": "util",
+      "description": "Formats an area in m² as a human label (\"850 m²\", \"1.20 km²\", \"3.4 ac\")."
+    },
+    {
+      "name": "formatDistance",
+      "kind": "value",
+      "category": "util",
+      "description": "Formats a distance in metres as a human label (\"850 m\", \"1.20 km\", \"2.4 mi\")."
+    },
+    {
+      "name": "generateArc",
+      "kind": "value",
+      "category": "util",
+      "description": "Generates the coordinate path for an arc between two points."
+    },
+    {
+      "name": "GeoJSONLayer",
+      "kind": "value",
+      "category": "component",
+      "description": "Low-level escape hatch: declaratively add a GeoJSON source + layers, kept alive across theme-driven style swaps. Build Route/Arc/Cluster-style features yourself when the higher-level components don't fit."
+    },
+    {
+      "name": "GeoJSONLayerProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "haversineDistance",
+      "kind": "value",
+      "category": "util",
+      "description": "Great-circle (haversine) distance between two lng/lat points, in metres."
+    },
+    {
+      "name": "HeatmapLayer",
+      "kind": "value",
+      "category": "component",
+      "description": "Renders points as a density heatmap (MapLibre `heatmap` layer)."
+    },
+    {
+      "name": "HeatmapLayerProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "HexbinLayer",
+      "kind": "value",
+      "category": "component",
+      "description": "Aggregates points into hexagonal or square cells colored by count (or a summed weight) — a clearer read of density than a heatmap at a glance, and steadier than clustering as you pan. Optionally extrudes each cell into a 3D column."
+    },
+    {
+      "name": "HexbinLayerProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "isChoroplethSpec",
+      "kind": "value",
+      "category": "util",
+      "description": "True if a `fillColor` value is a choropleth spec rather than a plain color."
+    },
+    {
+      "name": "Layer",
+      "kind": "value",
+      "category": "component",
+      "description": "Registers a named, toggleable overlay with the map's layer registry and shows or hides its children based on visibility. Pair with <LayerControl>."
+    },
+    {
+      "name": "LayerConfig",
+      "kind": "type",
+      "category": "component",
+      "description": "A fully-controlled layer definition for the `layers` config API."
+    },
+    {
+      "name": "LayerControl",
+      "kind": "value",
+      "category": "component",
+      "description": "A collapsible MUI panel that lists registered overlay layers as checkboxes and toggles their visibility. Layers come from declarative <Layer> children and/or the `layers` config prop — both feed the same registry. Heavily customizable via icons, slot props, and `renderItem` / `renderTrigger` render props."
+    },
+    {
+      "name": "LayerControlProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "LayerEntry",
+      "kind": "type",
+      "category": "hook",
+      "description": "A registered overlay layer, as shown in the LayerControl panel."
+    },
+    {
+      "name": "LayerInput",
+      "kind": "type",
+      "category": "hook",
+      "description": "A layer spec where `source` is optional (filled from the config id)."
+    },
+    {
+      "name": "LayerItemControls",
+      "kind": "type",
+      "category": "component",
+      "description": "Handle passed to `renderItem` for a custom row."
+    },
+    {
+      "name": "LayerPoint",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "LayerProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "LayerRegistryValue",
+      "kind": "type",
+      "category": "hook",
+      "description": ""
+    },
+    {
+      "name": "Legend",
+      "kind": "value",
+      "category": "component",
+      "description": "A themed map legend. Because it is plain MUI it inherits the app's theme (light/dark, palette, shape) automatically. Pass the same `ChoroplethSpec` your `ShapeLayer` uses to keep the legend in sync with the layer, or an `items` list for a categorical legend."
+    },
+    {
+      "name": "LegendItem",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "LegendProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "lineDistance",
+      "kind": "value",
+      "category": "util",
+      "description": "Total length of a path (sum of segment great-circle distances), in metres."
+    },
+    {
+      "name": "lineFeature",
+      "kind": "value",
+      "category": "util",
+      "description": ""
+    },
+    {
+      "name": "LngLatTuple",
+      "kind": "type",
+      "category": "util",
+      "description": "A [longitude, latitude] pair."
+    },
+    {
+      "name": "Map",
+      "kind": "value",
+      "category": "component",
+      "description": "The map container. Creates a MapLibre GL instance, exposes it via context to children (markers, controls, layers…), and swaps the basemap style when the MUI theme mode changes."
+    },
+    {
+      "name": "MapContextValue",
+      "kind": "type",
+      "category": "hook",
+      "description": ""
+    },
+    {
+      "name": "MapControls",
+      "kind": "value",
+      "category": "component",
+      "description": "A cluster of MUI-styled map controls. Because it is plain MUI, it inherits the app's theme automatically (light/dark, colors, shape)."
+    },
+    {
+      "name": "MapControlsProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "MapLayerConfig",
+      "kind": "type",
+      "category": "hook",
+      "description": ""
+    },
+    {
+      "name": "maplibregl",
+      "kind": "value",
+      "category": "reexport",
+      "description": ""
+    },
+    {
+      "name": "MapProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "MapProvider",
+      "kind": "type",
+      "category": "provider",
+      "description": "A pluggable basemap source. Implement this to add any MapLibre-compatible provider (MapTiler, Stadia, self-hosted, …) beyond the built-ins."
+    },
+    {
+      "name": "MapStyleInput",
+      "kind": "type",
+      "category": "provider",
+      "description": "Anything accepted by the `provider` prop: a built-in id, a custom MapProvider, a raw style URL, or a full style spec."
+    },
+    {
+      "name": "maptiler",
+      "kind": "value",
+      "category": "provider",
+      "description": "MapTiler basemaps — the natural production upgrade from the keyless built-ins. Requires a (free-tier) API key from https://cloud.maptiler.com. Because it's key'd, it's a factory rather than a bare provider const: call it with your key and pass the result to the `provider` prop."
+    },
+    {
+      "name": "MapViewEventHandler",
+      "kind": "type",
+      "category": "component",
+      "description": "A map-level event handler receiving the camera state after the event."
+    },
+    {
+      "name": "MapViewState",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "Marker",
+      "kind": "value",
+      "category": "component",
+      "description": "A map marker that renders arbitrary MUI content via a React portal into a MapLibre marker. With no children it shows a themed pin."
+    },
+    {
+      "name": "MarkerProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "MeasureControl",
+      "kind": "value",
+      "category": "component",
+      "description": "A measuring tape: draw a line to read its length, or a polygon to read its area. Values surface live (while drawing) and per-shape in deletable MUI chips. Built on the same engine as <DrawControl>."
+    },
+    {
+      "name": "MeasureControlProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "MeasureMode",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "MeasureUnit",
+      "kind": "type",
+      "category": "util",
+      "description": ""
+    },
+    {
+      "name": "opentopomap",
+      "kind": "value",
+      "category": "provider",
+      "description": ""
+    },
+    {
+      "name": "osm",
+      "kind": "value",
+      "category": "provider",
+      "description": ""
+    },
+    {
+      "name": "pointFeature",
+      "kind": "value",
+      "category": "util",
+      "description": ""
+    },
+    {
+      "name": "pointInBox",
+      "kind": "value",
+      "category": "util",
+      "description": "True when a point falls within the axis-aligned box defined by two corners."
+    },
+    {
+      "name": "pointInPolygon",
+      "kind": "value",
+      "category": "util",
+      "description": "Ray-casting point-in-polygon test in screen (pixel) space. The ring is an ordered list of vertices; it is treated as implicitly closed. Points exactly on an edge are reported inconsistently (as is standard for ray casting) — fine for lasso selection, where pixel-perfect edges don't matter."
+    },
+    {
+      "name": "PointLayer",
+      "kind": "value",
+      "category": "component",
+      "description": "Renders many points as a single GPU circle layer — cheaper than one DOM Marker per point. For rich/interactive content, use Marker instead."
+    },
+    {
+      "name": "PointLayerProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "polygonArea",
+      "kind": "value",
+      "category": "util",
+      "description": "Spherical area of a polygon ring, in square metres. The ring need not repeat its first point — it is treated as implicitly closed. Winding-order agnostic (always returns a non-negative area)."
+    },
+    {
+      "name": "Popup",
+      "kind": "value",
+      "category": "component",
+      "description": "A theme-aware popup anchored to a coordinate. Renders MUI content via a portal into a MapLibre popup, styled to match the current MUI surface (incl. dark)."
+    },
+    {
+      "name": "PopupProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "ProviderId",
+      "kind": "type",
+      "category": "provider",
+      "description": ""
+    },
+    {
+      "name": "providerKey",
+      "kind": "value",
+      "category": "provider",
+      "description": "A stable key for the provider, used to detect when a style swap is needed."
+    },
+    {
+      "name": "providers",
+      "kind": "value",
+      "category": "provider",
+      "description": "Built-in providers, keyed by id."
+    },
+    {
+      "name": "resolveAttribution",
+      "kind": "value",
+      "category": "provider",
+      "description": "The attribution string for a provider input, when one is known."
+    },
+    {
+      "name": "resolvePaletteColor",
+      "kind": "value",
+      "category": "util",
+      "description": "Resolves an MUI palette token (\"primary.main\", \"error.light\", …) against the theme. Anything that isn't a known token (e.g. \"#ff0000\", \"rgb(...)\") is returned unchanged, so callers can pass raw CSS colors too."
+    },
+    {
+      "name": "resolveStyle",
+      "kind": "value",
+      "category": "provider",
+      "description": "Resolves the `provider` prop + color mode into a MapLibre style."
+    },
+    {
+      "name": "Route",
+      "kind": "value",
+      "category": "component",
+      "description": "Draws a polyline (LineString) on the map from a list of coordinates."
+    },
+    {
+      "name": "RouteProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "ScreenPoint",
+      "kind": "type",
+      "category": "util",
+      "description": "A pixel-space point, matching MapLibre's `map.project()` return shape."
+    },
+    {
+      "name": "SelectControl",
+      "kind": "value",
+      "category": "component",
+      "description": "Drag a marquee box or freehand lasso to select <PointLayer> features. While a tool is armed, panning is suspended so the drag draws a selection; release to select. Selected points are highlighted and reported via onSelect."
+    },
+    {
+      "name": "SelectControlProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "SelectTool",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "ShapeLayer",
+      "kind": "value",
+      "category": "component",
+      "description": "Renders GeoJSON polygons/lines as fill + outline layers, with optional choropleth fill."
+    },
+    {
+      "name": "ShapeLayerProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "TimePlayback",
+      "kind": "value",
+      "category": "component",
+      "description": "Animates time-stamped GeoJSON points along a playhead — great for trips and trajectories. Renders a faint cumulative (or trailing) trail plus a bright \"head\" of the most-recent points, driven by a themed MUI transport bar (play/pause, scrubber, speed). Filtering happens on the GPU, so it stays smooth with many points."
+    },
+    {
+      "name": "TimePlaybackProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "Tooltip",
+      "kind": "value",
+      "category": "component",
+      "description": "A lightweight, non-interactive label anchored to a coordinate — a Popup with no close button and tighter padding. Pair it with a Marker's hover state."
+    },
+    {
+      "name": "TooltipProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "useColorScheme",
+      "kind": "value",
+      "category": "hook",
+      "description": "Resolves the effective basemap color mode, following the MUI theme on \"auto\"."
+    },
+    {
+      "name": "useDraw",
+      "kind": "value",
+      "category": "hook",
+      "description": "Headless drawing state machine: wires map clicks / double-click / move / keyboard into a point/line/polygon draft and a list of completed features. Both <DrawControl> and <MeasureControl> are thin shells over this."
+    },
+    {
+      "name": "UseDrawOptions",
+      "kind": "type",
+      "category": "hook",
+      "description": ""
+    },
+    {
+      "name": "useLayerRegistry",
+      "kind": "value",
+      "category": "hook",
+      "description": "Reads the layer registry. Throws if used outside <Map>."
+    },
+    {
+      "name": "useLayerVisibility",
+      "kind": "value",
+      "category": "hook",
+      "description": "Returns whether a layer id is currently visible, falling back to `defaultVisible` until the layer has registered."
+    },
+    {
+      "name": "useMap",
+      "kind": "value",
+      "category": "hook",
+      "description": "Returns the underlying MapLibre GL map instance, or null until it is ready. Use this to drop down to the raw MapLibre API whenever you need more control."
+    },
+    {
+      "name": "useMapContext",
+      "kind": "value",
+      "category": "hook",
+      "description": "Reads the full map context. Throws if used outside <Map>."
+    },
+    {
+      "name": "useMapLayer",
+      "kind": "value",
+      "category": "hook",
+      "description": "Adds a GeoJSON source + layers to the map and keeps them alive across theme-driven style swaps (MapLibre's `setStyle` wipes custom layers, so we re-add on `styledata`). Data and paint/layout updates are applied in place."
+    },
+    {
+      "name": "versatiles",
+      "kind": "value",
+      "category": "provider",
+      "description": ""
+    }
+  ]
+}

@@ -13,7 +13,7 @@ import MyLocation from "@mui/icons-material/MyLocation";
 import Fullscreen from "@mui/icons-material/Fullscreen";
 import FullscreenExit from "@mui/icons-material/FullscreenExit";
 import ViewInAr from "@mui/icons-material/ViewInAr";
-import { useMapContext } from "../context/useMap";
+import { useMapContext } from "../../context/useMap";
 import Styles from "./mapControls.style";
 
 export type ControlPosition =

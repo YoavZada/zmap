@@ -1,10 +1,10 @@
 import { useId, useMemo, type FC } from "react";
 import { useTheme } from "@mui/material/styles";
 import type { ExpressionSpecification } from "maplibre-gl";
-import { useMapLayer, type LayerInput } from "../hooks/useMapLayer";
-import { resolvePaletteColor } from "../utils/color";
-import { featureCollection, pointFeature } from "../utils/geojson";
-import type { LayerPoint } from "./PointLayer";
+import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
+import { resolvePaletteColor } from "../../utils/color";
+import { featureCollection, pointFeature } from "../../utils/geojson";
+import type { LayerPoint } from "../PointLayer";
 
 export type HeatmapLayerProps = {
   id?: string;

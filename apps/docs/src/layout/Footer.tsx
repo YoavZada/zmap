@@ -4,11 +4,12 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import MapIcon from "@mui/icons-material/Map";
+import { PATHFINDER_URL } from "../env";
 import Styles from "./footer.style";
 
 const GITHUB_USER = "https://github.com/YoavZada";
 const REPO = "https://github.com/YoavZada/zmap";
-const NPM = "https://www.npmjs.com/package/zmap";
+const NPM = "https://www.npmjs.com/package/zmapgl";
 
 type ExtLink = { label: string; href: string };
 
@@ -22,6 +23,7 @@ const product: { label: string; to: string }[] = [
 const community: ExtLink[] = [
   { label: "GitHub", href: REPO },
   { label: "npm package", href: NPM },
+  { label: "Pathfinder demo", href: PATHFINDER_URL },
 ];
 
 const resources: ExtLink[] = [

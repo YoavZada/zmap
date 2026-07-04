@@ -18,7 +18,6 @@ import DarkMode from "@mui/icons-material/DarkMode";
 import LightMode from "@mui/icons-material/LightMode";
 import GitHub from "@mui/icons-material/GitHub";
 import MenuIcon from "@mui/icons-material/Menu";
-import MapIcon from "@mui/icons-material/Map";
 import BoltOutlined from "@mui/icons-material/BoltOutlined";
 import RouteOutlined from "@mui/icons-material/RouteOutlined";
 import { NpmIcon } from "../icons";
@@ -129,7 +128,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
           >
             <MenuIcon />
           </IconButton>
-          <MapIcon color="primary" sx={Styles.logo} />
+          <BoltOutlined color="primary" sx={Styles.logo} />
           <Typography variant="h6" fontWeight={800} sx={Styles.title}>
             zmap
           </Typography>

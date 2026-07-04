@@ -8,8 +8,17 @@ import type {
 import type { GeoJSON } from "geojson";
 import { useMapContext } from "../context/useMap";
 
+/**
+ * Omit that distributes over a union instead of collapsing it to common keys —
+ * a plain `Omit<LayerSpecification, …>` would silently drop variant-specific
+ * fields like `filter` and the per-type `paint`/`layout` shapes.
+ */
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
+  ? Omit<T, K>
+  : never;
+
 /** A layer spec where `source` is optional (filled from the config id). */
-export type LayerInput = Omit<LayerSpecification, "source"> & {
+export type LayerInput = DistributiveOmit<LayerSpecification, "source"> & {
   source?: string;
 };
 

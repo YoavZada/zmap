@@ -1,12 +1,12 @@
 import { useEffect, useId, useMemo, type FC } from "react";
 import { useTheme } from "@mui/material/styles";
 import type { ExpressionSpecification } from "maplibre-gl";
-import { useMapContext } from "../context/useMap";
-import { useMapLayer, type LayerInput } from "../hooks/useMapLayer";
-import { resolvePaletteColor } from "../utils/color";
-import { buildColorExpression } from "../utils/choropleth";
-import { binPoints } from "../utils/bin";
-import type { LayerPoint } from "./PointLayer";
+import { useMapContext } from "../../context/useMap";
+import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
+import { resolvePaletteColor } from "../../utils/color";
+import { buildColorExpression } from "../../utils/choropleth";
+import { binPoints } from "../../utils/bin";
+import type { LayerPoint } from "../PointLayer";
 
 export type HexbinLayerProps = {
   id?: string;

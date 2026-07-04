@@ -13,6 +13,7 @@ import GradientOutlined from "@mui/icons-material/GradientOutlined";
 import HexagonOutlined from "@mui/icons-material/HexagonOutlined";
 import PlayCircleOutline from "@mui/icons-material/PlayCircleOutline";
 import ViewInArOutlined from "@mui/icons-material/ViewInArOutlined";
+import MenuBookOutlined from "@mui/icons-material/MenuBookOutlined";
 
 export interface NavItem {
   path: string;
@@ -35,4 +36,5 @@ export const navItems: NavItem[] = [
   { path: "/hexbins", label: "Hexbins & grids", icon: HexagonOutlined },
   { path: "/time", label: "Time playback", icon: PlayCircleOutline },
   { path: "/extrusion", label: "3D Extrusion", icon: ViewInArOutlined },
+  { path: "/api", label: "API Reference", icon: MenuBookOutlined },
 ];

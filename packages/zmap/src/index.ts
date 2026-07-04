@@ -2,7 +2,11 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 // Components
 export { default as Map } from "./components/Map";
-export type { MapProps, MapViewState } from "./components/Map";
+export type {
+  MapProps,
+  MapViewState,
+  MapViewEventHandler,
+} from "./components/Map";
 export { default as Marker } from "./components/Marker";
 export type { MarkerProps } from "./components/Marker";
 export { default as Popup } from "./components/Popup";

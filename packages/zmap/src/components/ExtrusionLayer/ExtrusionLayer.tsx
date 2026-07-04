@@ -2,14 +2,14 @@ import { useEffect, useId, useMemo, type FC } from "react";
 import { useTheme } from "@mui/material/styles";
 import type { ExpressionSpecification } from "maplibre-gl";
 import type { GeoJSON } from "geojson";
-import { useMapContext } from "../context/useMap";
-import { useMapLayer, type LayerInput } from "../hooks/useMapLayer";
-import { resolvePaletteColor } from "../utils/color";
+import { useMapContext } from "../../context/useMap";
+import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
+import { resolvePaletteColor } from "../../utils/color";
 import {
   buildColorExpression,
   isChoroplethSpec,
   type ChoroplethSpec,
-} from "../utils/choropleth";
+} from "../../utils/choropleth";
 
 export type ExtrusionLayerProps = {
   id?: string;

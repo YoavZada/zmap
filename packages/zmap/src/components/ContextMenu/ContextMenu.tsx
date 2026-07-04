@@ -9,9 +9,9 @@ import CenterFocusStrong from "@mui/icons-material/CenterFocusStrongOutlined";
 import ContentCopy from "@mui/icons-material/ContentCopyOutlined";
 import PushPin from "@mui/icons-material/PushPinOutlined";
 import type { Map as MapLibreMap, MapMouseEvent } from "maplibre-gl";
-import { useMapContext } from "../context/useMap";
-import type { LngLatTuple } from "../utils/geojson";
-import Marker from "./Marker";
+import { useMapContext } from "../../context/useMap";
+import type { LngLatTuple } from "../../utils/geojson";
+import Marker from "../Marker";
 import Styles from "./contextMenu.style";
 
 export type ContextMenuItemContext = {

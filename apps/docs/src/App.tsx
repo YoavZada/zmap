@@ -15,6 +15,7 @@ import { ChoroplethPage } from "./pages/ChoroplethPage";
 import { HexbinPage } from "./pages/HexbinPage";
 import { TimePlaybackPage } from "./pages/TimePlaybackPage";
 import { ExtrusionPage } from "./pages/ExtrusionPage";
+import { ApiPage } from "./pages/ApiPage";
 
 export const App: FC = () => {
   return (
@@ -34,6 +35,7 @@ export const App: FC = () => {
         <Route path="/hexbins" element={<HexbinPage />} />
         <Route path="/time" element={<TimePlaybackPage />} />
         <Route path="/extrusion" element={<ExtrusionPage />} />
+        <Route path="/api" element={<ApiPage />} />
       </Routes>
     </Layout>
   );

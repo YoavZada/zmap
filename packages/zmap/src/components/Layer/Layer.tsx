@@ -2,7 +2,7 @@ import { useEffect, type FC, type ReactNode } from "react";
 import {
   useLayerRegistry,
   useLayerVisibility,
-} from "../context/useLayerRegistry";
+} from "../../context/useLayerRegistry";
 
 export type LayerProps = {
   /** Unique id, used as the checkbox key in the control. */

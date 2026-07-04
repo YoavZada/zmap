@@ -1,118 +1,67 @@
-import { useState, type FC } from "react";
+import type { FC } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import {
-  Map,
-  DrawControl,
-  MeasureControl,
-  ContextMenu,
-  SelectControl,
-  PointLayer,
-  type DrawFeature,
-  type LayerPoint,
-  type MeasureUnit,
-} from "zmapgl";
 import DemoSection from "../components/DemoSection";
+import PropsTable from "../components/PropsTable";
+import MapEventsDemo from "../demos/interaction/MapEventsDemo";
+import mapEventsDemoSource from "../demos/interaction/MapEventsDemo.tsx?raw";
+import DeclarativeCameraDemo from "../demos/interaction/DeclarativeCameraDemo";
+import declarativeCameraDemoSource from "../demos/interaction/DeclarativeCameraDemo.tsx?raw";
+import DrawToolsDemo from "../demos/interaction/DrawToolsDemo";
+import drawToolsDemoSource from "../demos/interaction/DrawToolsDemo.tsx?raw";
+import MeasureDemo from "../demos/interaction/MeasureDemo";
+import measureDemoSource from "../demos/interaction/MeasureDemo.tsx?raw";
+import ContextMenuDemo from "../demos/interaction/ContextMenuDemo";
+import contextMenuDemoSource from "../demos/interaction/ContextMenuDemo.tsx?raw";
+import SelectionDemo from "../demos/interaction/SelectionDemo";
+import selectionDemoSource from "../demos/interaction/SelectionDemo.tsx?raw";
 import Styles from "./interactionPage.style";
-import { clusterPoints } from "../data";
-
-const drawCode = `import { useState, type FC } from "react";
-import { Map, DrawControl, type DrawFeature } from "zmapgl";
-
-const MyMap: FC = () => {
-  const [shapes, setShapes] = useState<DrawFeature[]>([]);
-  return (
-    <Map center={[-0.1276, 51.5072]} zoom={12}>
-      {/* point / line / polygon — double-click or Enter to finish,
-          Backspace to undo a vertex, Esc to cancel */}
-      <DrawControl position="top-left" onChange={setShapes} />
-    </Map>
-  );
-};
-
-export default MyMap;`;
-
-const measureCode = `import type { FC } from "react";
-import { Map, MeasureControl } from "zmapgl";
-
-const MyMap: FC = () => {
-  return (
-    <Map center={[-0.1276, 51.5072]} zoom={12}>
-      {/* draw a line → distance; a polygon → area, in live MUI chips */}
-      <MeasureControl
-        position="top-left"
-        readoutPosition="top-right"
-        unit="metric"
-      />
-    </Map>
-  );
-};
-
-export default MyMap;`;
-
-const contextMenuCode = `import type { FC } from "react";
-import { Map, ContextMenu } from "zmapgl";
-
-const MyMap: FC = () => {
-  return (
-    <Map center={[2.3522, 48.8566]} zoom={4}>
-      {/* right-click the map → "Center here" / "Copy coords" / "Drop marker".
-          Dropped markers are draggable; click one to remove it. */}
-      <ContextMenu />
-
-      {/* or supply your own items:
-          <ContextMenu items={(lngLat) => [
-            { label: "Log here", icon: <Place />, onClick: () => console.log(lngLat) },
-          ]} /> */}
-    </Map>
-  );
-};
-
-export default MyMap;`;
-
-const selectCode = `import { useState, type FC } from "react";
-import { Map, PointLayer, SelectControl, type LayerPoint } from "zmapgl";
-
-const MyMap: FC = () => {
-  const [selected, setSelected] = useState<LayerPoint[]>([]);
-  return (
-    <Map center={[-74.006, 40.7128]} zoom={8.5}>
-      <PointLayer points={points} radius={4} />
-      {/* arm the box or lasso tool, then drag to select — hits are highlighted */}
-      <SelectControl points={points} onSelect={setSelected} />
-    </Map>
-  );
-};
-
-export default MyMap;`;
-
-function countByMode(shapes: DrawFeature[]) {
-  const counts = { point: 0, line: 0, polygon: 0 };
-  for (const s of shapes) counts[s.properties.mode] += 1;
-  return counts;
-}
 
 export const InteractionPage: FC = () => {
-  const [shapes, setShapes] = useState<DrawFeature[]>([]);
-  const [unit, setUnit] = useState<MeasureUnit>("metric");
-  const [selected, setSelected] = useState<LayerPoint[]>([]);
-
-  const counts = countByMode(shapes);
-
   return (
     <Box>
       <Typography variant="h4" fontWeight={800} gutterBottom>
         Interaction
       </Typography>
       <Typography color="text.secondary" sx={Styles.intro}>
-        Tools that let people draw on, measure, and select from the map. Every
-        one is plain MUI — the toolbars, chips, and menus inherit your theme
-        (light/dark, palette, shape) automatically. Try them, then toggle dark
-        mode.
+        React to what people do on the map — clicks, pans, zooms — and drive the
+        camera declaratively, plus tools that let them draw, measure, and
+        select. Every control is plain MUI — the toolbars, chips, and menus
+        inherit your theme (light/dark, palette, shape) automatically.
       </Typography>
+
+      <DemoSection
+        title="Map events"
+        description={
+          <>
+            <code>&lt;Map&gt;</code> promotes the everyday MapLibre events to
+            props: <code>onClick</code>, <code>onDblClick</code>,{" "}
+            <code>onContextMenu</code> receive the raw mouse event (with{" "}
+            <code>lngLat</code>), while <code>onMove</code>,{" "}
+            <code>onMoveEnd</code>, and <code>onZoomEnd</code> hand you the
+            camera state. Click anywhere to drop a pin, then pan around and
+            watch the readout.
+          </>
+        }
+        code={mapEventsDemoSource}
+        demo={<MapEventsDemo />}
+      />
+
+      <DemoSection
+        title="Declarative camera"
+        description={
+          <>
+            The <code>view</code> prop eases the camera to a new position
+            whenever it changes — unlike <code>initialView</code>, which only
+            applies at creation. The user can still pan freely in between, and
+            feeding <code>onMoveEnd</code> back into <code>view</code> doesn't
+            loop. <code>fitBounds</code> refits declaratively when its value
+            changes; <code>animate</code> tunes or disables the transition.
+          </>
+        }
+        code={declarativeCameraDemoSource}
+        demo={<DeclarativeCameraDemo />}
+      />
 
       <DemoSection
         title="Draw tools"
@@ -127,23 +76,8 @@ export const InteractionPage: FC = () => {
             <code>onChange</code> / <code>onCreate</code>.
           </>
         }
-        code={drawCode}
-        demo={
-          <Box>
-            <Map center={[-0.1276, 51.5072]} zoom={12} sx={Styles.map}>
-              <DrawControl position="top-left" onChange={setShapes} />
-            </Map>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={Styles.readout}
-            >
-              Drawn: {counts.point} point{counts.point === 1 ? "" : "s"},{" "}
-              {counts.line} line{counts.line === 1 ? "" : "s"}, {counts.polygon}{" "}
-              polygon{counts.polygon === 1 ? "" : "s"}.
-            </Typography>
-          </Box>
-        }
+        code={drawToolsDemoSource}
+        demo={<DrawToolsDemo />}
       />
 
       <DemoSection
@@ -156,29 +90,8 @@ export const InteractionPage: FC = () => {
             around in deletable chips. Switch the unit system below.
           </>
         }
-        code={measureCode}
-        demo={
-          <Box>
-            <Stack direction="row" spacing={2} sx={Styles.controls}>
-              <ToggleButtonGroup
-                size="small"
-                exclusive
-                value={unit}
-                onChange={(_, v: MeasureUnit | null) => v && setUnit(v)}
-              >
-                <ToggleButton value="metric">metric</ToggleButton>
-                <ToggleButton value="imperial">imperial</ToggleButton>
-              </ToggleButtonGroup>
-            </Stack>
-            <Map center={[-0.1276, 51.5072]} zoom={12} sx={Styles.map}>
-              <MeasureControl
-                position="top-left"
-                readoutPosition="top-right"
-                unit={unit}
-              />
-            </Map>
-          </Box>
-        }
+        code={measureDemoSource}
+        demo={<MeasureDemo />}
       />
 
       <DemoSection
@@ -192,12 +105,8 @@ export const InteractionPage: FC = () => {
             the map.
           </>
         }
-        code={contextMenuCode}
-        demo={
-          <Map center={[2.3522, 48.8566]} zoom={4} sx={Styles.map}>
-            <ContextMenu />
-          </Map>
-        }
+        code={contextMenuDemoSource}
+        demo={<ContextMenuDemo />}
       />
 
       <DemoSection
@@ -212,28 +121,13 @@ export const InteractionPage: FC = () => {
             the cluster.
           </>
         }
-        code={selectCode}
-        demo={
-          <Box>
-            <Map center={[-74.006, 40.7128]} zoom={8.5} sx={Styles.map}>
-              <PointLayer
-                points={clusterPoints}
-                color="primary.main"
-                radius={4}
-              />
-              <SelectControl points={clusterPoints} onSelect={setSelected} />
-            </Map>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={Styles.readout}
-            >
-              {selected.length} point{selected.length === 1 ? "" : "s"}{" "}
-              selected.
-            </Typography>
-          </Box>
-        }
+        code={selectionDemoSource}
+        demo={<SelectionDemo />}
       />
+      <PropsTable component="DrawControl" />
+      <PropsTable component="MeasureControl" />
+      <PropsTable component="ContextMenu" />
+      <PropsTable component="SelectControl" />
     </Box>
   );
 };

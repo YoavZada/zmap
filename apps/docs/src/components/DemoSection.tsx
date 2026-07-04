@@ -5,7 +5,9 @@ import Typography from "@mui/material/Typography";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Skeleton from "@mui/material/Skeleton";
+import Link from "@mui/material/Link";
 import CodeBlock from "./CodeBlock";
+import { stripDemoSource } from "../utils/stripDemoSource";
 import Styles from "./demoSection.style";
 
 export type DemoSectionProps = {
@@ -60,10 +62,18 @@ const DemoSection: FC<DemoSectionProps> = ({
     return () => observer.disconnect();
   }, [revealed, tab]);
 
+  const anchor = title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
   return (
-    <Box component="section" sx={Styles.section}>
+    <Box component="section" id={anchor} sx={Styles.section}>
       <Typography variant="h5" fontWeight={700} gutterBottom>
-        {title}
+        <Link href={`#${anchor}`} sx={Styles.titleLink}>
+          {title}
+          <span className="anchor-hash">#</span>
+        </Link>
       </Typography>
       {description && (
         <Typography color="text.secondary" sx={Styles.description}>
@@ -90,7 +100,7 @@ const DemoSection: FC<DemoSectionProps> = ({
           </Box>
         ) : (
           <Box sx={Styles.codeArea}>
-            <CodeBlock code={code} />
+            <CodeBlock code={stripDemoSource(code)} />
           </Box>
         )}
       </Paper>

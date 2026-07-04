@@ -1,7 +1,7 @@
 import { useMemo, type FC } from "react";
-import Route, { type RouteProps } from "./Route";
-import { generateArc, type ArcType } from "../utils/arc";
-import type { LngLatTuple } from "../utils/geojson";
+import Route, { type RouteProps } from "../Route";
+import { generateArc, type ArcType } from "../../utils/arc";
+import type { LngLatTuple } from "../../utils/geojson";
 
 export interface ArcProps extends Omit<RouteProps, "coordinates"> {
   from: LngLatTuple;
