@@ -1,5 +1,10 @@
 import type { MapProvider } from "./types";
 
+const VERSATILES_STYLE_URLS = {
+  light: "https://tiles.versatiles.org/assets/styles/colorful/style.json",
+  dark: "https://tiles.versatiles.org/assets/styles/eclipse/style.json",
+} as const;
+
 /**
  * VersaTiles basemaps — free, open, no API key and no signup. Vector tiles
  * built from OpenStreetMap data and served from a community CDN. "colorful" is
@@ -7,11 +12,6 @@ import type { MapProvider } from "./types";
  * the same way CARTO's positron/dark-matter pair does — but with no usage
  * restrictions for commercial use.
  */
-const VERSATILES_STYLE_URLS = {
-  light: "https://tiles.versatiles.org/assets/styles/colorful/style.json",
-  dark: "https://tiles.versatiles.org/assets/styles/eclipse/style.json",
-} as const;
-
 export const versatiles: MapProvider = {
   id: "versatiles",
   getStyle: (mode) => VERSATILES_STYLE_URLS[mode],

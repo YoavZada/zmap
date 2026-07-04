@@ -7,8 +7,12 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   treeshake: true,
-  // The `maplibre-gl.css` imported in src/index.ts is bundled to dist/index.css,
-  // exposed to consumers as `zmap/styles.css`.
+  // CSS story: src/index.ts keeps a bare `import "maplibre-gl/dist/maplibre-gl.css"`
+  // side-effect import (preserved in dist output) so bundler users get the map CSS
+  // automatically. For everyone else, the same CSS is copied to dist/styles.css and
+  // published as the `zmapgl/styles.css` subpath. (A CSS entry with @import doesn't
+  // work here: tsup auto-externalizes dependencies, so the import isn't inlined.)
+  onSuccess: "node scripts/copy-css.mjs",
   // Keep React + MUI as peers; bundle nothing of them.
   external: [
     "react",

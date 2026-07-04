@@ -1,0 +1,73 @@
+// @vitest-environment jsdom
+import { describe, expect, it, vi } from "vitest";
+import { render, act, screen } from "@testing-library/react";
+import type { ReactNode } from "react";
+import { MapContext } from "../../context/MapContext";
+import { FakeMap } from "../../test/mockMaplibre";
+import Marker, { type MarkerProps } from "./Marker";
+
+vi.mock("maplibre-gl", () => import("../../test/mockMaplibre"));
+
+function renderMarker(map: FakeMap, props: Partial<MarkerProps> = {}) {
+  const wrapper = ({ children }: { children: ReactNode }) => (
+    <MapContext.Provider
+      value={{ map: map as never, loaded: true }}
+      children={children}
+    />
+  );
+  return render(
+    <Marker longitude={0} latitude={0} {...props}>
+      <span>pin</span>
+    </Marker>,
+    { wrapper },
+  );
+}
+
+describe("Marker accessibility", () => {
+  it("interactive markers are keyboard-focusable buttons", () => {
+    const map = new FakeMap();
+    const onClick = vi.fn();
+    renderMarker(map, { onClick, label: "Office" });
+
+    const button = screen.getByRole("button", { name: "Office" });
+    expect(button.tabIndex).toBe(0);
+
+    act(() => {
+      button.dispatchEvent(
+        new KeyboardEvent("keydown", { key: "Enter", bubbles: true }),
+      );
+    });
+    expect(onClick).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      button.dispatchEvent(
+        new KeyboardEvent("keydown", { key: " ", bubbles: true }),
+      );
+    });
+    expect(onClick).toHaveBeenCalledTimes(2);
+  });
+
+  it("static markers stay out of the tab order", () => {
+    const map = new FakeMap();
+    renderMarker(map, { label: "Just a pin" });
+
+    expect(screen.queryByRole("button")).toBeNull();
+    const el = screen.getByText("pin").parentElement!;
+    expect(el.getAttribute("tabindex")).toBeNull();
+  });
+
+  it("gains and loses button semantics as onClick comes and goes", () => {
+    const map = new FakeMap();
+    const { rerender } = renderMarker(map);
+    expect(screen.queryByRole("button")).toBeNull();
+
+    rerender(
+      <MapContext.Provider value={{ map: map as never, loaded: true }}>
+        <Marker longitude={0} latitude={0} onClick={() => {}}>
+          <span>pin</span>
+        </Marker>
+      </MapContext.Provider>,
+    );
+    expect(screen.getByRole("button")).toBeDefined();
+  });
+});

@@ -5,12 +5,7 @@ const OPENTOPOMAP_ATTRIBUTION =
   'map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, SRTM | ' +
   'style © <a href="https://opentopomap.org/" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)';
 
-/**
- * OpenTopoMap raster tiles — free, no API key. A topographic basemap (contours,
- * hillshading, hiking detail) rendered from OpenStreetMap + SRTM elevation
- * data. Like OSM it ships a single raster style, so it looks the same in light
- * and dark. Honor its fair-use tile policy in production.
- */
+// Built as a MapLibre style on the fly.
 function openTopoMapStyle(): StyleSpecification {
   return {
     version: 8,
@@ -33,6 +28,12 @@ function openTopoMapStyle(): StyleSpecification {
   };
 }
 
+/**
+ * OpenTopoMap raster tiles — free, no API key. A topographic basemap (contours,
+ * hillshading, hiking detail) rendered from OpenStreetMap + SRTM elevation
+ * data. Like OSM it ships a single raster style, so it looks the same in light
+ * and dark. Honor its fair-use tile policy in production.
+ */
 export const opentopomap: MapProvider = {
   id: "opentopomap",
   getStyle: () => openTopoMapStyle(),

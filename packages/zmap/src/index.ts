@@ -1,8 +1,13 @@
 import "maplibre-gl/dist/maplibre-gl.css";
+import maplibreglNamespace from "maplibre-gl";
 
 // Components
 export { default as Map } from "./components/Map";
-export type { MapProps, MapViewState } from "./components/Map";
+export type {
+  MapProps,
+  MapViewState,
+  MapViewEventHandler,
+} from "./components/Map";
 export { default as Marker } from "./components/Marker";
 export type { MarkerProps } from "./components/Marker";
 export { default as Popup } from "./components/Popup";
@@ -32,6 +37,8 @@ export type {
 } from "./components/LayerControl";
 export { default as PointLayer } from "./components/PointLayer";
 export type { PointLayerProps, LayerPoint } from "./components/PointLayer";
+export { default as SymbolLayer } from "./components/SymbolLayer";
+export type { SymbolLayerProps, SymbolPoint } from "./components/SymbolLayer";
 export { default as HeatmapLayer } from "./components/HeatmapLayer";
 export type { HeatmapLayerProps } from "./components/HeatmapLayer";
 export { default as ShapeLayer } from "./components/ShapeLayer";
@@ -83,6 +90,8 @@ export type {
   LayerEntry,
   LayerRegistryValue,
 } from "./context/LayerRegistryContext";
+export { useFeatureState } from "./hooks/useFeatureState";
+export type { FeatureStateOptions } from "./hooks/useFeatureState";
 export { useDraw } from "./hooks/useDraw";
 export type {
   DrawMode,
@@ -137,5 +146,5 @@ export type { MeasureUnit } from "./utils/measure";
 export { pointInPolygon, pointInBox } from "./utils/geometry";
 export type { ScreenPoint } from "./utils/geometry";
 
-// Re-export the underlying MapLibre namespace for power users.
-export { default as maplibregl } from "maplibre-gl";
+/** The underlying MapLibre GL namespace, re-exported for power users. */
+export const maplibregl = maplibreglNamespace;
