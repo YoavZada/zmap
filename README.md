@@ -16,7 +16,7 @@ MUI and follow your theme, including automatic light/dark basemaps.
 [![MUI](https://img.shields.io/badge/MUI-007FFF?logo=mui&logoColor=white)](https://mui.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-![zmap — theme-aware MUI maps](demo-screenshots/intro-dark.png)
+![zmap — theme-aware MUI maps](apps/docs/zmap-intro.png)
 
 </div>
 
