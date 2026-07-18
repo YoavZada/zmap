@@ -81,7 +81,7 @@ function removeAll(map: MapLibreMap, cfg: MapLayerConfig) {
  */
 export function useMapLayer(config: MapLayerConfig): void {
   const { map, loaded } = useMapContext();
-  const { id, data, layers } = config;
+  const { id, data, layers, beforeId } = config;
 
   // Add on load + re-add after every style reload. Keyed by source id only.
   useEffect(() => {
@@ -111,6 +111,16 @@ export function useMapLayer(config: MapLayerConfig): void {
       src.setData(data as never);
     }
   }, [map, loaded, id, data]);
+
+  // Re-anchor when `beforeId` changes after mount — addAll only honors it at
+  // insertion time, so a later change must move the layers explicitly.
+  useEffect(() => {
+    if (!map || !loaded || !beforeId) return;
+    if (!map.getLayer(beforeId)) return;
+    for (const layer of layers) {
+      if (map.getLayer(layer.id)) map.moveLayer(layer.id, beforeId);
+    }
+  }, [map, loaded, beforeId, layers]);
 
   // Update paint/layout in place when layer specs change.
   useEffect(() => {

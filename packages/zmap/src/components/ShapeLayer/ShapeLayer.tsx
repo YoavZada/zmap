@@ -1,9 +1,15 @@
-import { useEffect, useId, useMemo, type FC } from "react";
+import { useId, useMemo, type FC } from "react";
 import { useTheme } from "@mui/material/styles";
 import type { GeoJSON } from "geojson";
-import { useMapContext } from "../../context/useMap";
+import type { MapGeoJSONFeature, MapLayerMouseEvent } from "maplibre-gl";
 import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
+import { useLayerClick } from "../../hooks/useLayerClick";
 import { resolvePaletteColor } from "../../utils/color";
+import { warnDeprecatedProp } from "../../utils/deprecation";
+import {
+  applyLayerOverrides,
+  type LayerOverride,
+} from "../../utils/layerOverrides";
 import {
   buildColorExpression,
   isChoroplethSpec,
@@ -20,13 +26,32 @@ export type ShapeLayerProps = {
   /** Fill opacity, 0–1. Default 0.4. */
   fillOpacity?: number;
   /** Outline color (palette token or CSS). Default "primary.main". */
-  lineColor?: string;
+  strokeColor?: string;
   /** Outline width in pixels. Default 1.5. */
-  lineWidth?: number;
+  strokeWidth?: number;
   /** Outline opacity, 0–1. Default 1. */
+  strokeOpacity?: number;
+  /**
+   * Deprecated: use `strokeColor` instead.
+   * @deprecated Use `strokeColor`. Removed in v1.0.
+   */
+  lineColor?: string;
+  /**
+   * Deprecated: use `strokeWidth` instead.
+   * @deprecated Use `strokeWidth`. Removed in v1.0.
+   */
+  lineWidth?: number;
+  /**
+   * Deprecated: use `strokeOpacity` instead.
+   * @deprecated Use `strokeOpacity`. Removed in v1.0.
+   */
   lineOpacity?: number;
-  /** Fired with the clicked GeoJSON feature. */
-  onClick?: (feature: any) => void;
+  /** Insert the layers before this existing layer id (e.g. a label layer). */
+  beforeId?: string;
+  /** Paint/layout patches merged into the generated fill/line layers. */
+  layerOverrides?: { fill?: LayerOverride; line?: LayerOverride };
+  /** Fired with the clicked feature and the raw map event. */
+  onClick?: (feature: MapGeoJSONFeature, event: MapLayerMouseEvent) => void;
 };
 
 /** Renders GeoJSON polygons/lines as fill + outline layers, with optional choropleth fill. */
@@ -35,16 +60,33 @@ const ShapeLayer: FC<ShapeLayerProps> = ({
   data,
   fillColor = "primary.main",
   fillOpacity = 0.4,
-  lineColor = "primary.main",
-  lineWidth = 1.5,
-  lineOpacity = 1,
+  strokeColor,
+  strokeWidth,
+  strokeOpacity,
+  lineColor,
+  lineWidth,
+  lineOpacity,
+  beforeId,
+  layerOverrides,
   onClick,
 }) => {
   const theme = useTheme();
-  const { map } = useMapContext();
   const reactId = useId();
   const baseId = id ?? `zmap-shape-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const fillId = `${baseId}-fill`;
+
+  if (lineColor !== undefined) {
+    warnDeprecatedProp("ShapeLayer", "lineColor", "strokeColor");
+  }
+  if (lineWidth !== undefined) {
+    warnDeprecatedProp("ShapeLayer", "lineWidth", "strokeWidth");
+  }
+  if (lineOpacity !== undefined) {
+    warnDeprecatedProp("ShapeLayer", "lineOpacity", "strokeOpacity");
+  }
+  const resolvedStroke = strokeColor ?? lineColor ?? "primary.main";
+  const resolvedStrokeWidth = strokeWidth ?? lineWidth ?? 1.5;
+  const resolvedStrokeOpacity = strokeOpacity ?? lineOpacity ?? 1;
 
   const fill = useMemo(
     () =>
@@ -55,57 +97,50 @@ const ShapeLayer: FC<ShapeLayerProps> = ({
   );
 
   const layers = useMemo<LayerInput[]>(
-    () => [
-      {
-        id: fillId,
-        type: "fill",
-        paint: { "fill-color": fill, "fill-opacity": fillOpacity },
-      },
-      {
-        id: `${baseId}-line`,
-        type: "line",
-        paint: {
-          "line-color": resolvePaletteColor(theme, lineColor),
-          "line-width": lineWidth,
-          "line-opacity": lineOpacity,
-        },
-      },
-    ],
+    () =>
+      applyLayerOverrides(
+        [
+          {
+            id: fillId,
+            type: "fill",
+            paint: { "fill-color": fill, "fill-opacity": fillOpacity },
+          },
+          {
+            id: `${baseId}-line`,
+            type: "line",
+            paint: {
+              "line-color": resolvePaletteColor(theme, resolvedStroke),
+              "line-width": resolvedStrokeWidth,
+              "line-opacity": resolvedStrokeOpacity,
+            },
+          },
+        ],
+        layerOverrides,
+      ),
     [
       baseId,
       fillId,
       fill,
       fillOpacity,
-      lineColor,
-      lineWidth,
-      lineOpacity,
+      resolvedStroke,
+      resolvedStrokeWidth,
+      resolvedStrokeOpacity,
+      layerOverrides,
       theme,
     ],
   );
 
-  useMapLayer({ id: baseId, data, layers });
+  useMapLayer({ id: baseId, data, layers, beforeId });
 
-  useEffect(() => {
-    if (!map || !onClick) return;
-    const handler = (e: any) => {
-      const f = e.features?.[0];
-      if (f) onClick(f);
-    };
-    const enter = () => {
-      map.getCanvas().style.cursor = "pointer";
-    };
-    const leave = () => {
-      map.getCanvas().style.cursor = "";
-    };
-    map.on("click", fillId, handler);
-    map.on("mouseenter", fillId, enter);
-    map.on("mouseleave", fillId, leave);
-    return () => {
-      map.off("click", fillId, handler);
-      map.off("mouseenter", fillId, enter);
-      map.off("mouseleave", fillId, leave);
-    };
-  }, [map, fillId, onClick]);
+  useLayerClick(
+    fillId,
+    onClick
+      ? (e) => {
+          const f = e.features?.[0];
+          if (f) onClick(f, e);
+        }
+      : undefined,
+  );
 
   return null;
 };

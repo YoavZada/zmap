@@ -80,6 +80,28 @@ describe("useMapLayer", () => {
     expect(map.layerOrder).toEqual(["layer-1"]);
   });
 
+  it("moves layers when beforeId changes after mount", () => {
+    const map = new FakeMap();
+    map.addLayer({ id: "labels" });
+    map.addLayer({ id: "roads" });
+    const { rerender } = renderMapLayer(map, baseConfig());
+    expect(map.layerOrder).toEqual(["labels", "roads", "layer-1"]);
+
+    rerender(baseConfig({ beforeId: "labels" }));
+    expect(map.layerOrder).toEqual(["layer-1", "labels", "roads"]);
+
+    rerender(baseConfig({ beforeId: "roads" }));
+    expect(map.layerOrder).toEqual(["labels", "layer-1", "roads"]);
+  });
+
+  it("ignores a beforeId change targeting a missing layer", () => {
+    const map = new FakeMap();
+    const { rerender } = renderMapLayer(map, baseConfig());
+
+    rerender(baseConfig({ beforeId: "missing" }));
+    expect(map.layerOrder).toEqual(["layer-1"]);
+  });
+
   it("re-adds source and layers after a style swap wipes them", () => {
     const map = new FakeMap();
     renderMapLayer(map, baseConfig());

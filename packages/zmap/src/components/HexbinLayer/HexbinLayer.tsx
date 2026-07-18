@@ -1,10 +1,18 @@
-import { useEffect, useId, useMemo, type FC } from "react";
+import { useId, useMemo, type FC } from "react";
 import { useTheme } from "@mui/material/styles";
-import type { ExpressionSpecification } from "maplibre-gl";
-import { useMapContext } from "../../context/useMap";
+import type {
+  ExpressionSpecification,
+  MapLayerMouseEvent,
+} from "maplibre-gl";
 import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
+import { useLayerClick } from "../../hooks/useLayerClick";
 import { resolvePaletteColor } from "../../utils/color";
 import { buildColorExpression } from "../../utils/choropleth";
+import { warnDeprecatedProp } from "../../utils/deprecation";
+import {
+  applyLayerOverrides,
+  type LayerOverride,
+} from "../../utils/layerOverrides";
 import { binPoints } from "../../utils/bin";
 import type { LayerPoint } from "../PointLayer";
 
@@ -24,18 +32,45 @@ export type HexbinLayerProps = {
    * Omit to auto-build a ramp spanning the data's `[0, max]`.
    */
   colorRamp?: [number, string][];
-  /** Cell opacity, 0–1. Default 0.75. */
+  /** Cell fill opacity, 0–1. Default 0.75. */
+  fillOpacity?: number;
+  /**
+   * Deprecated: use `fillOpacity` instead.
+   * @deprecated Use `fillOpacity`. Removed in v1.0.
+   */
   opacity?: number;
   /** Render bins as 3D columns (height ∝ value). Pitch the camera to see them. */
   extruded?: boolean;
   /** Meters of column height per unit value when extruded. Default scales max → ~1500m. */
   heightScale?: number;
   /** Cell outline color (flat mode). Default "background.paper". */
-  lineColor?: string;
+  strokeColor?: string;
   /** Cell outline width in pixels (flat mode). Default 0.5. */
+  strokeWidth?: number;
+  /** Cell outline opacity, 0–1 (flat mode). Default 0.4. */
+  strokeOpacity?: number;
+  /**
+   * Deprecated: use `strokeColor` instead.
+   * @deprecated Use `strokeColor`. Removed in v1.0.
+   */
+  lineColor?: string;
+  /**
+   * Deprecated: use `strokeWidth` instead.
+   * @deprecated Use `strokeWidth`. Removed in v1.0.
+   */
   lineWidth?: number;
-  /** Fired with the clicked cell's aggregated value and point count. */
-  onClick?: (bin: { value: number; count: number }) => void;
+  /** Insert the layers before this existing layer id (e.g. a label layer). */
+  beforeId?: string;
+  /**
+   * Paint/layout patches merged into the generated layers. The `fill` role
+   * covers both the flat fill and the extruded fill-extrusion variant.
+   */
+  layerOverrides?: { fill?: LayerOverride; line?: LayerOverride };
+  /** Fired with the clicked cell's aggregates and the raw map event. */
+  onClick?: (
+    bin: { value: number; count: number },
+    event: MapLayerMouseEvent,
+  ) => void;
 };
 
 const DEFAULT_RAMP: [number, string][] = [
@@ -56,18 +91,36 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
   radius = 50,
   weightProperty,
   colorRamp,
-  opacity = 0.75,
+  fillOpacity,
+  opacity,
   extruded = false,
   heightScale,
-  lineColor = "background.paper",
-  lineWidth = 0.5,
+  strokeColor,
+  strokeWidth,
+  strokeOpacity = 0.4,
+  lineColor,
+  lineWidth,
+  beforeId,
+  layerOverrides,
   onClick,
 }) => {
   const theme = useTheme();
-  const { map } = useMapContext();
   const reactId = useId();
   const baseId = id ?? `zmap-hexbin-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const fillId = `${baseId}-fill`;
+
+  if (opacity !== undefined) {
+    warnDeprecatedProp("HexbinLayer", "opacity", "fillOpacity");
+  }
+  if (lineColor !== undefined) {
+    warnDeprecatedProp("HexbinLayer", "lineColor", "strokeColor");
+  }
+  if (lineWidth !== undefined) {
+    warnDeprecatedProp("HexbinLayer", "lineWidth", "strokeWidth");
+  }
+  const resolvedFillOpacity = fillOpacity ?? opacity ?? 0.75;
+  const resolvedStroke = strokeColor ?? lineColor ?? "background.paper";
+  const resolvedStrokeWidth = strokeWidth ?? lineWidth ?? 0.5;
 
   const data = useMemo(
     () => binPoints(points, { cell, radius, weightProperty }),
@@ -95,80 +148,75 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
   const hScale = heightScale ?? 1500 / (max || 1);
 
   const layers = useMemo<LayerInput[]>(() => {
-    if (extruded) {
-      return [
-        {
-          id: fillId,
-          type: "fill-extrusion",
-          paint: {
-            "fill-extrusion-color": colorExpr,
-            "fill-extrusion-height": [
-              "*",
-              ["get", "value"],
-              hScale,
-            ] as ExpressionSpecification,
-            "fill-extrusion-base": 0,
-            "fill-extrusion-opacity": opacity,
+    const base: LayerInput[] = extruded
+      ? [
+          {
+            id: fillId,
+            type: "fill-extrusion",
+            paint: {
+              "fill-extrusion-color": colorExpr,
+              "fill-extrusion-height": [
+                "*",
+                ["get", "value"],
+                hScale,
+              ] as ExpressionSpecification,
+              "fill-extrusion-base": 0,
+              "fill-extrusion-opacity": resolvedFillOpacity,
+            },
           },
-        },
-      ];
-    }
-    return [
-      {
-        id: fillId,
-        type: "fill",
-        paint: { "fill-color": colorExpr, "fill-opacity": opacity },
-      },
-      {
-        id: `${baseId}-line`,
-        type: "line",
-        paint: {
-          "line-color": resolvePaletteColor(theme, lineColor),
-          "line-width": lineWidth,
-          "line-opacity": 0.4,
-        },
-      },
-    ];
+        ]
+      : [
+          {
+            id: fillId,
+            type: "fill",
+            paint: { "fill-color": colorExpr, "fill-opacity": resolvedFillOpacity },
+          },
+          {
+            id: `${baseId}-line`,
+            type: "line",
+            paint: {
+              "line-color": resolvePaletteColor(theme, resolvedStroke),
+              "line-width": resolvedStrokeWidth,
+              "line-opacity": strokeOpacity,
+            },
+          },
+        ];
+    // The extruded variant's only layer still ends in "-fill", so the `fill`
+    // override role covers both shapes.
+    return applyLayerOverrides(base, layerOverrides);
   }, [
     extruded,
     fillId,
     baseId,
     colorExpr,
     hScale,
-    opacity,
-    lineColor,
-    lineWidth,
+    resolvedFillOpacity,
+    resolvedStroke,
+    resolvedStrokeWidth,
+    strokeOpacity,
+    layerOverrides,
     theme,
   ]);
 
-  useMapLayer({ id: baseId, data, layers });
+  useMapLayer({ id: baseId, data, layers, beforeId });
 
-  useEffect(() => {
-    if (!map || !onClick) return;
-    const handler = (e: any) => {
-      const f = e.features?.[0];
-      if (f) {
-        onClick({
-          value: f.properties?.value as number,
-          count: f.properties?.count as number,
-        });
-      }
-    };
-    const enter = () => {
-      map.getCanvas().style.cursor = "pointer";
-    };
-    const leave = () => {
-      map.getCanvas().style.cursor = "";
-    };
-    map.on("click", fillId, handler);
-    map.on("mouseenter", fillId, enter);
-    map.on("mouseleave", fillId, leave);
-    return () => {
-      map.off("click", fillId, handler);
-      map.off("mouseenter", fillId, enter);
-      map.off("mouseleave", fillId, leave);
-    };
-  }, [map, fillId, onClick]);
+  useLayerClick(
+    fillId,
+    onClick
+      ? (e) => {
+          const f = e.features?.[0];
+          if (f) {
+            onClick(
+              {
+                value: f.properties?.value as number,
+                count: f.properties?.count as number,
+              },
+              e,
+            );
+          }
+        }
+      : undefined,
+  );
 
   return null;
 };

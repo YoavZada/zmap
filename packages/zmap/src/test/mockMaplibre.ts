@@ -165,6 +165,24 @@ export class FakeMap {
     this.layerOrder = this.layerOrder.filter((l) => l !== id);
     return this;
   }
+  moveLayer(id: string, beforeId?: string): this {
+    if (!this.layers.has(id)) return this;
+    this.layerOrder = this.layerOrder.filter((l) => l !== id);
+    const at = beforeId ? this.layerOrder.indexOf(beforeId) : -1;
+    if (at >= 0) this.layerOrder.splice(at, 0, id);
+    else this.layerOrder.push(id);
+    return this;
+  }
+
+  // --- filters (what setFilter last applied, per layer) ---
+  filters = new Map<string, unknown>();
+  setFilter(id: string, filter: unknown): this {
+    this.filters.set(id, filter);
+    return this;
+  }
+  getFilter(id: string): unknown {
+    return this.filters.get(id);
+  }
 
   // --- feature state ---
   featureStates = new Map<string, Record<string, unknown>>();
