@@ -1,16 +1,20 @@
 import { useEffect, useId, useMemo, type FC } from "react";
 import { useTheme } from "@mui/material/styles";
+import type { MapLayerMouseEvent } from "maplibre-gl";
 import { useMapContext } from "../../context/useMap";
 import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
+import { useLayerClick } from "../../hooks/useLayerClick";
 import { resolvePaletteColor } from "../../utils/color";
 import { featureCollection, pointFeature } from "../../utils/geojson";
+import type { BasePoint } from "../../utils/geojson";
+import {
+  applyLayerOverrides,
+  type LayerOverride,
+} from "../../utils/layerOverrides";
 
-export type SymbolPoint = {
-  longitude: number;
-  latitude: number;
+export type SymbolPoint = BasePoint & {
   /** The text rendered at this point. */
   label?: string;
-  properties?: Record<string, unknown>;
 };
 
 export type SymbolLayerProps = {
@@ -52,8 +56,16 @@ export type SymbolLayerProps = {
   icon?: { src: string; size?: number };
   /** Draw labels even when they collide. Default false (MapLibre declutters). */
   allowOverlap?: boolean;
-  /** Fired with the clicked point and its index in `points`. */
-  onClick?: (point: SymbolPoint, index: number) => void;
+  /** Insert the layer before this existing layer id. */
+  beforeId?: string;
+  /** Paint/layout patches merged into the generated symbol layer. */
+  layerOverrides?: { symbol?: LayerOverride };
+  /** Fired with the clicked point, its index in `points`, and the raw event. */
+  onClick?: (
+    point: SymbolPoint,
+    index: number,
+    event: MapLayerMouseEvent,
+  ) => void;
 };
 
 /**
@@ -73,6 +85,8 @@ const SymbolLayer: FC<SymbolLayerProps> = ({
   offset = [0, 0.4],
   icon,
   allowOverlap = false,
+  beforeId,
+  layerOverrides,
   onClick,
 }) => {
   const theme = useTheme();
@@ -129,30 +143,34 @@ const SymbolLayer: FC<SymbolLayerProps> = ({
   }, [map, iconSrc, imageId]);
 
   const layers = useMemo<LayerInput[]>(
-    () => [
-      {
-        id: layerId,
-        type: "symbol",
-        layout: {
-          "text-field": ["get", "label"],
-          "text-size": size,
-          "text-anchor": anchor,
-          "text-offset": offset,
-          ...(font ? { "text-font": font } : undefined),
-          ...(allowOverlap
-            ? { "text-allow-overlap": true, "icon-allow-overlap": true }
-            : undefined),
-          ...(icon
-            ? { "icon-image": imageId, "icon-size": icon.size ?? 1 }
-            : undefined),
-        },
-        paint: {
-          "text-color": resolvePaletteColor(theme, color),
-          "text-halo-color": resolvePaletteColor(theme, haloColor),
-          "text-halo-width": haloWidth,
-        },
-      } as LayerInput,
-    ],
+    () =>
+      applyLayerOverrides(
+        [
+          {
+            id: layerId,
+            type: "symbol",
+            layout: {
+              "text-field": ["get", "label"],
+              "text-size": size,
+              "text-anchor": anchor,
+              "text-offset": offset,
+              ...(font ? { "text-font": font } : undefined),
+              ...(allowOverlap
+                ? { "text-allow-overlap": true, "icon-allow-overlap": true }
+                : undefined),
+              ...(icon
+                ? { "icon-image": imageId, "icon-size": icon.size ?? 1 }
+                : undefined),
+            },
+            paint: {
+              "text-color": resolvePaletteColor(theme, color),
+              "text-halo-color": resolvePaletteColor(theme, haloColor),
+              "text-halo-width": haloWidth,
+            },
+          } as LayerInput,
+        ],
+        layerOverrides,
+      ),
     [
       layerId,
       imageId,
@@ -165,35 +183,22 @@ const SymbolLayer: FC<SymbolLayerProps> = ({
       color,
       haloColor,
       haloWidth,
+      layerOverrides,
       theme,
     ],
   );
 
-  useMapLayer({ id: baseId, data, layers });
+  useMapLayer({ id: baseId, data, layers, beforeId });
 
-  useEffect(() => {
-    if (!map || !onClick) return;
-    const handleClick = (e: {
-      features?: { properties?: Record<string, unknown> }[];
-    }) => {
-      const idx = e.features?.[0]?.properties?._idx as number | undefined;
-      if (idx != null && points[idx]) onClick(points[idx], idx);
-    };
-    const enter = () => {
-      map.getCanvas().style.cursor = "pointer";
-    };
-    const leave = () => {
-      map.getCanvas().style.cursor = "";
-    };
-    map.on("click", layerId, handleClick);
-    map.on("mouseenter", layerId, enter);
-    map.on("mouseleave", layerId, leave);
-    return () => {
-      map.off("click", layerId, handleClick);
-      map.off("mouseenter", layerId, enter);
-      map.off("mouseleave", layerId, leave);
-    };
-  }, [map, layerId, onClick, points]);
+  useLayerClick(
+    layerId,
+    onClick
+      ? (e) => {
+          const idx = e.features?.[0]?.properties?._idx as number | undefined;
+          if (idx != null && points[idx]) onClick(points[idx], idx, e);
+        }
+      : undefined,
+  );
 
   return null;
 };

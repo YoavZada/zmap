@@ -92,16 +92,32 @@ describe("SymbolLayer", () => {
     expect(map.getLayer("cities-symbol")).toBeUndefined();
   });
 
-  it("reports clicks with the original point and index", () => {
+  it("reports clicks with the original point, index, and raw event", () => {
     const map = new FakeMap();
     const onClick = vi.fn();
     renderSymbols(map, { onClick });
 
+    const event = { features: [{ properties: { _idx: 1 } }] };
     act(() => {
-      map.fireLayer("click", "cities-symbol", {
-        features: [{ properties: { _idx: 1 } }],
-      });
+      map.fireLayer("click", "cities-symbol", event);
     });
-    expect(onClick).toHaveBeenCalledWith(POINTS[1], 1);
+    expect(onClick).toHaveBeenCalledWith(POINTS[1], 1, event);
+  });
+
+  it("honors beforeId and layerOverrides", () => {
+    const map = new FakeMap();
+    map.addLayer({ id: "labels" });
+    renderSymbols(map, {
+      beforeId: "labels",
+      layerOverrides: { symbol: { layout: { "symbol-sort-key": 1 } } },
+    });
+
+    expect(map.layerOrder).toEqual(["cities-symbol", "labels"]);
+    const layout = map.getLayer("cities-symbol")!.layout as Record<
+      string,
+      unknown
+    >;
+    expect(layout["symbol-sort-key"]).toBe(1);
+    expect(layout["text-field"]).toEqual(["get", "label"]); // generated kept
   });
 });
