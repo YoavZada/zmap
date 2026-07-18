@@ -1,6 +1,19 @@
 import type { FC } from "react";
-import { Map, MapControls, ExtrusionLayer } from "zmapgl";
+import { Map, MapControls, ExtrusionLayer, Legend } from "zmapgl";
+import type { ChoroplethSpec } from "zmapgl";
 import { buildings } from "../../data";
+
+// Muted at street level, indigo mid-rise, pink towers — palette-token stops
+// stay theme-aware in light and dark mode.
+const byHeight: ChoroplethSpec = {
+  property: "height",
+  stops: [
+    [20, "grey.500"],
+    [120, "primary.light"],
+    [260, "primary.main"],
+    [440, "secondary.main"],
+  ],
+};
 
 // buildings: GeoJSON polygons whose features carry a numeric "height" (meters).
 const ExtrudedBuildingsDemo: FC = () => {
@@ -17,8 +30,13 @@ const ExtrudedBuildingsDemo: FC = () => {
       <ExtrusionLayer
         data={buildings}
         heightProperty="height" // drive height from the data
-        color="primary.main"
+        color={byHeight} // …and tint each building by the same value
         opacity={0.92}
+      />
+      <Legend
+        title="Building height"
+        spec={byHeight}
+        formatValue={(v) => `${v} m`}
       />
     </Map>
   );

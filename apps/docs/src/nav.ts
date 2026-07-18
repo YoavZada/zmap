@@ -19,22 +19,114 @@ export interface NavItem {
   path: string;
   label: string;
   icon: ElementType;
+  /** One-line summary used for the page's meta description. */
+  description: string;
 }
 
 export const navItems: NavItem[] = [
-  { path: "/", label: "Introduction", icon: InfoOutlined },
-  { path: "/providers", label: "Providers & Theming", icon: PaletteOutlined },
-  { path: "/markers", label: "Markers", icon: PlaceOutlined },
-  { path: "/popups", label: "Popups & Tooltips", icon: ChatBubbleOutline },
-  { path: "/controls", label: "Controls", icon: TuneOutlined },
-  { path: "/interaction", label: "Interaction", icon: DesignServicesOutlined },
-  { path: "/routes", label: "Routes", icon: RouteOutlined },
-  { path: "/arcs", label: "Arcs", icon: TimelineOutlined },
-  { path: "/clusters", label: "Clusters", icon: BubbleChartOutlined },
-  { path: "/layers", label: "Layers", icon: LayersOutlined },
-  { path: "/choropleth", label: "Choropleth", icon: GradientOutlined },
-  { path: "/hexbins", label: "Hexbins & grids", icon: HexagonOutlined },
-  { path: "/time", label: "Time playback", icon: PlayCircleOutline },
-  { path: "/extrusion", label: "3D Extrusion", icon: ViewInArOutlined },
-  { path: "/api", label: "API Reference", icon: MenuBookOutlined },
+  {
+    path: "/",
+    label: "Introduction",
+    icon: InfoOutlined,
+    description:
+      "MUI-native map components built on MapLibre GL — install zmapgl and drop a themed map into your React app.",
+  },
+  {
+    path: "/providers",
+    label: "Providers & Theming",
+    icon: PaletteOutlined,
+    description:
+      "Switch basemap providers and let maps follow your MUI theme's light and dark mode automatically.",
+  },
+  {
+    path: "/markers",
+    label: "Markers",
+    icon: PlaceOutlined,
+    description:
+      "Place MUI content on the map: pins, custom components, draggable markers, and GPU symbol labels.",
+  },
+  {
+    path: "/popups",
+    label: "Popups & Tooltips",
+    icon: ChatBubbleOutline,
+    description:
+      "Theme-aware popups on click and lightweight tooltips on hover, anchored to map coordinates.",
+  },
+  {
+    path: "/controls",
+    label: "Controls",
+    icon: TuneOutlined,
+    description:
+      "Zoom, compass, geolocate, fullscreen, pitch, and scale controls styled to match your MUI theme.",
+  },
+  {
+    path: "/interaction",
+    label: "Interaction",
+    icon: DesignServicesOutlined,
+    description:
+      "Drawing tools, measuring, context menus, box and lasso selection, and declarative camera control.",
+  },
+  {
+    path: "/routes",
+    label: "Routes",
+    icon: RouteOutlined,
+    description:
+      "Declarative polylines with palette-token colors, dashing, and width — rendered as GPU line layers.",
+  },
+  {
+    path: "/arcs",
+    label: "Arcs",
+    icon: TimelineOutlined,
+    description:
+      "Curved bezier and geodesic arcs between points — flight paths and connection maps.",
+  },
+  {
+    path: "/clusters",
+    label: "Clusters",
+    icon: BubbleChartOutlined,
+    description:
+      "Native MapLibre clustering rendered as MUI markers, with aggregate properties and custom renderers.",
+  },
+  {
+    path: "/layers",
+    label: "Layers",
+    icon: LayersOutlined,
+    description:
+      "Toggleable overlays with LayerControl, GeoJSON layers, point layers, heatmaps, and legends.",
+  },
+  {
+    path: "/choropleth",
+    label: "Choropleth",
+    icon: GradientOutlined,
+    description:
+      "Data-driven polygon coloring with interpolate and step ramps, hover feature-state, and legends.",
+  },
+  {
+    path: "/hexbins",
+    label: "Hexbins & grids",
+    icon: HexagonOutlined,
+    description:
+      "Aggregate points into hexagonal or square bins, flat or extruded, with weighted color ramps.",
+  },
+  {
+    path: "/time",
+    label: "Time playback",
+    icon: PlayCircleOutline,
+    description:
+      "Animate time-stamped points with a themed transport bar — trails, looping, and scrubbing.",
+  },
+  {
+    path: "/extrusion",
+    label: "3D Extrusion",
+    icon: ViewInArOutlined,
+    description:
+      "Extrude polygons into 3D — buildings by height, data-driven prisms, and tilt controls.",
+  },
+  {
+    path: "/api",
+    label: "API Reference",
+    icon: MenuBookOutlined,
+    description:
+      "Every component, hook, provider, utility, and type zmapgl ships, with links into the demos.",
+  },
 ];

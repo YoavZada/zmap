@@ -20,6 +20,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import BoltOutlined from "@mui/icons-material/BoltOutlined";
 import RouteOutlined from "@mui/icons-material/RouteOutlined";
 import { NpmIcon } from "../../icons";
+import RouteMeta from "../../components/RouteMeta";
 import Search from "../../components/Search";
 import { navItems } from "../../nav";
 import { useColorMode } from "../../theme";
@@ -119,6 +120,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 
   return (
     <Box sx={Styles.root}>
+      <RouteMeta />
       <AppBar position="fixed" color="default" elevation={0} sx={Styles.appBar}>
         <Toolbar>
           <IconButton

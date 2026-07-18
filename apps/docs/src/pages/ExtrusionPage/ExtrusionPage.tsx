@@ -27,7 +27,7 @@ const ExtrusionPage: FC = () => {
 
       <DemoSection
         title="Extruded buildings"
-        description="A block of Midtown footprints, each raised to its height in meters. Tilt with the cube control, then drag to orbit."
+        description="A block of Midtown footprints, each raised — and tinted — by its height in meters. Tilt with the cube control, then drag to orbit."
         code={extrudedBuildingsDemoSource}
         demo={<ExtrudedBuildingsDemo />}
       />
