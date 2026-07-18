@@ -8,91 +8,120 @@
           "type": "LngLatTuple",
           "required": true,
           "defaultValue": null,
-          "description": "Start of the arc as [longitude, latitude]."
+          "description": "Start of the arc as [longitude, latitude].",
+          "deprecated": null
         },
         {
           "name": "to",
           "type": "LngLatTuple",
           "required": true,
           "defaultValue": null,
-          "description": "End of the arc as [longitude, latitude]."
+          "description": "End of the arc as [longitude, latitude].",
+          "deprecated": null
         },
         {
           "name": "beforeId",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Insert before this existing layer id."
+          "description": "Insert before this existing layer id.",
+          "deprecated": null
         },
         {
           "name": "color",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "MUI palette token (\"primary.main\") or any CSS color. Default \"primary.main\"."
+          "description": "MUI palette token (\"primary.main\") or any CSS color. Default \"primary.main\".",
+          "deprecated": null
         },
         {
           "name": "curvature",
           "type": "number",
           "required": false,
           "defaultValue": null,
-          "description": "Bulge factor for \"bezier\" arcs (0 = straight). Default 0.3."
+          "description": "Bulge factor for \"bezier\" arcs (0 = straight). Default 0.3.",
+          "deprecated": null
         },
         {
           "name": "dashed",
           "type": "boolean",
           "required": false,
           "defaultValue": null,
-          "description": "Draw the line dashed instead of solid. Default false."
+          "description": "Draw the line dashed instead of solid. Default false.",
+          "deprecated": null
         },
         {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Explicit source/layer id. Auto-generated when omitted."
+          "description": "Explicit source/layer id. Auto-generated when omitted.",
+          "deprecated": null
+        },
+        {
+          "name": "layerOverrides",
+          "type": "{ line?: LayerOverride; }",
+          "required": false,
+          "defaultValue": null,
+          "description": "Paint/layout patches merged into the generated line layer.",
+          "deprecated": null
         },
         {
           "name": "lineCap",
           "type": "enum",
           "required": false,
           "defaultValue": null,
-          "description": "How line ends are capped. Default \"round\"."
+          "description": "How line ends are capped. Default \"round\".",
+          "deprecated": null
         },
         {
           "name": "lineJoin",
           "type": "enum",
           "required": false,
           "defaultValue": null,
-          "description": "How line corners are joined. Default \"round\"."
+          "description": "How line corners are joined. Default \"round\".",
+          "deprecated": null
+        },
+        {
+          "name": "onClick",
+          "type": "((event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired when the line is clicked, with the raw map event.",
+          "deprecated": null
         },
         {
           "name": "opacity",
           "type": "number",
           "required": false,
           "defaultValue": null,
-          "description": "Line opacity, 0–1. Default 1."
+          "description": "Line opacity, 0–1. Default 1.",
+          "deprecated": null
         },
         {
           "name": "points",
           "type": "number",
           "required": false,
           "defaultValue": null,
-          "description": "Number of points sampled along the arc. Default 64."
+          "description": "Number of points sampled along the arc. Default 64.",
+          "deprecated": null
         },
         {
           "name": "type",
           "type": "enum",
           "required": false,
           "defaultValue": null,
-          "description": "\"bezier\" (flight-path bulge) or \"geodesic\" (great-circle). Default bezier."
+          "description": "\"bezier\" (flight-path bulge) or \"geodesic\" (great-circle). Default bezier.",
+          "deprecated": null
         },
         {
           "name": "width",
           "type": "number",
           "required": false,
           "defaultValue": null,
-          "description": "Line width in pixels. Default 4."
+          "description": "Line width in pixels. Default 4.",
+          "deprecated": null
         }
       ]
     },
@@ -104,77 +133,128 @@
           "type": "GeoJSON",
           "required": true,
           "defaultValue": null,
-          "description": "GeoJSON polygons to color."
+          "description": "GeoJSON polygons to color.",
+          "deprecated": null
         },
         {
           "name": "property",
           "type": "string",
           "required": true,
           "defaultValue": null,
-          "description": "Feature property whose numeric value drives the fill color."
+          "description": "Feature property whose numeric value drives the fill color.",
+          "deprecated": null
         },
         {
           "name": "stops",
           "type": "[number, string][]",
           "required": true,
           "defaultValue": null,
-          "description": "`[value, color]` stops in ascending order; colors may be palette tokens."
+          "description": "`[value, color]` stops in ascending order; colors may be palette tokens.",
+          "deprecated": null
+        },
+        {
+          "name": "beforeId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Insert the layers before this existing layer id (e.g. a label layer).",
+          "deprecated": null
         },
         {
           "name": "fillOpacity",
           "type": "number",
           "required": false,
           "defaultValue": "0.6",
-          "description": "Fill opacity, 0–1. Default 0.6."
+          "description": "Fill opacity, 0–1. Default 0.6.",
+          "deprecated": null
         },
         {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted."
+          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "deprecated": null
+        },
+        {
+          "name": "layerOverrides",
+          "type": "{ fill?: LayerOverride; line?: LayerOverride; } | undefined",
+          "required": false,
+          "defaultValue": null,
+          "description": "Paint/layout patches merged into the generated fill/line layers.",
+          "deprecated": null
         },
         {
           "name": "legend",
           "type": "boolean | ChoroplethLegendConfig",
           "required": false,
           "defaultValue": null,
-          "description": "Render a matching <Legend> from the same stops — pass `true` for defaults,\nor a config object to set its title, corner, and number format. The legend\nshares this layer's stops, so the two can never drift apart."
-        },
-        {
-          "name": "lineColor",
-          "type": "string",
-          "required": false,
-          "defaultValue": "divider",
-          "description": "Outline color (palette token or CSS). Default \"divider\"."
-        },
-        {
-          "name": "lineOpacity",
-          "type": "number",
-          "required": false,
-          "defaultValue": "1",
-          "description": "Outline opacity, 0–1. Default 1."
-        },
-        {
-          "name": "lineWidth",
-          "type": "number",
-          "required": false,
-          "defaultValue": "1",
-          "description": "Outline width in pixels. Default 1."
+          "description": "Render a matching <Legend> from the same stops — pass `true` for defaults,\nor a config object to set its title, corner, and number format. The legend\nshares this layer's stops, so the two can never drift apart.",
+          "deprecated": null
         },
         {
           "name": "onClick",
-          "type": "((feature: any) => void)",
+          "type": "((feature: MapGeoJSONFeature, event: MapLayerMouseEvent) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired with the clicked GeoJSON feature."
+          "description": "Fired with the clicked feature and the raw map event.",
+          "deprecated": null
         },
         {
           "name": "scale",
           "type": "enum",
           "required": false,
           "defaultValue": "interpolate",
-          "description": "\"interpolate\" (smooth ramp, default) or \"step\" (banded)."
+          "description": "\"interpolate\" (smooth ramp, default) or \"step\" (banded).",
+          "deprecated": null
+        },
+        {
+          "name": "strokeColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Outline color (palette token or CSS). Default \"divider\".",
+          "deprecated": null
+        },
+        {
+          "name": "strokeOpacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Outline opacity, 0–1. Default 1.",
+          "deprecated": null
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Outline width in pixels. Default 1.",
+          "deprecated": null
+        },
+        {
+          "name": "lineColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Deprecated: use `strokeColor` instead.",
+          "deprecated": "Use `strokeColor`. Removed in v1.0."
+        },
+        {
+          "name": "lineOpacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Deprecated: use `strokeOpacity` instead.",
+          "deprecated": "Use `strokeOpacity`. Removed in v1.0."
+        },
+        {
+          "name": "lineWidth",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Deprecated: use `strokeWidth` instead.",
+          "deprecated": "Use `strokeWidth`. Removed in v1.0."
         }
       ]
     },
@@ -186,70 +266,80 @@
           "type": "ClusterPoint[]",
           "required": true,
           "defaultValue": null,
-          "description": "The points to cluster."
+          "description": "The points to cluster.",
+          "deprecated": null
         },
         {
           "name": "clusterProperties",
           "type": "Record<string, unknown>",
           "required": false,
           "defaultValue": null,
-          "description": "Aggregate point properties into each cluster (MapLibre\n`clusterProperties`): a map of name → [operator, mapExpression], e.g.\n`{ sales: [\"+\", [\"get\", \"sales\"]] }`. Aggregates arrive in\n`renderCluster`'s third argument."
+          "description": "Aggregate point properties into each cluster (MapLibre\n`clusterProperties`): a map of name → [operator, mapExpression], e.g.\n`{ sales: [\"+\", [\"get\", \"sales\"]] }`. Aggregates arrive in\n`renderCluster`'s third argument.",
+          "deprecated": null
         },
         {
           "name": "color",
           "type": "string",
           "required": false,
           "defaultValue": "primary.main",
-          "description": "Cluster bubble color (palette token or CSS). Default \"primary.main\"."
+          "description": "Cluster bubble color (palette token or CSS). Default \"primary.main\".",
+          "deprecated": null
         },
         {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted."
+          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "deprecated": null
         },
         {
           "name": "maxZoom",
           "type": "number",
           "required": false,
           "defaultValue": "14",
-          "description": "Max zoom at which points cluster. Default 14."
+          "description": "Max zoom at which points cluster. Default 14.",
+          "deprecated": null
         },
         {
           "name": "onPointClick",
-          "type": "((point: ClusterPoint) => void)",
+          "type": "((point: ClusterPoint, index: number) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired with the clicked unclustered point."
+          "description": "Fired with the clicked unclustered point and its index in `points`.",
+          "deprecated": null
         },
         {
           "name": "pointColor",
           "type": "string",
           "required": false,
           "defaultValue": "secondary.main",
-          "description": "Unclustered point color. Default \"secondary.main\"."
+          "description": "Unclustered point color. Default \"secondary.main\".",
+          "deprecated": null
         },
         {
           "name": "radius",
           "type": "number",
           "required": false,
           "defaultValue": "50",
-          "description": "Cluster radius in pixels. Default 50."
+          "description": "Cluster radius in pixels. Default 50.",
+          "deprecated": null
         },
         {
           "name": "renderCluster",
           "type": "((count: number, expand: () => void, properties: Record<string, unknown>) => ReactNode)",
           "required": false,
           "defaultValue": null,
-          "description": "Custom cluster bubble. Receives the count, a zoom-to-expand callback, and\nthe cluster's aggregated properties (see `clusterProperties`)."
+          "description": "Custom cluster bubble. Receives the count, a zoom-to-expand callback, and\nthe cluster's aggregated properties (see `clusterProperties`).",
+          "deprecated": null
         },
         {
           "name": "renderPoint",
           "type": "((point: ClusterPoint) => ReactNode)",
           "required": false,
           "defaultValue": null,
-          "description": "Custom single-point marker."
+          "description": "Custom single-point marker.",
+          "deprecated": null
         }
       ]
     },
@@ -261,28 +351,32 @@
           "type": "boolean",
           "required": false,
           "defaultValue": null,
-          "description": "Include the built-in items. Defaults to true when `items` is omitted and\nfalse when custom items are supplied (set true to append the defaults)."
+          "description": "Include the built-in items. Defaults to true when `items` is omitted and\nfalse when custom items are supplied (set true to append the defaults).",
+          "deprecated": null
         },
         {
           "name": "items",
           "type": "ContextMenuItem[] | ((lngLat: LngLatTuple) => ContextMenuItem[])",
           "required": false,
           "defaultValue": null,
-          "description": "Menu entries — a static array or a builder called with the click\ncoordinate. When omitted, the built-in center / copy / drop items show."
+          "description": "Menu entries — a static array or a builder called with the click\ncoordinate. When omitted, the built-in center / copy / drop items show.",
+          "deprecated": null
         },
         {
           "name": "onDropMarker",
           "type": "((lngLat: LngLatTuple) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Handle the built-in \"Drop marker\" action. When omitted, the menu drops and\nrenders its own draggable markers (click one to remove it)."
+          "description": "Handle the built-in \"Drop marker\" action. When omitted, the menu drops and\nrenders its own draggable markers (click one to remove it).",
+          "deprecated": null
         },
         {
           "name": "precision",
           "type": "number",
           "required": false,
           "defaultValue": "5",
-          "description": "Decimal places for the copied / displayed coordinate. Default 5."
+          "description": "Decimal places for the copied / displayed coordinate. Default 5.",
+          "deprecated": null
         }
       ]
     },
@@ -294,56 +388,64 @@
           "type": "string",
           "required": false,
           "defaultValue": "primary.main",
-          "description": "Palette token or CSS color for the drawn shapes. Default \"primary.main\"."
+          "description": "Palette token or CSS color for the drawn shapes. Default \"primary.main\".",
+          "deprecated": null
         },
         {
           "name": "fillOpacity",
           "type": "number",
           "required": false,
           "defaultValue": "0.3",
-          "description": "Fill opacity for drawn polygons, 0–1. Default 0.3."
+          "description": "Fill opacity for drawn polygons, 0–1. Default 0.3.",
+          "deprecated": null
         },
         {
           "name": "lineWidth",
           "type": "number",
           "required": false,
           "defaultValue": "2",
-          "description": "Width of drawn lines and outlines in pixels. Default 2."
+          "description": "Width of drawn lines and outlines in pixels. Default 2.",
+          "deprecated": null
         },
         {
           "name": "modes",
           "type": "DrawMode[]",
           "required": false,
           "defaultValue": "[\"point\", \"line\", \"polygon\"]",
-          "description": "Which drawing tools to offer. Default point + line + polygon."
+          "description": "Which drawing tools to offer. Default point + line + polygon.",
+          "deprecated": null
         },
         {
           "name": "onChange",
           "type": "((features: DrawFeature[]) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired with the full feature list on every add / undo / clear."
+          "description": "Fired with the full feature list on every add / undo / clear.",
+          "deprecated": null
         },
         {
           "name": "onCreate",
           "type": "((feature: DrawFeature) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired once when a single shape is completed."
+          "description": "Fired once when a single shape is completed.",
+          "deprecated": null
         },
         {
           "name": "position",
           "type": "enum",
           "required": false,
           "defaultValue": "top-left",
-          "description": "Corner for the tool palette. Default \"top-left\"."
+          "description": "Corner for the tool palette. Default \"top-left\".",
+          "deprecated": null
         },
         {
           "name": "showClear",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Show the \"clear all\" button. Default true."
+          "description": "Show the \"clear all\" button. Default true.",
+          "deprecated": null
         }
       ]
     },
@@ -355,63 +457,104 @@
           "type": "GeoJSON",
           "required": true,
           "defaultValue": null,
-          "description": "GeoJSON polygons to extrude."
+          "description": "GeoJSON polygons to extrude.",
+          "deprecated": null
         },
         {
           "name": "base",
           "type": "number",
           "required": false,
           "defaultValue": "0",
-          "description": "Base height in meters — the floor the extrusion rises from. Default 0."
+          "description": "Base height in meters — the floor the extrusion rises from. Default 0.",
+          "deprecated": null
         },
         {
-          "name": "color",
+          "name": "beforeId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Insert the layer before this existing layer id (e.g. a label layer).",
+          "deprecated": null
+        },
+        {
+          "name": "fillColor",
           "type": "string | ChoroplethSpec",
           "required": false,
-          "defaultValue": "primary.main",
-          "description": "Fill — a palette token / CSS color, or a choropleth spec for data-driven color."
+          "defaultValue": null,
+          "description": "Fill — a palette token / CSS color, or a choropleth spec for data-driven color. Default \"primary.main\".",
+          "deprecated": null
+        },
+        {
+          "name": "fillOpacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Extrusion opacity, 0–1. Default 0.9.",
+          "deprecated": null
         },
         {
           "name": "height",
           "type": "number",
           "required": false,
           "defaultValue": "0",
-          "description": "Constant height in meters. Ignored when `heightProperty` is set. Default 0."
+          "description": "Constant height in meters. Ignored when `heightProperty` is set. Default 0.",
+          "deprecated": null
         },
         {
           "name": "heightProperty",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Feature property to drive height from (e.g. building floors × meters)."
+          "description": "Feature property to drive height from (e.g. building floors × meters).",
+          "deprecated": null
         },
         {
           "name": "heightScale",
           "type": "number",
           "required": false,
           "defaultValue": "1",
-          "description": "Multiplier applied to `heightProperty` values. Default 1."
+          "description": "Multiplier applied to `heightProperty` values. Default 1.",
+          "deprecated": null
         },
         {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted."
+          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "deprecated": null
+        },
+        {
+          "name": "layerOverrides",
+          "type": "{ extrusion?: LayerOverride; }",
+          "required": false,
+          "defaultValue": null,
+          "description": "Paint/layout patches merged into the generated fill-extrusion layer.",
+          "deprecated": null
         },
         {
           "name": "onClick",
-          "type": "((feature: any) => void)",
+          "type": "((feature: MapGeoJSONFeature, event: MapLayerMouseEvent) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired with the clicked GeoJSON feature."
+          "description": "Fired with the clicked feature and the raw map event.",
+          "deprecated": null
+        },
+        {
+          "name": "color",
+          "type": "string | ChoroplethSpec",
+          "required": false,
+          "defaultValue": null,
+          "description": "Deprecated: use `fillColor` instead.",
+          "deprecated": "Use `fillColor`. Removed in v1.0."
         },
         {
           "name": "opacity",
           "type": "number",
           "required": false,
-          "defaultValue": "0.9",
-          "description": "Extrusion opacity, 0–1. Default 0.9."
+          "defaultValue": null,
+          "description": "Deprecated: use `fillOpacity` instead.",
+          "deprecated": "Use `fillOpacity`. Removed in v1.0."
         }
       ]
     },
@@ -423,35 +566,40 @@
           "type": "string | GeoJSON",
           "required": true,
           "defaultValue": null,
-          "description": "GeoJSON rendered by the layers — inline data, or a URL string the map\nfetches itself (any endpoint serving GeoJSON)."
+          "description": "GeoJSON rendered by the layers — inline data, or a URL string the map\nfetches itself (any endpoint serving GeoJSON).",
+          "deprecated": null
         },
         {
           "name": "id",
           "type": "string",
           "required": true,
           "defaultValue": null,
-          "description": "Unique id for the GeoJSON source backing these layers."
+          "description": "Unique id for the GeoJSON source backing these layers.",
+          "deprecated": null
         },
         {
           "name": "layers",
           "type": "LayerInput[]",
           "required": true,
           "defaultValue": null,
-          "description": "One or more layers to render. Memoize this array to avoid churn."
+          "description": "One or more layers to render. Memoize this array to avoid churn.",
+          "deprecated": null
         },
         {
           "name": "beforeId",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Insert the layers before this existing layer id (e.g. a label layer)."
+          "description": "Insert the layers before this existing layer id (e.g. a label layer).",
+          "deprecated": null
         },
         {
           "name": "sourceOptions",
           "type": "Partial<Omit<GeoJSONSourceSpecification, \"type\" | \"data\">>",
           "required": false,
           "defaultValue": null,
-          "description": "Extra source options (clustering, generateId, …)."
+          "description": "Extra source options (clustering, generateId, …).",
+          "deprecated": null
         }
       ]
     },
@@ -460,52 +608,75 @@
       "props": [
         {
           "name": "points",
-          "type": "LayerPoint[]",
+          "type": "BasePoint[]",
           "required": true,
           "defaultValue": null,
-          "description": "The points that feed the density surface."
+          "description": "The points that feed the density surface.",
+          "deprecated": null
+        },
+        {
+          "name": "beforeId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Insert the layer before this existing layer id.",
+          "deprecated": null
         },
         {
           "name": "colorRamp",
-          "type": "ExpressionSpecification",
+          "type": "[number, string][] | ExpressionSpecification",
           "required": false,
           "defaultValue": null,
-          "description": "Override the density→color ramp (a MapLibre expression)."
+          "description": "Override the density→color ramp: either `[density, color]` stops over the\n0–1 density range (colors may be palette tokens, like HexbinLayer's\n`colorRamp`), or a raw MapLibre expression.",
+          "deprecated": null
         },
         {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted."
+          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "deprecated": null
         },
         {
           "name": "intensity",
           "type": "number",
           "required": false,
           "defaultValue": "1",
-          "description": "Global density multiplier — higher reads hotter. Default 1."
+          "description": "Global density multiplier — higher reads hotter. Default 1.",
+          "deprecated": null
+        },
+        {
+          "name": "layerOverrides",
+          "type": "{ heat?: LayerOverride; }",
+          "required": false,
+          "defaultValue": null,
+          "description": "Paint/layout patches merged into the generated heatmap layer.",
+          "deprecated": null
         },
         {
           "name": "opacity",
           "type": "number",
           "required": false,
           "defaultValue": "0.85",
-          "description": "Heatmap opacity, 0–1. Default 0.85."
+          "description": "Heatmap opacity, 0–1. Default 0.85.",
+          "deprecated": null
         },
         {
           "name": "radius",
           "type": "number",
           "required": false,
           "defaultValue": "20",
-          "description": "Influence radius of each point in pixels. Default 20."
+          "description": "Influence radius of each point in pixels. Default 20.",
+          "deprecated": null
         },
         {
           "name": "weightProperty",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Feature property to weight points by (defaults to equal weight)."
+          "description": "Feature property to weight points by (defaults to equal weight).",
+          "deprecated": null
         }
       ]
     },
@@ -514,87 +685,147 @@
       "props": [
         {
           "name": "points",
-          "type": "LayerPoint[]",
+          "type": "BasePoint[]",
           "required": true,
           "defaultValue": null,
-          "description": "The points to aggregate into cells."
+          "description": "The points to aggregate into cells.",
+          "deprecated": null
+        },
+        {
+          "name": "beforeId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Insert the layers before this existing layer id (e.g. a label layer).",
+          "deprecated": null
         },
         {
           "name": "cell",
           "type": "enum",
           "required": false,
           "defaultValue": "hex",
-          "description": "Cell shape — \"hex\" (default) or \"square\" grid."
+          "description": "Cell shape — \"hex\" (default) or \"square\" grid.",
+          "deprecated": null
         },
         {
           "name": "colorRamp",
           "type": "[number, string][]",
           "required": false,
           "defaultValue": null,
-          "description": "`[value, color]` stops for the bin color ramp; colors may be palette tokens.\nOmit to auto-build a ramp spanning the data's `[0, max]`."
+          "description": "`[value, color]` stops for the bin color ramp; colors may be palette tokens.\nOmit to auto-build a ramp spanning the data's `[0, max]`.",
+          "deprecated": null
         },
         {
           "name": "extruded",
           "type": "boolean",
           "required": false,
           "defaultValue": "false",
-          "description": "Render bins as 3D columns (height ∝ value). Pitch the camera to see them."
+          "description": "Render bins as 3D columns (height ∝ value). Pitch the camera to see them.",
+          "deprecated": null
+        },
+        {
+          "name": "fillOpacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Cell fill opacity, 0–1. Default 0.75.",
+          "deprecated": null
         },
         {
           "name": "heightScale",
           "type": "number",
           "required": false,
           "defaultValue": null,
-          "description": "Meters of column height per unit value when extruded. Default scales max → ~1500m."
+          "description": "Meters of column height per unit value when extruded. Default scales max → ~1500m.",
+          "deprecated": null
         },
         {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted."
+          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "deprecated": null
         },
         {
-          "name": "lineColor",
-          "type": "string",
+          "name": "layerOverrides",
+          "type": "{ fill?: LayerOverride; line?: LayerOverride; } | undefined",
           "required": false,
-          "defaultValue": "background.paper",
-          "description": "Cell outline color (flat mode). Default \"background.paper\"."
-        },
-        {
-          "name": "lineWidth",
-          "type": "number",
-          "required": false,
-          "defaultValue": "0.5",
-          "description": "Cell outline width in pixels (flat mode). Default 0.5."
+          "defaultValue": null,
+          "description": "Paint/layout patches merged into the generated layers. The `fill` role\ncovers both the flat fill and the extruded fill-extrusion variant.",
+          "deprecated": null
         },
         {
           "name": "onClick",
-          "type": "((bin: { value: number; count: number; }) => void)",
+          "type": "((bin: { value: number; count: number; }, event: MapLayerMouseEvent) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired with the clicked cell's aggregated value and point count."
-        },
-        {
-          "name": "opacity",
-          "type": "number",
-          "required": false,
-          "defaultValue": "0.75",
-          "description": "Cell opacity, 0–1. Default 0.75."
+          "description": "Fired with the clicked cell's aggregates and the raw map event.",
+          "deprecated": null
         },
         {
           "name": "radius",
           "type": "number",
           "required": false,
           "defaultValue": "50",
-          "description": "Approximate cell size in kilometers. Default 50."
+          "description": "Approximate cell size in kilometers. Default 50.",
+          "deprecated": null
+        },
+        {
+          "name": "strokeColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Cell outline color (flat mode). Default \"background.paper\".",
+          "deprecated": null
+        },
+        {
+          "name": "strokeOpacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "0.4",
+          "description": "Cell outline opacity, 0–1 (flat mode). Default 0.4.",
+          "deprecated": null
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Cell outline width in pixels (flat mode). Default 0.5.",
+          "deprecated": null
         },
         {
           "name": "weightProperty",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Sum this point property instead of counting points."
+          "description": "Sum this point property instead of counting points.",
+          "deprecated": null
+        },
+        {
+          "name": "lineColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Deprecated: use `strokeColor` instead.",
+          "deprecated": "Use `strokeColor`. Removed in v1.0."
+        },
+        {
+          "name": "lineWidth",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Deprecated: use `strokeWidth` instead.",
+          "deprecated": "Use `strokeWidth`. Removed in v1.0."
+        },
+        {
+          "name": "opacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Deprecated: use `fillOpacity` instead.",
+          "deprecated": "Use `fillOpacity`. Removed in v1.0."
         }
       ]
     },
@@ -606,56 +837,64 @@
           "type": "string",
           "required": true,
           "defaultValue": null,
-          "description": "Unique id, used as the checkbox key in the control."
+          "description": "Unique id, used as the checkbox key in the control.",
+          "deprecated": null
         },
         {
           "name": "label",
           "type": "string",
           "required": true,
           "defaultValue": null,
-          "description": "Label shown in the LayerControl."
+          "description": "Label shown in the LayerControl.",
+          "deprecated": null
         },
         {
           "name": "color",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Palette token or CSS color for the control's swatch."
+          "description": "Palette token or CSS color for the control's swatch.",
+          "deprecated": null
         },
         {
           "name": "defaultVisible",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Initial visibility for uncontrolled usage. Default true."
+          "description": "Initial visibility for uncontrolled usage. Default true.",
+          "deprecated": null
         },
         {
           "name": "group",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Optional section heading to group the layer under in the control."
+          "description": "Optional section heading to group the layer under in the control.",
+          "deprecated": null
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
           "defaultValue": null,
-          "description": "Optional icon shown in the control (set once at registration)."
+          "description": "Optional icon shown in the control (set once at registration).",
+          "deprecated": null
         },
         {
           "name": "onVisibleChange",
           "type": "((visible: boolean) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired when the LayerControl toggles a controlled layer — update `visible` here."
+          "description": "Fired when the LayerControl toggles a controlled layer — update `visible` here.",
+          "deprecated": null
         },
         {
           "name": "visible",
           "type": "boolean",
           "required": false,
           "defaultValue": null,
-          "description": "Controlled visibility — when set, the parent owns the state."
+          "description": "Controlled visibility — when set, the parent owns the state.",
+          "deprecated": null
         }
       ]
     },
@@ -667,84 +906,96 @@
           "type": "ReactNode",
           "required": false,
           "defaultValue": null,
-          "description": "Icon for the collapse button. Default a close (×) icon."
+          "description": "Icon for the collapse button. Default a close (×) icon.",
+          "deprecated": null
         },
         {
           "name": "colorCheckbox",
           "type": "boolean",
           "required": false,
           "defaultValue": "false",
-          "description": "Tint each checkbox with its layer `color`. Default uses the theme primary."
+          "description": "Tint each checkbox with its layer `color`. Default uses the theme primary.",
+          "deprecated": null
         },
         {
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
           "defaultValue": "false",
-          "description": "Start with the panel expanded. Default false (just the icon button)."
+          "description": "Start with the panel expanded. Default false (just the icon button).",
+          "deprecated": null
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
           "defaultValue": null,
-          "description": "Icon for the trigger button + header. Default a layers icon."
+          "description": "Icon for the trigger button + header. Default a layers icon.",
+          "deprecated": null
         },
         {
           "name": "layers",
           "type": "LayerConfig[]",
           "required": false,
           "defaultValue": null,
-          "description": "Optional config-driven layers, in addition to any declarative <Layer>s."
+          "description": "Optional config-driven layers, in addition to any declarative <Layer>s.",
+          "deprecated": null
         },
         {
           "name": "position",
           "type": "enum",
           "required": false,
           "defaultValue": "top-right",
-          "description": "Corner to anchor the control. Default \"top-right\"."
+          "description": "Corner to anchor the control. Default \"top-right\".",
+          "deprecated": null
         },
         {
           "name": "renderItem",
           "type": "((entry: LayerEntry, controls: LayerItemControls) => ReactNode)",
           "required": false,
           "defaultValue": null,
-          "description": "Fully render a row yourself (icon, badges, actions, …)."
+          "description": "Fully render a row yourself (icon, badges, actions, …).",
+          "deprecated": null
         },
         {
           "name": "renderTrigger",
           "type": "((open: () => void) => ReactNode)",
           "required": false,
           "defaultValue": null,
-          "description": "Replace the collapsed trigger button entirely."
+          "description": "Replace the collapsed trigger button entirely.",
+          "deprecated": null
         },
         {
           "name": "slotProps",
           "type": "{ paper?: PaperProps; checkbox?: CheckboxProps; } | undefined",
           "required": false,
           "defaultValue": null,
-          "description": "Props forwarded to the inner MUI Paper / Checkbox."
+          "description": "Props forwarded to the inner MUI Paper / Checkbox.",
+          "deprecated": null
         },
         {
           "name": "sx",
           "type": "SxProps<Theme>",
           "required": false,
           "defaultValue": null,
-          "description": "sx applied to the expanded panel (Paper)."
+          "description": "sx applied to the expanded panel (Paper).",
+          "deprecated": null
         },
         {
           "name": "title",
           "type": "string",
           "required": false,
           "defaultValue": "Layers",
-          "description": "Heading for the panel (and the trigger's tooltip). Default \"Layers\"."
+          "description": "Heading for the panel (and the trigger's tooltip). Default \"Layers\".",
+          "deprecated": null
         },
         {
           "name": "width",
           "type": "number",
           "required": false,
           "defaultValue": null,
-          "description": "Panel width in px."
+          "description": "Panel width in px.",
+          "deprecated": null
         }
       ]
     },
@@ -756,35 +1007,40 @@
           "type": "((value: number) => string)",
           "required": false,
           "defaultValue": "(value) => String(value)",
-          "description": "Format numeric stop values shown on a `spec`-driven legend."
+          "description": "Format numeric stop values shown on a `spec`-driven legend.",
+          "deprecated": null
         },
         {
           "name": "items",
           "type": "LegendItem[]",
           "required": false,
           "defaultValue": null,
-          "description": "Discrete swatches for a categorical legend. Takes precedence over `spec`."
+          "description": "Discrete swatches for a categorical legend. Takes precedence over `spec`.",
+          "deprecated": null
         },
         {
           "name": "position",
           "type": "enum",
           "required": false,
           "defaultValue": "bottom-right",
-          "description": "Corner to anchor the legend. Default \"bottom-right\"."
+          "description": "Corner to anchor the legend. Default \"bottom-right\".",
+          "deprecated": null
         },
         {
           "name": "spec",
           "type": "ChoroplethSpec",
           "required": false,
           "defaultValue": null,
-          "description": "Drive the legend from the same `ChoroplethSpec` a `ShapeLayer` fill takes,\nso the legend and its layer share one source of truth. \"interpolate\"\n(default) renders a continuous gradient ramp; \"step\" renders banded swatches."
+          "description": "Drive the legend from the same `ChoroplethSpec` a `ShapeLayer` fill takes,\nso the legend and its layer share one source of truth. \"interpolate\"\n(default) renders a continuous gradient ramp; \"step\" renders banded swatches.",
+          "deprecated": null
         },
         {
           "name": "title",
           "type": "ReactNode",
           "required": false,
           "defaultValue": null,
-          "description": "Optional heading shown above the legend body."
+          "description": "Optional heading shown above the legend body.",
+          "deprecated": null
         }
       ]
     },
@@ -796,154 +1052,176 @@
           "type": "boolean | AnimationOptions",
           "required": false,
           "defaultValue": "true",
-          "description": "How `view` changes move the camera: `true` (default) eases with MapLibre's\ndefault animation, `false` jumps instantly, or pass `AnimationOptions`\n(duration, easing…) for a custom transition."
+          "description": "How `view` changes move the camera: `true` (default) eases with MapLibre's\ndefault animation, `false` jumps instantly, or pass `AnimationOptions`\n(duration, easing…) for a custom transition.",
+          "deprecated": null
         },
         {
           "name": "center",
           "type": "LngLatTuple",
           "required": false,
           "defaultValue": null,
-          "description": "Shorthand for `initialView.center`. Initial-only, like `initialView`."
+          "description": "Shorthand for `initialView.center`. Initial-only, like `initialView`.",
+          "deprecated": null
         },
         {
           "name": "colorScheme",
           "type": "enum",
           "required": false,
           "defaultValue": "auto",
-          "description": "\"auto\" follows the MUI theme (default); \"light\"/\"dark\" force a basemap."
+          "description": "\"auto\" follows the MUI theme (default); \"light\"/\"dark\" force a basemap.",
+          "deprecated": null
         },
         {
           "name": "fitBounds",
           "type": "LngLatBoundsLike",
           "required": false,
           "defaultValue": null,
-          "description": "Declarative fitBounds: whenever this prop changes, the camera adjusts to\nfit the bounds. For one-off imperative moves, use the map ref instead."
+          "description": "Declarative fitBounds: whenever this prop changes, the camera adjusts to\nfit the bounds. For one-off imperative moves, use the map ref instead.",
+          "deprecated": null
         },
         {
           "name": "fitBoundsOptions",
           "type": "FitBoundsOptions",
           "required": false,
           "defaultValue": null,
-          "description": "Options for `fitBounds` (padding, maxZoom…)."
+          "description": "Options for `fitBounds` (padding, maxZoom…).",
+          "deprecated": null
         },
         {
           "name": "hideAttribution",
           "type": "boolean",
           "required": false,
           "defaultValue": "false",
-          "description": "Hide MapLibre's built-in attribution control (attribute elsewhere)."
+          "description": "Hide MapLibre's built-in attribution control (attribute elsewhere).",
+          "deprecated": null
         },
         {
           "name": "infinite",
           "type": "boolean",
           "required": false,
           "defaultValue": "false",
-          "description": "Let the map wrap/repeat horizontally and scroll forever. Default false —\nthe map shows a single, non-wrapping world (a barrier), instead of the\ninfinite east-west repetition MapLibre renders by default."
+          "description": "Let the map wrap/repeat horizontally and scroll forever. Default false —\nthe map shows a single, non-wrapping world (a barrier), instead of the\ninfinite east-west repetition MapLibre renders by default.",
+          "deprecated": null
         },
         {
           "name": "initialView",
           "type": "MapViewState",
           "required": false,
           "defaultValue": null,
-          "description": "Initial camera position. Applied once at creation — use `view` to move the camera later."
+          "description": "Initial camera position. Applied once at creation — use `view` to move the camera later.",
+          "deprecated": null
         },
         {
           "name": "interactive",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Allow user pan/zoom/rotate. Default true."
+          "description": "Allow user pan/zoom/rotate. Default true.",
+          "deprecated": null
         },
         {
           "name": "mapOptions",
           "type": "Partial<MapOptions>",
           "required": false,
           "defaultValue": null,
-          "description": "Escape hatch for any other MapLibre map option."
+          "description": "Escape hatch for any other MapLibre map option.",
+          "deprecated": null
         },
         {
           "name": "maxZoom",
           "type": "number",
           "required": false,
           "defaultValue": null,
-          "description": "Highest zoom level the camera allows."
+          "description": "Highest zoom level the camera allows.",
+          "deprecated": null
         },
         {
           "name": "minZoom",
           "type": "number",
           "required": false,
           "defaultValue": null,
-          "description": "Lowest zoom level the camera allows."
+          "description": "Lowest zoom level the camera allows.",
+          "deprecated": null
         },
         {
           "name": "onClick",
           "type": "((e: MapMouseEvent) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Click on the map. `e.lngLat` has the clicked coordinate."
+          "description": "Click on the map. `e.lngLat` has the clicked coordinate.",
+          "deprecated": null
         },
         {
           "name": "onContextMenu",
           "type": "((e: MapMouseEvent) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Right-click / long-press on the map."
+          "description": "Right-click / long-press on the map.",
+          "deprecated": null
         },
         {
           "name": "onDblClick",
           "type": "((e: MapMouseEvent) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Double-click on the map."
+          "description": "Double-click on the map.",
+          "deprecated": null
         },
         {
           "name": "onLoad",
           "type": "((map: Map$1) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Called once with the map instance after the \"load\" event."
+          "description": "Called once with the map instance after the \"load\" event.",
+          "deprecated": null
         },
         {
           "name": "onMove",
           "type": "MapViewEventHandler",
           "required": false,
           "defaultValue": null,
-          "description": "Fires continuously while the camera moves (pan, zoom, rotate)."
+          "description": "Fires continuously while the camera moves (pan, zoom, rotate).",
+          "deprecated": null
         },
         {
           "name": "onMoveEnd",
           "type": "MapViewEventHandler",
           "required": false,
           "defaultValue": null,
-          "description": "Fires once when a camera movement settles."
+          "description": "Fires once when a camera movement settles.",
+          "deprecated": null
         },
         {
           "name": "onZoomEnd",
           "type": "MapViewEventHandler",
           "required": false,
           "defaultValue": null,
-          "description": "Fires once when a zoom gesture/animation settles."
+          "description": "Fires once when a zoom gesture/animation settles.",
+          "deprecated": null
         },
         {
           "name": "provider",
           "type": "MapStyleInput",
           "required": false,
           "defaultValue": "carto",
-          "description": "Basemap source: a built-in id (\"carto\" | \"osm\"), a custom MapProvider,\na raw style URL, or a full MapLibre StyleSpecification. Defaults to \"carto\"."
+          "description": "Basemap source: a built-in id (\"carto\" | \"osm\"), a custom MapProvider,\na raw style URL, or a full MapLibre StyleSpecification. Defaults to \"carto\".",
+          "deprecated": null
         },
         {
           "name": "view",
           "type": "MapViewState",
           "required": false,
           "defaultValue": null,
-          "description": "Reactive camera position: whenever this prop changes, the map eases to it\n(only the fields you provide are applied). Unlike `initialView`, the user\ncan still pan/zoom freely between changes — pair with `onMoveEnd` to track\nwhere they went. Changes that match the current camera are ignored, so\nfeeding `onMoveEnd`'s view state back into `view` doesn't loop."
+          "description": "Reactive camera position: whenever this prop changes, the map eases to it\n(only the fields you provide are applied). Unlike `initialView`, the user\ncan still pan/zoom freely between changes — pair with `onMoveEnd` to track\nwhere they went. Changes that match the current camera are ignored, so\nfeeding `onMoveEnd`'s view state back into `view` doesn't loop.",
+          "deprecated": null
         },
         {
           "name": "zoom",
           "type": "number",
           "required": false,
           "defaultValue": null,
-          "description": "Shorthand for `initialView.zoom`. Initial-only, like `initialView`."
+          "description": "Shorthand for `initialView.zoom`. Initial-only, like `initialView`.",
+          "deprecated": null
         }
       ]
     },
@@ -955,70 +1233,80 @@
           "type": "number",
           "required": false,
           "defaultValue": "60",
-          "description": "Pitch (degrees) the tilt toggle eases to. Default 60."
+          "description": "Pitch (degrees) the tilt toggle eases to. Default 60.",
+          "deprecated": null
         },
         {
           "name": "position",
           "type": "enum",
           "required": false,
           "defaultValue": "top-right",
-          "description": "Corner for the zoom/compass/geolocate/fullscreen cluster."
+          "description": "Corner for the zoom/compass/geolocate/fullscreen cluster.",
+          "deprecated": null
         },
         {
           "name": "scalePosition",
           "type": "enum",
           "required": false,
           "defaultValue": "bottom-left",
-          "description": "Corner for the scale bar. Default \"bottom-left\"."
+          "description": "Corner for the scale bar. Default \"bottom-left\".",
+          "deprecated": null
         },
         {
           "name": "scaleUnit",
           "type": "enum",
           "required": false,
           "defaultValue": "metric",
-          "description": "Scale bar units. Default \"metric\"."
+          "description": "Scale bar units. Default \"metric\".",
+          "deprecated": null
         },
         {
           "name": "showCompass",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Show the compass (reset-north) button. Default true."
+          "description": "Show the compass (reset-north) button. Default true.",
+          "deprecated": null
         },
         {
           "name": "showFullscreen",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Show the fullscreen toggle. Default true."
+          "description": "Show the fullscreen toggle. Default true.",
+          "deprecated": null
         },
         {
           "name": "showGeolocate",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Show the \"my location\" button. Default true."
+          "description": "Show the \"my location\" button. Default true.",
+          "deprecated": null
         },
         {
           "name": "showPitch",
           "type": "boolean",
           "required": false,
           "defaultValue": "false",
-          "description": "Show a 3D tilt toggle that pitches the camera (for fill-extrusion layers)."
+          "description": "Show a 3D tilt toggle that pitches the camera (for fill-extrusion layers).",
+          "deprecated": null
         },
         {
           "name": "showScale",
           "type": "boolean",
           "required": false,
           "defaultValue": "false",
-          "description": "Show a scale bar. Default false."
+          "description": "Show a scale bar. Default false.",
+          "deprecated": null
         },
         {
           "name": "showZoom",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Show the zoom in/out buttons. Default true."
+          "description": "Show the zoom in/out buttons. Default true.",
+          "deprecated": null
         }
       ]
     },
@@ -1030,70 +1318,80 @@
           "type": "number",
           "required": true,
           "defaultValue": null,
-          "description": "Latitude of the marker position."
+          "description": "Latitude of the marker position.",
+          "deprecated": null
         },
         {
           "name": "longitude",
           "type": "number",
           "required": true,
           "defaultValue": null,
-          "description": "Longitude of the marker position."
+          "description": "Longitude of the marker position.",
+          "deprecated": null
         },
         {
           "name": "anchor",
           "type": "enum",
           "required": false,
           "defaultValue": null,
-          "description": "Which part of the marker sits on the coordinate. Set at creation time."
+          "description": "Which part of the marker sits on the coordinate. Set at creation time.",
+          "deprecated": null
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": false,
           "defaultValue": null,
-          "description": "Custom marker content (any MUI element). Falls back to a themed pin."
+          "description": "Custom marker content (any MUI element). Falls back to a themed pin.",
+          "deprecated": null
         },
         {
           "name": "draggable",
           "type": "boolean",
           "required": false,
           "defaultValue": "false",
-          "description": "Allow the user to drag the marker."
+          "description": "Allow the user to drag the marker.",
+          "deprecated": null
         },
         {
           "name": "label",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Accessible name for the marker (`aria-label`). Recommended whenever\n`onClick` is set — interactive markers are keyboard-focusable buttons."
+          "description": "Accessible name for the marker (`aria-label`). Recommended whenever\n`onClick` is set — interactive markers are keyboard-focusable buttons.",
+          "deprecated": null
         },
         {
           "name": "offset",
           "type": "PointLike",
           "required": false,
           "defaultValue": null,
-          "description": "Pixel offset from the anchor point."
+          "description": "Pixel offset from the anchor point.",
+          "deprecated": null
         },
         {
           "name": "onClick",
           "type": "((event: MouseEvent) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Click handler. Also makes the marker keyboard-accessible: it becomes\nfocusable with `role=\"button\"`, and Enter/Space activate it."
+          "description": "Click handler. Also makes the marker keyboard-accessible: it becomes\nfocusable with `role=\"button\"`, and Enter/Space activate it.",
+          "deprecated": null
         },
         {
           "name": "onDragEnd",
           "type": "((lngLat: LngLatTuple) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired after a drag ends, with the marker's new [lng, lat]."
+          "description": "Fired after a drag ends, with the marker's new [lng, lat].",
+          "deprecated": null
         },
         {
           "name": "rotation",
           "type": "number",
           "required": false,
           "defaultValue": null,
-          "description": "Rotation in degrees."
+          "description": "Rotation in degrees.",
+          "deprecated": null
         }
       ]
     },
@@ -1105,35 +1403,40 @@
           "type": "string",
           "required": false,
           "defaultValue": "secondary.main",
-          "description": "Palette token or CSS color for the drawn measurements."
+          "description": "Palette token or CSS color for the drawn measurements.",
+          "deprecated": null
         },
         {
           "name": "modes",
           "type": "MeasureMode[]",
           "required": false,
           "defaultValue": "[\"line\", \"polygon\"]",
-          "description": "Tools to offer. Default distance (line) + area (polygon)."
+          "description": "Tools to offer. Default distance (line) + area (polygon).",
+          "deprecated": null
         },
         {
           "name": "position",
           "type": "enum",
           "required": false,
           "defaultValue": "top-left",
-          "description": "Corner for the tool palette. Default \"top-left\"."
+          "description": "Corner for the tool palette. Default \"top-left\".",
+          "deprecated": null
         },
         {
           "name": "readoutPosition",
           "type": "enum",
           "required": false,
           "defaultValue": "top-right",
-          "description": "Corner for the measurement readout chips. Default \"top-right\"."
+          "description": "Corner for the measurement readout chips. Default \"top-right\".",
+          "deprecated": null
         },
         {
           "name": "unit",
           "type": "enum",
           "required": false,
           "defaultValue": "metric",
-          "description": "Unit system for the readouts. Default \"metric\"."
+          "description": "Unit system for the readouts. Default \"metric\".",
+          "deprecated": null
         }
       ]
     },
@@ -1142,59 +1445,107 @@
       "props": [
         {
           "name": "points",
-          "type": "LayerPoint[]",
+          "type": "BasePoint[]",
           "required": true,
           "defaultValue": null,
-          "description": "The points to draw as circles."
+          "description": "The points to draw as circles.",
+          "deprecated": null
         },
         {
-          "name": "color",
+          "name": "beforeId",
           "type": "string",
           "required": false,
-          "defaultValue": "primary.main",
-          "description": "Palette token or CSS color. Default \"primary.main\"."
+          "defaultValue": null,
+          "description": "Insert the layer before this existing layer id (e.g. a label layer).",
+          "deprecated": null
+        },
+        {
+          "name": "fillColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Circle fill color (palette token or CSS). Default \"primary.main\".",
+          "deprecated": null
+        },
+        {
+          "name": "fillOpacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Circle fill opacity, 0–1. Default 1.",
+          "deprecated": null
         },
         {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted."
+          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "deprecated": null
+        },
+        {
+          "name": "layerOverrides",
+          "type": "{ circle?: LayerOverride; }",
+          "required": false,
+          "defaultValue": null,
+          "description": "Paint/layout patches merged into the generated circle layer.",
+          "deprecated": null
         },
         {
           "name": "onClick",
-          "type": "((point: LayerPoint, index: number) => void)",
+          "type": "((point: BasePoint, index: number, event: MapLayerMouseEvent) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired with the clicked point and its index in `points`."
-        },
-        {
-          "name": "opacity",
-          "type": "number",
-          "required": false,
-          "defaultValue": "1",
-          "description": "Circle opacity, 0–1. Default 1."
+          "description": "Fired with the clicked point, its index in `points`, and the raw event.",
+          "deprecated": null
         },
         {
           "name": "radius",
           "type": "number",
           "required": false,
           "defaultValue": "6",
-          "description": "Circle radius in pixels. Default 6."
+          "description": "Circle radius in pixels. Default 6.",
+          "deprecated": null
         },
         {
           "name": "strokeColor",
           "type": "string",
           "required": false,
           "defaultValue": "background.paper",
-          "description": "Circle outline color (palette token or CSS). Default \"background.paper\"."
+          "description": "Circle outline color (palette token or CSS). Default \"background.paper\".",
+          "deprecated": null
+        },
+        {
+          "name": "strokeOpacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "1",
+          "description": "Circle outline opacity, 0–1. Default 1.",
+          "deprecated": null
         },
         {
           "name": "strokeWidth",
           "type": "number",
           "required": false,
           "defaultValue": "1.5",
-          "description": "Circle outline width in pixels. Default 1.5."
+          "description": "Circle outline width in pixels. Default 1.5.",
+          "deprecated": null
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Deprecated: use `fillColor` instead.",
+          "deprecated": "Use `fillColor`. Removed in v1.0."
+        },
+        {
+          "name": "opacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Deprecated: use `fillOpacity` instead.",
+          "deprecated": "Use `fillOpacity`. Removed in v1.0."
         }
       ]
     },
@@ -1206,77 +1557,88 @@
           "type": "number",
           "required": true,
           "defaultValue": null,
-          "description": "Latitude of the anchor coordinate."
+          "description": "Latitude of the anchor coordinate.",
+          "deprecated": null
         },
         {
           "name": "longitude",
           "type": "number",
           "required": true,
           "defaultValue": null,
-          "description": "Longitude of the anchor coordinate."
+          "description": "Longitude of the anchor coordinate.",
+          "deprecated": null
         },
         {
           "name": "anchor",
           "type": "enum",
           "required": false,
           "defaultValue": null,
-          "description": "Edge to pin to the coordinate (e.g. \"bottom\"). Auto-chosen to fit the view when omitted."
+          "description": "Edge to pin to the coordinate (e.g. \"bottom\"). Auto-chosen to fit the view when omitted.",
+          "deprecated": null
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Extra class name(s) for the popup container."
+          "description": "Extra class name(s) for the popup container.",
+          "deprecated": null
         },
         {
           "name": "closeButton",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Show the X button. Default true."
+          "description": "Show the X button. Default true.",
+          "deprecated": null
         },
         {
           "name": "closeOnClick",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Close when the map is clicked. Default true."
+          "description": "Close when the map is clicked. Default true.",
+          "deprecated": null
         },
         {
           "name": "closeOnMove",
           "type": "boolean",
           "required": false,
           "defaultValue": "false",
-          "description": "Close when the map moves. Default false."
+          "description": "Close when the map moves. Default false.",
+          "deprecated": null
         },
         {
           "name": "maxWidth",
           "type": "string",
           "required": false,
           "defaultValue": "320px",
-          "description": "CSS max-width of the popup. Default \"320px\"."
+          "description": "CSS max-width of the popup. Default \"320px\".",
+          "deprecated": null
         },
         {
           "name": "offset",
           "type": "Offset",
           "required": false,
           "defaultValue": null,
-          "description": "Pixel offset from the coordinate — a number, [x, y], or a per-anchor map."
+          "description": "Pixel offset from the coordinate — a number, [x, y], or a per-anchor map.",
+          "deprecated": null
         },
         {
           "name": "onClose",
           "type": "(() => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired when MapLibre closes the popup (X button, click, or move)."
+          "description": "Fired when MapLibre closes the popup (X button, click, or move).",
+          "deprecated": null
         },
         {
           "name": "open",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Controlled visibility. Default true."
+          "description": "Controlled visibility. Default true.",
+          "deprecated": null
         }
       ]
     },
@@ -1288,63 +1650,88 @@
           "type": "LngLatTuple[]",
           "required": true,
           "defaultValue": null,
-          "description": "The line's vertices as [longitude, latitude] pairs, in draw order."
+          "description": "The line's vertices as [longitude, latitude] pairs, in draw order.",
+          "deprecated": null
         },
         {
           "name": "beforeId",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Insert before this existing layer id."
+          "description": "Insert before this existing layer id.",
+          "deprecated": null
         },
         {
           "name": "color",
           "type": "string",
           "required": false,
           "defaultValue": "primary.main",
-          "description": "MUI palette token (\"primary.main\") or any CSS color. Default \"primary.main\"."
+          "description": "MUI palette token (\"primary.main\") or any CSS color. Default \"primary.main\".",
+          "deprecated": null
         },
         {
           "name": "dashed",
           "type": "boolean",
           "required": false,
           "defaultValue": "false",
-          "description": "Draw the line dashed instead of solid. Default false."
+          "description": "Draw the line dashed instead of solid. Default false.",
+          "deprecated": null
         },
         {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Explicit source/layer id. Auto-generated when omitted."
+          "description": "Explicit source/layer id. Auto-generated when omitted.",
+          "deprecated": null
+        },
+        {
+          "name": "layerOverrides",
+          "type": "{ line?: LayerOverride; }",
+          "required": false,
+          "defaultValue": null,
+          "description": "Paint/layout patches merged into the generated line layer.",
+          "deprecated": null
         },
         {
           "name": "lineCap",
           "type": "enum",
           "required": false,
           "defaultValue": "round",
-          "description": "How line ends are capped. Default \"round\"."
+          "description": "How line ends are capped. Default \"round\".",
+          "deprecated": null
         },
         {
           "name": "lineJoin",
           "type": "enum",
           "required": false,
           "defaultValue": "round",
-          "description": "How line corners are joined. Default \"round\"."
+          "description": "How line corners are joined. Default \"round\".",
+          "deprecated": null
+        },
+        {
+          "name": "onClick",
+          "type": "((event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired when the line is clicked, with the raw map event.",
+          "deprecated": null
         },
         {
           "name": "opacity",
           "type": "number",
           "required": false,
           "defaultValue": "1",
-          "description": "Line opacity, 0–1. Default 1."
+          "description": "Line opacity, 0–1. Default 1.",
+          "deprecated": null
         },
         {
           "name": "width",
           "type": "number",
           "required": false,
           "defaultValue": "4",
-          "description": "Line width in pixels. Default 4."
+          "description": "Line width in pixels. Default 4.",
+          "deprecated": null
         }
       ]
     },
@@ -1353,66 +1740,75 @@
       "props": [
         {
           "name": "points",
-          "type": "LayerPoint[]",
+          "type": "BasePoint[]",
           "required": true,
           "defaultValue": null,
-          "description": "The same points fed to your <PointLayer>. Selection runs against these."
+          "description": "The same points fed to your <PointLayer>. Selection runs against these.",
+          "deprecated": null
         },
         {
           "name": "defaultTool",
           "type": "SelectTool | null",
           "required": false,
           "defaultValue": "null",
-          "description": "Tool armed on mount. Default none (with a toolbar) / the first tool (without)."
+          "description": "Tool armed on mount. Default none (with a toolbar) / the first tool (without).",
+          "deprecated": null
         },
         {
           "name": "highlight",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Highlight the selected points. Default true."
+          "description": "Highlight the selected points. Default true.",
+          "deprecated": null
         },
         {
           "name": "highlightColor",
           "type": "string",
           "required": false,
           "defaultValue": "secondary.main",
-          "description": "Palette token or CSS color for the highlight. Default \"secondary.main\"."
+          "description": "Palette token or CSS color for the highlight. Default \"secondary.main\".",
+          "deprecated": null
         },
         {
           "name": "onSelect",
-          "type": "((selected: LayerPoint[], indices: number[]) => void)",
+          "type": "((selected: BasePoint[], indices: number[]) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired on every completed selection with the hit points and their indices."
+          "description": "Fired on every completed selection with the hit points and their indices.",
+          "deprecated": null
         },
         {
           "name": "position",
           "type": "enum",
           "required": false,
           "defaultValue": "top-left",
-          "description": "Corner for the tool palette. Default \"top-left\"."
+          "description": "Corner for the tool palette. Default \"top-left\".",
+          "deprecated": null
         },
         {
           "name": "selectionColor",
           "type": "string",
           "required": false,
           "defaultValue": "primary.main",
-          "description": "Palette token or CSS color for the marquee / lasso. Default \"primary.main\"."
+          "description": "Palette token or CSS color for the marquee / lasso. Default \"primary.main\".",
+          "deprecated": null
         },
         {
           "name": "showToolbar",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Show the toolbar. When false, `defaultTool` (or the first tool) stays armed."
+          "description": "Show the toolbar. When false, `defaultTool` (or the first tool) stays armed.",
+          "deprecated": null
         },
         {
           "name": "tools",
           "type": "SelectTool[]",
           "required": false,
           "defaultValue": "[\"box\", \"lasso\"]",
-          "description": "Tools to offer. Default box + lasso."
+          "description": "Tools to offer. Default box + lasso.",
+          "deprecated": null
         }
       ]
     },
@@ -1424,56 +1820,104 @@
           "type": "GeoJSON",
           "required": true,
           "defaultValue": null,
-          "description": "GeoJSON polygons and/or lines."
+          "description": "GeoJSON polygons and/or lines.",
+          "deprecated": null
+        },
+        {
+          "name": "beforeId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Insert the layers before this existing layer id (e.g. a label layer).",
+          "deprecated": null
         },
         {
           "name": "fillColor",
           "type": "string | ChoroplethSpec",
           "required": false,
           "defaultValue": "primary.main",
-          "description": "A palette token / CSS color, or a choropleth spec for data-driven fill."
+          "description": "A palette token / CSS color, or a choropleth spec for data-driven fill.",
+          "deprecated": null
         },
         {
           "name": "fillOpacity",
           "type": "number",
           "required": false,
           "defaultValue": "0.4",
-          "description": "Fill opacity, 0–1. Default 0.4."
+          "description": "Fill opacity, 0–1. Default 0.4.",
+          "deprecated": null
         },
         {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted."
+          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "deprecated": null
+        },
+        {
+          "name": "layerOverrides",
+          "type": "{ fill?: LayerOverride; line?: LayerOverride; } | undefined",
+          "required": false,
+          "defaultValue": null,
+          "description": "Paint/layout patches merged into the generated fill/line layers.",
+          "deprecated": null
+        },
+        {
+          "name": "onClick",
+          "type": "((feature: MapGeoJSONFeature, event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the clicked feature and the raw map event.",
+          "deprecated": null
+        },
+        {
+          "name": "strokeColor",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Outline color (palette token or CSS). Default \"primary.main\".",
+          "deprecated": null
+        },
+        {
+          "name": "strokeOpacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Outline opacity, 0–1. Default 1.",
+          "deprecated": null
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Outline width in pixels. Default 1.5.",
+          "deprecated": null
         },
         {
           "name": "lineColor",
           "type": "string",
           "required": false,
-          "defaultValue": "primary.main",
-          "description": "Outline color (palette token or CSS). Default \"primary.main\"."
+          "defaultValue": null,
+          "description": "Deprecated: use `strokeColor` instead.",
+          "deprecated": "Use `strokeColor`. Removed in v1.0."
         },
         {
           "name": "lineOpacity",
           "type": "number",
           "required": false,
-          "defaultValue": "1",
-          "description": "Outline opacity, 0–1. Default 1."
+          "defaultValue": null,
+          "description": "Deprecated: use `strokeOpacity` instead.",
+          "deprecated": "Use `strokeOpacity`. Removed in v1.0."
         },
         {
           "name": "lineWidth",
           "type": "number",
           "required": false,
-          "defaultValue": "1.5",
-          "description": "Outline width in pixels. Default 1.5."
-        },
-        {
-          "name": "onClick",
-          "type": "((feature: any) => void)",
-          "required": false,
           "defaultValue": null,
-          "description": "Fired with the clicked GeoJSON feature."
+          "description": "Deprecated: use `strokeWidth` instead.",
+          "deprecated": "Use `strokeWidth`. Removed in v1.0."
         }
       ]
     },
@@ -1485,187 +1929,277 @@
           "type": "SymbolPoint[]",
           "required": true,
           "defaultValue": null,
-          "description": "The labeled points to render."
+          "description": "The labeled points to render.",
+          "deprecated": null
         },
         {
           "name": "allowOverlap",
           "type": "boolean",
           "required": false,
           "defaultValue": "false",
-          "description": "Draw labels even when they collide. Default false (MapLibre declutters)."
+          "description": "Draw labels even when they collide. Default false (MapLibre declutters).",
+          "deprecated": null
         },
         {
           "name": "anchor",
           "type": "enum",
           "required": false,
           "defaultValue": "top",
-          "description": "Which side of the coordinate the text sits on. Default \"top\"."
+          "description": "Which side of the coordinate the text sits on. Default \"top\".",
+          "deprecated": null
+        },
+        {
+          "name": "beforeId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Insert the layer before this existing layer id.",
+          "deprecated": null
         },
         {
           "name": "color",
           "type": "string",
           "required": false,
           "defaultValue": "text.primary",
-          "description": "Text color — palette token or CSS. Default \"text.primary\"."
+          "description": "Text color — palette token or CSS. Default \"text.primary\".",
+          "deprecated": null
         },
         {
           "name": "font",
           "type": "string[]",
           "required": false,
           "defaultValue": null,
-          "description": "Font stack, e.g. `[\"Open Sans Bold\"]`. Must exist in the basemap's glyph\nset; when omitted, the style's default fonts are used."
+          "description": "Font stack, e.g. `[\"Open Sans Bold\"]`. Must exist in the basemap's glyph\nset; when omitted, the style's default fonts are used.",
+          "deprecated": null
         },
         {
           "name": "haloColor",
           "type": "string",
           "required": false,
           "defaultValue": "background.paper",
-          "description": "Halo behind the text for basemap contrast. Default \"background.paper\"."
+          "description": "Halo behind the text for basemap contrast. Default \"background.paper\".",
+          "deprecated": null
         },
         {
           "name": "haloWidth",
           "type": "number",
           "required": false,
           "defaultValue": "1.2",
-          "description": "Halo width in px. Default 1.2."
+          "description": "Halo width in px. Default 1.2.",
+          "deprecated": null
         },
         {
           "name": "icon",
           "type": "{ src: string; size?: number; }",
           "required": false,
           "defaultValue": null,
-          "description": "Optional icon drawn at the coordinate beneath the label: an image URL\n(PNG/JPEG/WebP) loaded and registered with the map. `size` scales it\n(1 = native pixels)."
+          "description": "Optional icon drawn at the coordinate beneath the label: an image URL\n(PNG/JPEG/WebP) loaded and registered with the map. `size` scales it\n(1 = native pixels).",
+          "deprecated": null
         },
         {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted."
+          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "deprecated": null
+        },
+        {
+          "name": "layerOverrides",
+          "type": "{ symbol?: LayerOverride; }",
+          "required": false,
+          "defaultValue": null,
+          "description": "Paint/layout patches merged into the generated symbol layer.",
+          "deprecated": null
         },
         {
           "name": "offset",
           "type": "[number, number]",
           "required": false,
           "defaultValue": "[0, 0.4]",
-          "description": "Text offset in ems, [x, y]. Default [0, 0.4] (just under the point)."
+          "description": "Text offset in ems, [x, y]. Default [0, 0.4] (just under the point).",
+          "deprecated": null
         },
         {
           "name": "onClick",
-          "type": "((point: SymbolPoint, index: number) => void)",
+          "type": "((point: SymbolPoint, index: number, event: MapLayerMouseEvent) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired with the clicked point and its index in `points`."
+          "description": "Fired with the clicked point, its index in `points`, and the raw event.",
+          "deprecated": null
         },
         {
           "name": "size",
           "type": "number",
           "required": false,
           "defaultValue": "12",
-          "description": "Text size in px. Default 12."
+          "description": "Text size in px. Default 12.",
+          "deprecated": null
         }
       ]
     },
     "TimePlayback": {
-      "description": "Animates time-stamped GeoJSON points along a playhead — great for trips and\ntrajectories. Renders a faint cumulative (or trailing) trail plus a bright\n\"head\" of the most-recent points, driven by a themed MUI transport bar\n(play/pause, scrubber, speed). Filtering happens on the GPU, so it stays\nsmooth with many points.",
+      "description": "Animates time-stamped GeoJSON points along a playhead — great for trips and\ntrajectories. Renders a faint cumulative (or trailing) trail plus a bright\n\"head\" of the most-recent points, driven by a themed MUI transport bar\n(play/pause, scrubber, speed). Filtering happens on the GPU, so it stays\nsmooth with many points. Playhead and playing state follow the standard\ncontrolled/uncontrolled pattern.",
       "props": [
         {
           "name": "data",
           "type": "FeatureCollection<Geometry, GeoJsonProperties>",
           "required": true,
           "defaultValue": null,
-          "description": "GeoJSON points, each carrying a numeric timestamp property."
+          "description": "GeoJSON points, each carrying a numeric timestamp property.",
+          "deprecated": null
         },
         {
           "name": "autoplay",
           "type": "boolean",
           "required": false,
           "defaultValue": "false",
-          "description": "Start playing on mount. Default false."
+          "description": "Start playing on mount (uncontrolled initial). Default false.",
+          "deprecated": null
+        },
+        {
+          "name": "beforeId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Insert the layers before this existing layer id.",
+          "deprecated": null
         },
         {
           "name": "color",
           "type": "string",
           "required": false,
           "defaultValue": "primary.main",
-          "description": "Head (most-recent) point color — palette token or CSS. Default \"primary.main\"."
+          "description": "Head (most-recent) point color — palette token or CSS. Default \"primary.main\".",
+          "deprecated": null
+        },
+        {
+          "name": "defaultPlayhead",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Initial playhead for uncontrolled use. Defaults to the data's min time.",
+          "deprecated": null
         },
         {
           "name": "duration",
           "type": "number",
           "required": false,
           "defaultValue": "12",
-          "description": "Seconds for one full playthrough at 1×. Default 12."
+          "description": "Seconds for one full playthrough at 1×. Default 12.",
+          "deprecated": null
         },
         {
           "name": "formatTime",
           "type": "((value: number) => string)",
           "required": false,
           "defaultValue": null,
-          "description": "Format the playhead value shown on the transport bar."
+          "description": "Format the playhead value shown on the transport bar.",
+          "deprecated": null
         },
         {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted."
+          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "deprecated": null
+        },
+        {
+          "name": "layerOverrides",
+          "type": "{ trail?: LayerOverride; head?: LayerOverride; } | undefined",
+          "required": false,
+          "defaultValue": null,
+          "description": "Paint/layout patches merged into the generated trail/head layers.",
+          "deprecated": null
         },
         {
           "name": "loop",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Loop back to the start at the end. Default true."
+          "description": "Loop back to the start at the end. Default true.",
+          "deprecated": null
+        },
+        {
+          "name": "onPlayingChange",
+          "type": "((playing: boolean) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired when the transport wants to start or stop (toggle, end reached).",
+          "deprecated": null
         },
         {
           "name": "onTimeChange",
           "type": "((value: number) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Called whenever the playhead advances or is scrubbed."
+          "description": "Called whenever the playhead advances or is scrubbed.",
+          "deprecated": null
+        },
+        {
+          "name": "playhead",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Controlled playhead value. Pair with `onTimeChange` to own playback state;\nomit to let the component manage it internally.",
+          "deprecated": null
+        },
+        {
+          "name": "playing",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Controlled playing state. Pair with `onPlayingChange`.",
+          "deprecated": null
         },
         {
           "name": "position",
           "type": "enum",
           "required": false,
           "defaultValue": "bottom-left",
-          "description": "Corner to anchor the transport bar. Default \"bottom-left\"."
+          "description": "Corner to anchor the transport bar. Default \"bottom-left\".",
+          "deprecated": null
         },
         {
           "name": "radius",
           "type": "number",
           "required": false,
           "defaultValue": "6",
-          "description": "Head point radius in px. Default 6."
+          "description": "Head point radius in px. Default 6.",
+          "deprecated": null
         },
         {
           "name": "showTransport",
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Render the transport bar. Default true."
+          "description": "Render the transport bar. Default true.",
+          "deprecated": null
         },
         {
           "name": "timeProperty",
           "type": "string",
           "required": false,
           "defaultValue": "time",
-          "description": "Name of the numeric timestamp property. Default \"time\"."
+          "description": "Name of the numeric timestamp property. Default \"time\".",
+          "deprecated": null
         },
         {
           "name": "trail",
           "type": "number",
           "required": false,
           "defaultValue": null,
-          "description": "Visible trailing window, in the same units as the timestamps: only points\nwith `playhead - trail ≤ t ≤ playhead` show. Omit for a cumulative trail —\neverything up to the playhead stays on screen."
+          "description": "Visible trailing window, in the same units as the timestamps: only points\nwith `playhead - trail ≤ t ≤ playhead` show. Omit for a cumulative trail —\neverything up to the playhead stays on screen.",
+          "deprecated": null
         },
         {
           "name": "trailColor",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Trail point color. Defaults to `color`."
+          "description": "Trail point color. Defaults to `color`.",
+          "deprecated": null
         }
       ]
     },
@@ -1677,63 +2211,72 @@
           "type": "number",
           "required": true,
           "defaultValue": null,
-          "description": "Latitude of the anchor coordinate."
+          "description": "Latitude of the anchor coordinate.",
+          "deprecated": null
         },
         {
           "name": "longitude",
           "type": "number",
           "required": true,
           "defaultValue": null,
-          "description": "Longitude of the anchor coordinate."
+          "description": "Longitude of the anchor coordinate.",
+          "deprecated": null
         },
         {
           "name": "anchor",
           "type": "enum",
           "required": false,
           "defaultValue": null,
-          "description": "Edge to pin to the coordinate (e.g. \"bottom\"). Auto-chosen to fit the view when omitted."
+          "description": "Edge to pin to the coordinate (e.g. \"bottom\"). Auto-chosen to fit the view when omitted.",
+          "deprecated": null
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Extra class name(s) for the popup container."
+          "description": "Extra class name(s) for the popup container.",
+          "deprecated": null
         },
         {
           "name": "closeOnMove",
           "type": "boolean",
           "required": false,
           "defaultValue": null,
-          "description": "Close when the map moves. Default false."
+          "description": "Close when the map moves. Default false.",
+          "deprecated": null
         },
         {
           "name": "maxWidth",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "CSS max-width of the popup. Default \"320px\"."
+          "description": "CSS max-width of the popup. Default \"320px\".",
+          "deprecated": null
         },
         {
           "name": "offset",
           "type": "Offset",
           "required": false,
           "defaultValue": null,
-          "description": "Pixel offset from the coordinate — a number, [x, y], or a per-anchor map."
+          "description": "Pixel offset from the coordinate — a number, [x, y], or a per-anchor map.",
+          "deprecated": null
         },
         {
           "name": "onClose",
           "type": "(() => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired when MapLibre closes the popup (X button, click, or move)."
+          "description": "Fired when MapLibre closes the popup (X button, click, or move).",
+          "deprecated": null
         },
         {
           "name": "open",
           "type": "boolean",
           "required": false,
           "defaultValue": null,
-          "description": "Controlled visibility. Default true."
+          "description": "Controlled visibility. Default true.",
+          "deprecated": null
         }
       ]
     }
@@ -1762,6 +2305,12 @@
       "kind": "type",
       "category": "util",
       "description": ""
+    },
+    {
+      "name": "BasePoint",
+      "kind": "type",
+      "category": "util",
+      "description": "The minimal point shape shared by every point-driven layer (PointLayer, SymbolLayer, HeatmapLayer, HexbinLayer, Cluster). Component-specific point types extend this base, so helpers written against `BasePoint` accept them all."
     },
     {
       "name": "BinnedFeatureCollection",
@@ -2058,10 +2607,16 @@
       "description": "Handle passed to `renderItem` for a custom row."
     },
     {
+      "name": "LayerOverride",
+      "kind": "type",
+      "category": "util",
+      "description": "Paint/layout patches merged into a component-generated layer spec — the escape hatch when a high-level prop doesn't exist for a MapLibre property. Entries win over component-computed values."
+    },
+    {
       "name": "LayerPoint",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "A point rendered by PointLayer."
     },
     {
       "name": "LayerProps",
@@ -2307,7 +2862,7 @@
       "name": "resolvePaletteColor",
       "kind": "value",
       "category": "util",
-      "description": "Resolves an MUI palette token (\"primary.main\", \"error.light\", …) against the theme. Anything that isn't a known token (e.g. \"#ff0000\", \"rgb(...)\") is returned unchanged, so callers can pass raw CSS colors too."
+      "description": "Resolves an MUI palette token (\"primary.main\", \"error.light\", or a top-level string entry like \"divider\") against the theme. Anything that isn't a known token (e.g. \"#ff0000\", \"rgb(...)\") is returned unchanged, so callers can pass raw CSS colors too."
     },
     {
       "name": "resolveStyle",
@@ -2385,7 +2940,7 @@
       "name": "TimePlayback",
       "kind": "value",
       "category": "component",
-      "description": "Animates time-stamped GeoJSON points along a playhead — great for trips and trajectories. Renders a faint cumulative (or trailing) trail plus a bright \"head\" of the most-recent points, driven by a themed MUI transport bar (play/pause, scrubber, speed). Filtering happens on the GPU, so it stays smooth with many points."
+      "description": "Animates time-stamped GeoJSON points along a playhead — great for trips and trajectories. Renders a faint cumulative (or trailing) trail plus a bright \"head\" of the most-recent points, driven by a themed MUI transport bar (play/pause, scrubber, speed). Filtering happens on the GPU, so it stays smooth with many points. Playhead and playing state follow the standard controlled/uncontrolled pattern."
     },
     {
       "name": "TimePlaybackProps",

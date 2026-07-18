@@ -4,15 +4,79 @@ All notable changes to **zmapgl** are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.4.0] — 2026-07-19
+
+An API-consistency release: one fill/stroke vocabulary across every layer
+component, click events everywhere, render-order control, and an escape hatch
+for raw MapLibre paint/layout. **Fully backwards compatible** — old prop names
+keep working and warn once in dev; they'll be removed in v1.0.
 
 ### Added
 
+- **Unified fill/stroke props** on the polygon/circle family: `fillColor` /
+  `fillOpacity` for the surface, `strokeColor` / `strokeWidth` /
+  `strokeOpacity` for the outline — on PointLayer, ShapeLayer,
+  ChoroplethLayer, HexbinLayer, and ExtrusionLayer. PointLayer and HexbinLayer
+  gain `strokeOpacity` (HexbinLayer's outline opacity was previously hardcoded
+  to 0.4).
+- **`beforeId` on every GL layer component** (PointLayer, SymbolLayer,
+  HeatmapLayer, HexbinLayer, ShapeLayer, ChoroplethLayer, ExtrusionLayer,
+  TimePlayback — Route/Arc/GeoJSONLayer already had it). Changing it after
+  mount now moves the layers in place (`useMapLayer` calls `map.moveLayer`).
+- **`layerOverrides` escape hatch** on every layer component: per-role
+  paint/layout patches (e.g. `{ circle: { paint: { "circle-blur": 0.5 } } }`)
+  deep-merged into the generated MapLibre layer specs — reach any paint
+  property without dropping to `GeoJSONLayer`. New exported type
+  `LayerOverride`.
+- **Clicks everywhere, one shape**: every layer `onClick` now also receives
+  the raw `MapLayerMouseEvent` as its last argument; **Route and Arc gain
+  `onClick`** (with pointer-cursor hover). `Cluster`'s `onPointClick` now also
+  receives the point's index.
+- **Controlled `TimePlayback`**: `playhead` + `onTimeChange` and `playing` +
+  `onPlayingChange` follow the standard controlled/uncontrolled pattern, plus
+  `defaultPlayhead` for the uncontrolled start. `autoplay` stays the
+  uncontrolled initial.
+- **`BasePoint`** exported type — the shared `{ longitude, latitude,
+  properties? }` shape that `LayerPoint`, `SymbolPoint`, `ClusterPoint`, and
+  `BinPoint` now all extend, so helpers can be written once.
+- **`HeatmapLayer.colorRamp`** now also accepts `[density, color][]` stops
+  (palette tokens allowed) — same shape as HexbinLayer's ramp — in addition to
+  a raw MapLibre expression.
 - **Marker accessibility**: markers with `onClick` are now keyboard-accessible
   — focusable with `role="button"`, activated by Enter/Space — and a new
   `label` prop sets their accessible name. The `Map` container carries a
   default `aria-label` (override via the usual Box props).
-- JSDoc on every public prop and export (surfaced in the docs props tables).
+- JSDoc on every public prop and export (surfaced in the docs props tables,
+  which now badge deprecated props).
+
+### Deprecated
+
+Old props keep working (new prop wins when both are set) and warn once per
+prop in dev builds. Removal is planned for v1.0.
+
+| Component | Deprecated | Use instead |
+| --- | --- | --- |
+| PointLayer | `color`, `opacity` | `fillColor`, `fillOpacity` |
+| ShapeLayer | `lineColor`, `lineWidth`, `lineOpacity` | `strokeColor`, `strokeWidth`, `strokeOpacity` |
+| ChoroplethLayer | `lineColor`, `lineWidth`, `lineOpacity` | `strokeColor`, `strokeWidth`, `strokeOpacity` |
+| HexbinLayer | `opacity`, `lineColor`, `lineWidth` | `fillOpacity`, `strokeColor`, `strokeWidth` |
+| ExtrusionLayer | `color`, `opacity` | `fillColor`, `fillOpacity` |
+
+(Route/Arc keep `color`/`width`/`opacity` — a line has no fill/stroke split.
+SymbolLayer keeps `color` + `haloColor`; Cluster/TimePlayback/Marker keep
+their domain colors.)
+
+### Changed
+
+- Layer `onClick` feature arguments are now typed `MapGeoJSONFeature` instead
+  of `any` (ShapeLayer, ChoroplethLayer, ExtrusionLayer). Code that relied on
+  the implicit `any` may need a type tweak — runtime behavior is unchanged.
+
+### Fixed
+
+- `resolvePaletteColor` now resolves top-level palette string entries like
+  `"divider"` — previously ChoroplethLayer's default outline color reached
+  MapLibre as the literal string `"divider"`.
 
 ## [0.3.0] — 2026-07-04
 

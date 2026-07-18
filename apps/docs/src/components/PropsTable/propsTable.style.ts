@@ -28,6 +28,26 @@ const required: SxProps<Theme> = {
   ml: 0.25,
 };
 
+// Deprecated props sort last and read quietly struck-through.
+// (propName's shape plus the strike — kept standalone so the component can
+// ternary between the two without composing sx arrays.)
+const deprecatedName: SxProps<Theme> = {
+  fontFamily: "monospace",
+  fontWeight: 600,
+  whiteSpace: "nowrap",
+  textDecoration: "line-through",
+  textDecorationThickness: "1px",
+  opacity: 0.6,
+};
+
+const deprecatedTag: SxProps<Theme> = {
+  fontFamily: "monospace",
+  fontSize: "0.7rem",
+  color: "warning.main",
+  ml: 0.75,
+  whiteSpace: "nowrap",
+};
+
 const propType: SxProps<Theme> = (theme) => ({
   fontFamily: "monospace",
   fontSize: "0.8rem",
@@ -56,6 +76,8 @@ const styles: Record<
   | "table"
   | "propName"
   | "required"
+  | "deprecatedName"
+  | "deprecatedTag"
   | "propType"
   | "defaultValue"
   | "description",
@@ -67,6 +89,8 @@ const styles: Record<
   table,
   propName,
   required,
+  deprecatedName,
+  deprecatedTag,
   propType,
   defaultValue,
   description,

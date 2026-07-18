@@ -25,6 +25,8 @@ type PropRow = {
   required: boolean;
   defaultValue: string | null;
   description: string;
+  /** The @deprecated tag text, when present ("" for a bare tag). */
+  deprecated?: string | null;
 };
 
 /**
@@ -70,12 +72,24 @@ const PropsTable: FC<PropsTableProps> = ({ component, note }) => {
               {entry.props.map((prop) => (
                 <TableRow key={prop.name}>
                   <TableCell>
-                    <Box component="span" sx={Styles.propName}>
+                    <Box
+                      component="span"
+                      sx={
+                        prop.deprecated != null
+                          ? Styles.deprecatedName
+                          : Styles.propName
+                      }
+                    >
                       {prop.name}
                     </Box>
                     {prop.required && (
                       <Box component="span" sx={Styles.required}>
                         *
+                      </Box>
+                    )}
+                    {prop.deprecated != null && (
+                      <Box component="span" sx={Styles.deprecatedTag}>
+                        deprecated
                       </Box>
                     )}
                   </TableCell>

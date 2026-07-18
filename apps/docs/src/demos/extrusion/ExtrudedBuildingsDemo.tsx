@@ -30,8 +30,8 @@ const ExtrudedBuildingsDemo: FC = () => {
       <ExtrusionLayer
         data={buildings}
         heightProperty="height" // drive height from the data
-        color={byHeight} // …and tint each building by the same value
-        opacity={0.92}
+        fillColor={byHeight} // …and tint each building by the same value
+        fillOpacity={0.92}
       />
       <Legend
         title="Building height"

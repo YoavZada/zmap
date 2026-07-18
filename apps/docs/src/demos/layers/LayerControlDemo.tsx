@@ -78,7 +78,7 @@ const LayerControlDemo: FC = () => {
         icon={<Place fontSize="small" color="primary" />}
         group="Overlays"
       >
-        <PointLayer points={clusterPoints} color="primary.main" radius={4} />
+        <PointLayer points={clusterPoints} fillColor="primary.main" radius={4} />
       </Layer>
 
       <Layer
@@ -101,7 +101,7 @@ const LayerControlDemo: FC = () => {
         <ShapeLayer
           data={regions}
           fillColor={salesSpec}
-          lineColor="secondary.main"
+          strokeColor="secondary.main"
           fillOpacity={0.45}
         />
       </Layer>
