@@ -11,6 +11,7 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { Link as RouterLink } from "react-router-dom";
 import propsData from "../../generated/props.json";
+import PageHeader from "../../components/PageHeader";
 import DemoStyles from "../../components/DemoSection/demoSection.style";
 import { DEMO_ROUTE } from "../../apiRoutes";
 import Styles from "./apiPage.style";
@@ -127,16 +128,18 @@ const ApiPage: FC = () => {
 
   return (
     <Box>
-      <Typography variant="h4" fontWeight={800} gutterBottom>
-        API Reference
-      </Typography>
-      <Typography color="text.secondary" sx={Styles.intro}>
-        Every export shipped by <code>zmapgl</code>, generated from the library
-        source and its JSDoc — components, hooks, providers, and utilities.
-        Per-component prop tables live on each component's page. Power users can
-        also import <code>maplibregl</code>, the full MapLibre GL namespace, for
-        anything below the React layer.
-      </Typography>
+      <PageHeader
+        title="API Reference"
+        lead={
+          <>
+            Every export shipped by <code>zmapgl</code>, generated from the
+            library source and its JSDoc — components, hooks, providers, and
+            utilities. Per-component prop tables live on each component's page.
+            Power users can also import <code>maplibregl</code>, the full
+            MapLibre GL namespace, for anything below the React layer.
+          </>
+        }
+      />
 
       <Section
         title="Components"

@@ -13,12 +13,20 @@ import Typography from "@mui/material/Typography";
 import SearchIcon from "@mui/icons-material/Search";
 import propsData from "../../generated/props.json";
 import { navItems } from "../../nav";
+import { blocks } from "../../blocks";
 import { DEMO_ROUTE } from "../../apiRoutes";
 import Styles from "./search.style";
 
 type SearchItem = {
   label: string;
-  category: "Page" | "Component" | "Hook" | "Provider" | "Utility" | "Type";
+  category:
+    | "Page"
+    | "Block"
+    | "Component"
+    | "Hook"
+    | "Provider"
+    | "Utility"
+    | "Type";
   to: string;
   description?: string;
 };
@@ -38,6 +46,7 @@ const CATEGORY_OF: Record<string, SearchItem["category"]> = {
 
 const API_ANCHOR: Record<SearchItem["category"], string> = {
   Page: "",
+  Block: "",
   Component: "/api#components",
   Hook: "/api#hooks",
   Provider: "/api#providers",
@@ -45,12 +54,19 @@ const API_ANCHOR: Record<SearchItem["category"], string> = {
   Type: "/api#types",
 };
 
-/** Everything searchable: pages, then the whole generated API surface. */
+/** Everything searchable: pages, blocks, then the whole generated API surface. */
 function buildIndex(): SearchItem[] {
   const pages: SearchItem[] = navItems.map((item) => ({
     label: item.label,
     category: "Page",
     to: item.path,
+  }));
+
+  const blockItems: SearchItem[] = blocks.map((block) => ({
+    label: block.title,
+    category: "Block",
+    to: `/blocks#${block.id}`,
+    description: block.description,
   }));
 
   const components: SearchItem[] = Object.entries(
@@ -75,7 +91,7 @@ function buildIndex(): SearchItem[] {
       };
     });
 
-  return [...pages, ...components, ...rest];
+  return [...pages, ...blockItems, ...components, ...rest];
 }
 
 /**

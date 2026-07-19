@@ -1,25 +1,27 @@
 import type { FC } from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import DemoSection from "../../components/DemoSection";
+import PageHeader from "../../components/PageHeader";
 import PropsTable from "../../components/PropsTable";
 import ClickPopups from "../../demos/popups/ClickPopups";
 import clickPopupsSource from "../../demos/popups/ClickPopups.tsx?raw";
 import HoverTooltips from "../../demos/popups/HoverTooltips";
 import hoverTooltipsSource from "../../demos/popups/HoverTooltips.tsx?raw";
-import Styles from "./popupsPage.style";
 
 const PopupsPage: FC = () => {
   return (
     <Box>
-      <Typography variant="h4" fontWeight={800} gutterBottom>
-        Popups & Tooltips
-      </Typography>
-      <Typography color="text.secondary" sx={Styles.intro}>
-        Popups and tooltips render MUI content into a MapLibre overlay, styled
-        to match your theme's surface — including dark mode and rounded corners.
-        A <code>Tooltip</code> is a non-interactive popup with no close button.
-      </Typography>
+      <PageHeader
+        title="Popups & Tooltips"
+        lead={
+          <>
+            Popups and tooltips render MUI content into a MapLibre overlay,
+            styled to match your theme's surface — including dark mode and
+            rounded corners. A <code>Tooltip</code> is a non-interactive popup
+            with no close button.
+          </>
+        }
+      />
 
       <DemoSection
         title="Click-to-open popups"

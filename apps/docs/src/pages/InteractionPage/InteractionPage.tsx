@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import DemoSection from "../../components/DemoSection";
+import PageHeader from "../../components/PageHeader";
 import PropsTable from "../../components/PropsTable";
 import MapEventsDemo from "../../demos/interaction/MapEventsDemo";
 import mapEventsDemoSource from "../../demos/interaction/MapEventsDemo.tsx?raw";
@@ -15,20 +15,14 @@ import ContextMenuDemo from "../../demos/interaction/ContextMenuDemo";
 import contextMenuDemoSource from "../../demos/interaction/ContextMenuDemo.tsx?raw";
 import SelectionDemo from "../../demos/interaction/SelectionDemo";
 import selectionDemoSource from "../../demos/interaction/SelectionDemo.tsx?raw";
-import Styles from "./interactionPage.style";
 
 const InteractionPage: FC = () => {
   return (
     <Box>
-      <Typography variant="h4" fontWeight={800} gutterBottom>
-        Interaction
-      </Typography>
-      <Typography color="text.secondary" sx={Styles.intro}>
-        React to what people do on the map — clicks, pans, zooms — and drive the
-        camera declaratively, plus tools that let them draw, measure, and
-        select. Every control is plain MUI — the toolbars, chips, and menus
-        inherit your theme (light/dark, palette, shape) automatically.
-      </Typography>
+      <PageHeader
+        title="Interaction"
+        lead="React to what people do on the map — clicks, pans, zooms — and drive the camera declaratively, plus tools that let them draw, measure, and select. Every control is plain MUI — the toolbars, chips, and menus inherit your theme (light/dark, palette, shape) automatically."
+      />
 
       <DemoSection
         title="Map events"

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FC, type ReactNode } from "react";
+import { useState, type FC, type ReactNode } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -8,6 +8,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Link from "@mui/material/Link";
 import CodeBlock from "../CodeBlock";
 import { stripDemoSource } from "../../utils/stripDemoSource";
+import { useRevealOnScroll } from "../../utils/useRevealOnScroll";
 import Styles from "./demoSection.style";
 
 export type DemoSectionProps = {
@@ -33,34 +34,8 @@ const DemoSection: FC<DemoSectionProps> = ({
   previewMinHeight = 440,
 }) => {
   const [tab, setTab] = useState(0);
-  // Each demo is a full MapLibre WebGL context, so we only mount it once its
-  // section scrolls near the viewport — keeping live contexts (and tile fetches)
-  // bounded no matter how many demos a page stacks up. Once revealed it stays
-  // mounted, to avoid re-initialising the map (and re-fetching tiles) on scroll.
-  const [revealed, setRevealed] = useState(false);
-  const previewRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (revealed) return;
-    const el = previewRef.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === "undefined") {
-      setRevealed(true);
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setRevealed(true);
-          observer.disconnect();
-        }
-      },
-      // Mount a little before it enters view so the map is ready on arrival.
-      { rootMargin: "200px" },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [revealed, tab]);
+  // Bound live WebGL contexts no matter how many demos a page stacks up.
+  const { ref: previewRef, revealed } = useRevealOnScroll();
 
   const anchor = title
     .toLowerCase()

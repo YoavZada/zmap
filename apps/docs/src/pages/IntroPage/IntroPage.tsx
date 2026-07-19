@@ -152,6 +152,9 @@ const IntroPage: FC = () => {
             >
               Explore Components
             </Button>
+            <Button variant="outlined" component={RouterLink} to="/blocks">
+              Browse blocks
+            </Button>
             <InstallButton />
           </Stack>
           <Stack direction="row" spacing={2.5} flexWrap="wrap" useFlexGap>

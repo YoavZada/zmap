@@ -1,5 +1,6 @@
 import type { ElementType } from "react";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
+import GridViewOutlined from "@mui/icons-material/GridViewOutlined";
 import PaletteOutlined from "@mui/icons-material/PaletteOutlined";
 import PlaceOutlined from "@mui/icons-material/PlaceOutlined";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
@@ -30,6 +31,13 @@ export const navItems: NavItem[] = [
     icon: InfoOutlined,
     description:
       "MUI-native map components built on MapLibre GL — install zmapgl and drop a themed map into your React app.",
+  },
+  {
+    path: "/blocks",
+    label: "Blocks",
+    icon: GridViewOutlined,
+    description:
+      "Complete copy-paste scenarios — store locator, analytics dashboard, flight network, delivery tracker, 3D city — each one self-contained file.",
   },
   {
     path: "/providers",

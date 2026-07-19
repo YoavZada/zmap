@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { Routes, Route } from "react-router-dom";
 import Layout from "./layout/Layout";
 import IntroPage from "./pages/IntroPage";
+import BlocksPage from "./pages/BlocksPage";
 import ProvidersPage from "./pages/ProvidersPage";
 import MarkersPage from "./pages/MarkersPage";
 import PopupsPage from "./pages/PopupsPage";
@@ -23,6 +24,7 @@ const App: FC = () => {
     <Layout>
       <Routes>
         <Route path="/" element={<IntroPage />} />
+        <Route path="/blocks" element={<BlocksPage />} />
         <Route path="/providers" element={<ProvidersPage />} />
         <Route path="/markers" element={<MarkersPage />} />
         <Route path="/popups" element={<PopupsPage />} />
