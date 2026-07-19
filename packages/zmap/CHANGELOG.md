@@ -74,6 +74,12 @@ their domain colors.)
 
 ### Fixed
 
+- **Layers could vanish permanently on a theme toggle**: when a style swap's
+  final `styledata` event fired before `isStyleLoaded()` turned true, the
+  re-add never ran and every custom layer stayed gone. `useMapLayer` now also
+  sweeps on `idle`, which reliably catches that race. Re-added layers also now
+  carry the *current* paint/layout (the re-add previously used the mount-time
+  specs, so layers restored after a theme flip kept the old theme's colors).
 - `resolvePaletteColor` now resolves top-level palette string entries like
   `"divider"` — previously ChoroplethLayer's default outline color reached
   MapLibre as the literal string `"divider"`.

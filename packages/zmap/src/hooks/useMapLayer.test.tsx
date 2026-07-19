@@ -134,6 +134,54 @@ describe("useMapLayer", () => {
     expect(map.getSource("src-1")).toBeDefined();
   });
 
+  it("recovers on idle when the last styledata fired before the style loaded", () => {
+    const map = new FakeMap();
+    renderMapLayer(map, baseConfig());
+
+    // The swap's final styledata arrives while the style is still loading —
+    // without the idle sweep, the layers would be lost for good.
+    map.wipeStyle();
+    map.setStyleLoaded(false);
+    act(() => {
+      map.fire("styledata");
+    });
+    expect(map.getSource("src-1")).toBeUndefined();
+
+    map.setStyleLoaded(true);
+    act(() => {
+      map.fire("idle");
+    });
+    expect(map.getSource("src-1")).toBeDefined();
+    expect(map.getLayer("layer-1")).toBeDefined();
+  });
+
+  it("re-adds with the latest layer specs, not the mount-time ones", () => {
+    const map = new FakeMap();
+    const { rerender } = renderMapLayer(map, baseConfig());
+
+    rerender(
+      baseConfig({
+        layers: [
+          {
+            id: "layer-1",
+            type: "circle",
+            paint: { "circle-radius": 42 },
+          } as MapLayerConfig["layers"][number],
+        ],
+      }),
+    );
+
+    map.wipeStyle();
+    act(() => {
+      map.fire("styledata");
+    });
+    expect(
+      (map.getLayer("layer-1")!.paint as Record<string, unknown>)[
+        "circle-radius"
+      ],
+    ).toBe(42);
+  });
+
   it("accepts a URL string as data and passes it straight to the source", () => {
     const map = new FakeMap();
     const { rerender } = renderMapLayer(
