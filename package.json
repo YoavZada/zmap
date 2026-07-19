@@ -5,14 +5,15 @@
   "description": "zmap — MUI-native map components built on MapLibre GL",
   "type": "module",
   "scripts": {
-    "build": "pnpm --filter zmapgl build",
-    "dev": "pnpm --filter zmapgl dev",
-    "docs": "pnpm --filter docs dev",
-    "pathfinder": "pnpm --filter pathfinder dev",
-    "test": "pnpm --filter zmapgl test",
+    "build": "turbo run build",
+    "build:lib": "turbo run build --filter=zmapgl",
+    "dev": "turbo run dev --filter=zmapgl",
+    "docs": "turbo run dev --filter=docs",
+    "pathfinder": "turbo run dev --filter=pathfinder",
+    "test": "turbo run test",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
@@ -20,6 +21,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "globals": "^15.14.0",
     "prettier": "^3.4.2",
+    "turbo": "^2.10.5",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.1"
   },
