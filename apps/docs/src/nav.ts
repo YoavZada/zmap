@@ -138,3 +138,72 @@ export const navItems: NavItem[] = [
       "Every component, hook, provider, utility, and type zmapgl ships, with links into the demos.",
   },
 ];
+
+/* ------------------------------------------------------------------ *
+ * Derived navigation model
+ *
+ * `navItems` above stays the flat source of truth (Search + RouteMeta look
+ * pages up by path). The structures below are views over the SAME objects:
+ *   - `componentGroups` powers the contextual sidebar on component/guide routes.
+ *   - `destinations` powers the navbar's top-level tabs.
+ * ------------------------------------------------------------------ */
+
+const byPath = (path: string): NavItem => {
+  const item = navItems.find((n) => n.path === path);
+  if (!item) throw new Error(`nav: no NavItem registered for "${path}"`);
+  return item;
+};
+
+export interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+/** The component reference, grouped for the sidebar. Providers & Theming leads
+ * as a "Guides" entry; the remaining 12 pages cluster by what they do. */
+export const componentGroups: NavGroup[] = [
+  { label: "Guides", items: [byPath("/providers")] },
+  {
+    label: "Overlays",
+    items: [byPath("/markers"), byPath("/popups"), byPath("/clusters")],
+  },
+  {
+    label: "Data layers",
+    items: [
+      byPath("/routes"),
+      byPath("/arcs"),
+      byPath("/layers"),
+      byPath("/choropleth"),
+      byPath("/hexbins"),
+      byPath("/extrusion"),
+    ],
+  },
+  {
+    label: "Controls & interaction",
+    items: [byPath("/controls"), byPath("/interaction"), byPath("/time")],
+  },
+];
+
+// Every route that lives in the component sidebar (guides included).
+const componentPaths = new Set(
+  componentGroups.flatMap((g) => g.items.map((i) => i.path)),
+);
+
+/** True for any route that renders the grouped component rail. */
+export const isComponentRoute = (path: string): boolean =>
+  componentPaths.has(path);
+
+export interface Destination {
+  label: string;
+  to: string;
+  /** Whether this tab should read as active for the given pathname. */
+  isActive: (path: string) => boolean;
+}
+
+/** Top-level navbar tabs. "Components" lands on the first component page and
+ * stays active across the whole component/guide section. */
+export const destinations: Destination[] = [
+  { label: "Components", to: "/markers", isActive: isComponentRoute },
+  { label: "Blocks", to: "/blocks", isActive: (p) => p === "/blocks" },
+  { label: "API", to: "/api", isActive: (p) => p === "/api" },
+];

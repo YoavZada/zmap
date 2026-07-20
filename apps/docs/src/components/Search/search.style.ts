@@ -11,6 +11,55 @@ const dialog: SxProps<Theme> = {
   },
 };
 
+// Slim navbar trigger dressed as an input pill. Wide screens only — below lg
+// the centered destination tabs need the room, so the icon trigger takes over.
+const field: SxProps<Theme> = (theme) => ({
+  display: { xs: "none", lg: "flex" },
+  alignItems: "center",
+  gap: 1,
+  height: 36,
+  width: { lg: 220 },
+  pl: 1.25,
+  pr: 0.75,
+  borderRadius: 2,
+  border: "1px solid",
+  borderColor: "divider",
+  color: "text.secondary",
+  bgcolor:
+    theme.palette.mode === "dark"
+      ? "rgba(148,163,184,0.06)"
+      : "rgba(15,23,42,0.03)",
+  justifyContent: "flex-start",
+  transition: theme.transitions.create(["border-color", "background-color"], {
+    duration: 150,
+  }),
+  "&:hover": { borderColor: "text.secondary" },
+});
+
+const fieldIcon: SxProps<Theme> = { fontSize: 18 };
+
+const fieldText: SxProps<Theme> = {
+  flexGrow: 1,
+  textAlign: "left",
+  fontSize: 14,
+};
+
+const fieldKbd: SxProps<Theme> = (theme) => ({
+  px: 0.6,
+  py: 0.1,
+  borderRadius: 1,
+  border: `1px solid ${theme.palette.divider}`,
+  fontSize: "0.7rem",
+  fontFamily: "monospace",
+  lineHeight: 1.6,
+  color: "text.secondary",
+});
+
+// The icon fallback shown only when the field is hidden (below lg).
+const iconOnMobile: SxProps<Theme> = {
+  display: { xs: "inline-flex", lg: "none" },
+};
+
 const input: SxProps<Theme> = { p: 2, pb: 1 };
 
 const list: SxProps<Theme> = {
@@ -40,8 +89,30 @@ const kbd: SxProps<Theme> = (theme) => ({
 });
 
 const styles: Record<
-  "dialog" | "input" | "list" | "category" | "empty" | "kbd",
+  | "field"
+  | "fieldIcon"
+  | "fieldText"
+  | "fieldKbd"
+  | "iconOnMobile"
+  | "dialog"
+  | "input"
+  | "list"
+  | "category"
+  | "empty"
+  | "kbd",
   SxProps<Theme>
-> = { dialog, input, list, category, empty, kbd };
+> = {
+  field,
+  fieldIcon,
+  fieldText,
+  fieldKbd,
+  iconOnMobile,
+  dialog,
+  input,
+  list,
+  category,
+  empty,
+  kbd,
+};
 
 export default styles;

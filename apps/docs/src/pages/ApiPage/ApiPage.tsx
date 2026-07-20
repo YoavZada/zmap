@@ -14,7 +14,16 @@ import propsData from "../../generated/props.json";
 import PageHeader from "../../components/PageHeader";
 import DemoStyles from "../../components/DemoSection/demoSection.style";
 import { DEMO_ROUTE } from "../../apiRoutes";
+import { apiSections } from "../../apiSections";
 import Styles from "./apiPage.style";
+
+// Titles + anchors come from the shared apiSections list, so this page and the
+// contextual "On this page" rail stay in lockstep.
+const sec = (id: string) => {
+  const s = apiSections.find((x) => x.id === id);
+  if (!s) throw new Error(`apiSections: no section "${id}"`);
+  return s;
+};
 
 type ApiExport = {
   name: string;
@@ -142,14 +151,14 @@ const ApiPage: FC = () => {
       />
 
       <Section
-        title="Components"
-        anchor="components"
+        title={sec("components").label}
+        anchor={sec("components").id}
         intro="Each links to the page where it's demoed live."
         rows={componentRows}
       />
       <Section
-        title="Hooks"
-        anchor="hooks"
+        title={sec("hooks").label}
+        anchor={sec("hooks").id}
         intro={
           <>
             Everything a custom component needs to talk to the map. Gate work
@@ -161,8 +170,8 @@ const ApiPage: FC = () => {
         rows={hookRows}
       />
       <Section
-        title="Providers"
-        anchor="providers"
+        title={sec("providers").label}
+        anchor={sec("providers").id}
         intro={
           <>
             Basemap sources for the <code>provider</code> prop. All are keyless
@@ -173,16 +182,16 @@ const ApiPage: FC = () => {
         rows={providerRows}
       />
       <Section
-        title="Utilities"
-        anchor="utilities"
+        title={sec("utilities").label}
+        anchor={sec("utilities").id}
         intro="Pure helpers — geometry, GeoJSON builders, measuring, binning, and MUI palette color resolution."
         rows={utilRows}
       />
 
-      <Box component="section" id="types" sx={Styles.section}>
+      <Box component="section" id={sec("types").id} sx={Styles.section}>
         <Typography variant="h5" fontWeight={700} gutterBottom>
-          <Link href="#types" sx={DemoStyles.titleLink}>
-            Types
+          <Link href={`#${sec("types").id}`} sx={DemoStyles.titleLink}>
+            {sec("types").label}
             <span className="anchor-hash">#</span>
           </Link>
         </Typography>

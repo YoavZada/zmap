@@ -5,7 +5,6 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import Chip from "@mui/material/Chip";
 import PaletteIcon from "@mui/icons-material/PaletteOutlined";
 import SpeedIcon from "@mui/icons-material/SpeedOutlined";
 import CodeIcon from "@mui/icons-material/CodeOutlined";
@@ -15,35 +14,44 @@ import ArrowForward from "@mui/icons-material/ArrowForward";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import Check from "@mui/icons-material/Check";
+import RouteOutlined from "@mui/icons-material/RouteOutlined";
+import OpenInNew from "@mui/icons-material/OpenInNew";
 import { Link as RouterLink } from "react-router-dom";
 import { Map, Marker } from "zmapgl";
 import CodeBlock from "../../components/CodeBlock";
+import { PATHFINDER_URL } from "../../env";
 import Styles from "./introPage.style";
 
+// Bento spans: the two "headline" features get the wide tiles, the grid
+// zigzags 7/5 then 5/7 so the section reads composed rather than templated.
 const features = [
   {
     icon: <PaletteIcon />,
     title: "Theme-aware",
     body: "Components read your MUI theme directly — primary palette, shape and light/dark mode flow straight into the controls, popups and basemap.",
+    span: 7,
   },
   {
     icon: <SpeedIcon />,
     title: "Hardware-accelerated",
     body: "Built on MapLibre GL for GPU vector rendering. Markers mount through React portals, so React state changes never re-create the map canvas.",
+    span: 5,
   },
   {
     icon: <CodeIcon />,
     title: "Declarative",
     body: "Manage the map in JSX. Markers, popups, routes, arcs, clusters and layers are first-class React components with ordinary props and children.",
+    span: 5,
   },
   {
     icon: <ExtensionIcon />,
     title: "Pluggable providers",
     body: "CARTO and OpenStreetMap ship built in — or pass any MapLibre style URL or spec. Drop down to the raw map instance whenever you need it.",
+    span: 7,
   },
 ];
 
-const chips = ["Light & dark mode", "TypeScript-first", "MIT licensed"];
+const checks = ["Light & dark mode", "TypeScript-first", "MIT licensed"];
 
 const installCode = `npm install zmapgl @mui/material @mui/icons-material \\
   @emotion/react @emotion/styled maplibre-gl`;
@@ -99,7 +107,9 @@ const ThemeShowcase: FC = () => {
       >
         <Marker longitude={view.center[0]} latitude={view.center[1]} />
       </Map>
-      <Chip label={label} size="small" sx={Styles.showcaseChip} />
+      <Box component="span" sx={Styles.showcaseLabel}>
+        {label}
+      </Box>
     </Box>
   );
   return (
@@ -113,68 +123,75 @@ const ThemeShowcase: FC = () => {
 const IntroPage: FC = () => {
   return (
     <Box>
-      {/* Hero */}
-      <Grid
-        container
-        spacing={{ xs: 4, md: 6 }}
-        alignItems="center"
-        sx={Styles.hero}
-      >
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Typography variant="h2" gutterBottom>
-            Beautiful maps for{" "}
-            <Box component="span" sx={Styles.accent}>
-              MUI apps
-            </Box>
-            .
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            color="text.secondary"
-            sx={Styles.heroLead}
-          >
-            zmap inherits your Material UI theme, giving you a unified design
-            system from your buttons to your base maps. No custom styling hacks
-            — just declarative, composable mapping components.
-          </Typography>
-          <Stack
-            direction="row"
-            spacing={1.5}
-            sx={Styles.heroActions}
-            flexWrap="wrap"
-            useFlexGap
-          >
-            <Button
-              variant="contained"
-              endIcon={<ArrowForward />}
-              component={RouterLink}
-              to="/markers"
+      {/* Hero — full-bleed band with a faint dot grid and one soft glow. */}
+      <Box sx={Styles.heroBleed}>
+        <Grid
+          container
+          spacing={{ xs: 4, md: 6 }}
+          alignItems="center"
+          sx={Styles.heroInner}
+        >
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Typography variant="h1" gutterBottom>
+              Beautiful maps for{" "}
+              <Box component="span" sx={Styles.accent}>
+                MUI apps
+              </Box>
+              .
+            </Typography>
+            <Typography
+              variant="subtitle1"
+              color="text.secondary"
+              sx={Styles.heroLead}
             >
-              Explore Components
-            </Button>
-            <Button variant="outlined" component={RouterLink} to="/blocks">
-              Browse blocks
-            </Button>
-            <InstallButton />
-          </Stack>
-          <Stack direction="row" spacing={2.5} flexWrap="wrap" useFlexGap>
-            {chips.map((c) => (
-              <Stack key={c} direction="row" spacing={0.75} alignItems="center">
-                <CheckCircle sx={Styles.checkIcon} />
-                <Typography variant="body2" color="text.secondary">
-                  {c}
-                </Typography>
-              </Stack>
-            ))}
-          </Stack>
+              zmap inherits your Material UI theme, giving you a unified design
+              system from your buttons to your base maps. No custom styling
+              hacks — just declarative, composable mapping components.
+            </Typography>
+            <Stack
+              direction="row"
+              spacing={1.5}
+              sx={Styles.heroActions}
+              flexWrap="wrap"
+              useFlexGap
+            >
+              <Button
+                variant="contained"
+                endIcon={<ArrowForward />}
+                component={RouterLink}
+                to="/markers"
+              >
+                Explore Components
+              </Button>
+              <Button variant="outlined" component={RouterLink} to="/blocks">
+                Browse blocks
+              </Button>
+              <InstallButton />
+            </Stack>
+            <Stack direction="row" spacing={2.5} flexWrap="wrap" useFlexGap>
+              {checks.map((c) => (
+                <Stack
+                  key={c}
+                  direction="row"
+                  spacing={0.75}
+                  alignItems="center"
+                >
+                  <CheckCircle sx={Styles.checkIcon} />
+                  <Typography variant="body2" color="text.secondary">
+                    {c}
+                  </Typography>
+                </Stack>
+              ))}
+            </Stack>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ThemeShowcase />
+          </Grid>
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <ThemeShowcase />
-        </Grid>
-      </Grid>
+      </Box>
 
-      {/* Feature grid */}
-      <Box sx={Styles.featureSection}>
+      {/* Feature bento */}
+      <Box sx={Styles.section}>
         <Typography variant="h4" gutterBottom>
           Built for the Modern Developer
         </Typography>
@@ -184,7 +201,7 @@ const IntroPage: FC = () => {
         </Typography>
         <Grid container spacing={2.5}>
           {features.map((f) => (
-            <Grid key={f.title} size={{ xs: 12, sm: 6 }}>
+            <Grid key={f.title} size={{ xs: 12, sm: 6, md: f.span }}>
               <Paper variant="outlined" sx={Styles.featureCard}>
                 <Box sx={Styles.featureIcon}>{f.icon}</Box>
                 <Typography variant="h6" gutterBottom>
@@ -199,8 +216,40 @@ const IntroPage: FC = () => {
         </Grid>
       </Box>
 
+      {/* Pathfinder showcase */}
+      <Box sx={Styles.section}>
+        <Paper variant="outlined" sx={Styles.pathfinderTile}>
+          <Box sx={Styles.pathfinderIcon}>
+            <RouteOutlined fontSize="large" />
+          </Box>
+          <Box sx={Styles.pathfinderText}>
+            <Typography variant="overline" color="text.secondary">
+              Showcase
+            </Typography>
+            <Typography variant="h5" fontWeight={700} gutterBottom>
+              Pathfinder
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              An interactive Dijkstra shortest-path demo over a generated road
+              network — routes, markers, and controls, all built with zmap
+              components.
+            </Typography>
+          </Box>
+          <Button
+            variant="outlined"
+            endIcon={<OpenInNew fontSize="small" />}
+            component="a"
+            href={PATHFINDER_URL}
+            target="_blank"
+            rel="noopener"
+          >
+            Open Pathfinder
+          </Button>
+        </Paper>
+      </Box>
+
       {/* Installation */}
-      <Box sx={Styles.installSection}>
+      <Box sx={Styles.section}>
         <Typography variant="h4" gutterBottom>
           Installation
         </Typography>
