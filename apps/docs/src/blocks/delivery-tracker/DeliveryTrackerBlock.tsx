@@ -35,10 +35,7 @@ const trip: FeatureCollection = {
         type: "Feature" as const,
         geometry: {
           type: "Point" as const,
-          coordinates: [
-            lng + (nextLng - lng) * t,
-            lat + (nextLat - lat) * t,
-          ],
+          coordinates: [lng + (nextLng - lng) * t, lat + (nextLat - lat) * t],
         },
         properties: { time: leg * PINGS_PER_LEG + s },
       };
@@ -56,9 +53,18 @@ const DeliveryTrackerBlock: FC = () => {
 
   return (
     <Box sx={{ position: "relative", height: 560 }}>
-      <Map center={[-74.0, 40.729]} zoom={12.2} sx={{ height: "100%", borderRadius: 2 }}>
+      <Map
+        center={[-74.0, 40.729]}
+        zoom={12.2}
+        sx={{ height: "100%", borderRadius: 2 }}
+      >
         {/* Planned path, faint under the live trail. */}
-        <Route coordinates={path} color="primary.main" width={5} opacity={0.35} />
+        <Route
+          coordinates={path}
+          color="primary.main"
+          width={5}
+          opacity={0.35}
+        />
         <TimePlayback
           data={trip}
           trail={10}
@@ -81,13 +87,22 @@ const DeliveryTrackerBlock: FC = () => {
       {/* Status card */}
       <Paper
         elevation={4}
-        sx={{ position: "absolute", top: 16, left: 16, px: 2.5, py: 1.5, width: 220, borderRadius: 2 }}
+        sx={{
+          position: "absolute",
+          top: 16,
+          left: 16,
+          px: 2.5,
+          py: 1.5,
+          width: 220,
+          borderRadius: 2,
+        }}
       >
         <Typography variant="overline" color="text.secondary">
           Order #4817
         </Typography>
         <Typography variant="subtitle2" gutterBottom>
-          {progress >= 100 ? "Delivered" : "En route"} — {Math.min(progress, 100)}%
+          {progress >= 100 ? "Delivered" : "En route"} —{" "}
+          {Math.min(progress, 100)}%
         </Typography>
         <LinearProgress
           variant="determinate"

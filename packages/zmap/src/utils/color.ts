@@ -8,9 +8,7 @@ import type { Theme } from "@mui/material/styles";
  */
 export function resolvePaletteColor(theme: Theme, color: string): string {
   if (!color.includes(".")) {
-    const direct = (theme.palette as unknown as Record<string, unknown>)[
-      color
-    ];
+    const direct = (theme.palette as unknown as Record<string, unknown>)[color];
     return typeof direct === "string" ? direct : color;
   }
 

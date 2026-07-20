@@ -96,6 +96,7 @@ export function useMapLayer(config: MapLayerConfig): void {
   // false (sprite/glyphs pending) — with no later styledata, the layers would
   // be lost until something else touched the style. `idle` fires once the map
   // settles, so it reliably sweeps up that race.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: re-add is keyed by map/loaded; id is included to rebind if it changes
   useEffect(() => {
     if (!map || !loaded) return;
     addAll(map, cfgRef.current);
@@ -113,7 +114,6 @@ export function useMapLayer(config: MapLayerConfig): void {
       map.off("idle", ensure);
       removeAll(map, cfgRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, loaded, id]);
 
   // Update GeoJSON data in place.

@@ -1,9 +1,6 @@
 import { useId, useMemo, type FC } from "react";
 import { useTheme } from "@mui/material/styles";
-import type {
-  ExpressionSpecification,
-  MapLayerMouseEvent,
-} from "maplibre-gl";
+import type { ExpressionSpecification, MapLayerMouseEvent } from "maplibre-gl";
 import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
 import { useLayerClick } from "../../hooks/useLayerClick";
 import { resolvePaletteColor } from "../../utils/color";
@@ -169,7 +166,10 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
           {
             id: fillId,
             type: "fill",
-            paint: { "fill-color": colorExpr, "fill-opacity": resolvedFillOpacity },
+            paint: {
+              "fill-color": colorExpr,
+              "fill-opacity": resolvedFillOpacity,
+            },
           },
           {
             id: `${baseId}-line`,

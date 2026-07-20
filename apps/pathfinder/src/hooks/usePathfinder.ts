@@ -64,6 +64,7 @@ export function usePathfinder(): Pathfinder {
   // Recompute whenever the coordinates or their order change. Fewer than two
   // points can't form a route, so we just clear. The previous result is kept on
   // screen while a new request is in flight to avoid a flicker.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: keyed by coordsKey/order; points is excluded so renames don't re-route
   useEffect(() => {
     abortRef.current?.abort();
 
@@ -103,7 +104,6 @@ export function usePathfinder(): Pathfinder {
     return () => controller.abort();
     // `points` is read inside but intentionally excluded — we key off the
     // coordinate signature so renames don't recompute the route.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coordsKey, order]);
 
   // Draw the route on once a fresh result lands.

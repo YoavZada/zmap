@@ -2,13 +2,7 @@ import { useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import {
-  Map,
-  ChoroplethLayer,
-  PointLayer,
-  Layer,
-  LayerControl,
-} from "zmapgl";
+import { Map, ChoroplethLayer, PointLayer, Layer, LayerControl } from "zmapgl";
 import type { Feature, FeatureCollection, Polygon } from "geojson";
 
 // --- demo data ---
@@ -72,7 +66,11 @@ const RegionalAnalyticsBlock: FC = () => {
 
   return (
     <Box sx={{ position: "relative", height: 560 }}>
-      <Map center={[-103.5, 39.5]} zoom={4.1} sx={{ height: "100%", borderRadius: 2 }}>
+      <Map
+        center={[-103.5, 39.5]}
+        zoom={4.1}
+        sx={{ height: "100%", borderRadius: 2 }}
+      >
         <Layer id="revenue" label="Revenue by territory" color="primary.main">
           <ChoroplethLayer
             data={territories}
@@ -105,7 +103,16 @@ const RegionalAnalyticsBlock: FC = () => {
       {/* KPI strip */}
       <Paper
         elevation={4}
-        sx={{ position: "absolute", top: 16, left: 16, px: 2.5, py: 1.5, borderRadius: 2, display: "flex", gap: 4 }}
+        sx={{
+          position: "absolute",
+          top: 16,
+          left: 16,
+          px: 2.5,
+          py: 1.5,
+          borderRadius: 2,
+          display: "flex",
+          gap: 4,
+        }}
       >
         <Box>
           <Typography variant="overline" color="text.secondary">

@@ -43,7 +43,14 @@ export const blocks: BlockDef[] = [
     title: "Regional analytics",
     description:
       "A choropleth dashboard: revenue by territory with a shared-spec legend, toggleable office overlay, and a KPI strip fed by map clicks.",
-    components: ["Map", "ChoroplethLayer", "Legend", "Layer", "LayerControl", "PointLayer"],
+    components: [
+      "Map",
+      "ChoroplethLayer",
+      "Legend",
+      "Layer",
+      "LayerControl",
+      "PointLayer",
+    ],
     Component: RegionalAnalyticsBlock,
     source: regionalAnalyticsSource,
   },

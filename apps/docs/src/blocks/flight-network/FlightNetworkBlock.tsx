@@ -46,7 +46,11 @@ const FlightNetworkBlock: FC = () => {
 
   return (
     <Box sx={{ position: "relative", height: 560 }}>
-      <Map center={[10, 22]} zoom={1.3} sx={{ height: "100%", borderRadius: 2 }}>
+      <Map
+        center={[10, 22]}
+        zoom={1.3}
+        sx={{ height: "100%", borderRadius: 2 }}
+      >
         {network[hub].map((dest) => (
           <Arc
             key={`${hub}-${dest}`}
@@ -81,7 +85,10 @@ const FlightNetworkBlock: FC = () => {
       </Map>
 
       {/* Hub switcher */}
-      <Paper elevation={4} sx={{ position: "absolute", top: 16, left: 16, borderRadius: 2 }}>
+      <Paper
+        elevation={4}
+        sx={{ position: "absolute", top: 16, left: 16, borderRadius: 2 }}
+      >
         <ToggleButtonGroup
           exclusive
           size="small"

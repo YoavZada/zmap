@@ -9,18 +9,90 @@ import { Map, MapControls, Cluster, Popup, type MapViewState } from "zmapgl";
 
 // --- demo data ---
 const stores = [
-  { id: 1, name: "Soho Roastery", address: "12 Greek St", longitude: -0.1312, latitude: 51.5136 },
-  { id: 2, name: "Borough Beans", address: "8 Stoney St", longitude: -0.091, latitude: 51.5055 },
-  { id: 3, name: "Shoreditch Grind", address: "213 Old St", longitude: -0.0879, latitude: 51.5265 },
-  { id: 4, name: "Kings Cross Filter", address: "1 Granary Sq", longitude: -0.1257, latitude: 51.5355 },
-  { id: 5, name: "Notting Hill Brew", address: "20 Portobello Rd", longitude: -0.2005, latitude: 51.5152 },
-  { id: 6, name: "Camden Lock Coffee", address: "54 Chalk Farm Rd", longitude: -0.1466, latitude: 51.5413 },
-  { id: 7, name: "Greenwich Grounds", address: "3 College Way", longitude: -0.0077, latitude: 51.4826 },
-  { id: 8, name: "Brixton Blend", address: "40 Electric Ave", longitude: -0.1147, latitude: 51.4622 },
-  { id: 9, name: "Hampstead House", address: "77 Heath St", longitude: -0.1786, latitude: 51.5566 },
-  { id: 10, name: "Canary Wharf Cup", address: "5 Cabot Sq", longitude: -0.0235, latitude: 51.5054 },
-  { id: 11, name: "Chelsea Cortado", address: "170 Kings Rd", longitude: -0.1687, latitude: 51.4875 },
-  { id: 12, name: "Islington Espresso", address: "31 Upper St", longitude: -0.1027, latitude: 51.5362 },
+  {
+    id: 1,
+    name: "Soho Roastery",
+    address: "12 Greek St",
+    longitude: -0.1312,
+    latitude: 51.5136,
+  },
+  {
+    id: 2,
+    name: "Borough Beans",
+    address: "8 Stoney St",
+    longitude: -0.091,
+    latitude: 51.5055,
+  },
+  {
+    id: 3,
+    name: "Shoreditch Grind",
+    address: "213 Old St",
+    longitude: -0.0879,
+    latitude: 51.5265,
+  },
+  {
+    id: 4,
+    name: "Kings Cross Filter",
+    address: "1 Granary Sq",
+    longitude: -0.1257,
+    latitude: 51.5355,
+  },
+  {
+    id: 5,
+    name: "Notting Hill Brew",
+    address: "20 Portobello Rd",
+    longitude: -0.2005,
+    latitude: 51.5152,
+  },
+  {
+    id: 6,
+    name: "Camden Lock Coffee",
+    address: "54 Chalk Farm Rd",
+    longitude: -0.1466,
+    latitude: 51.5413,
+  },
+  {
+    id: 7,
+    name: "Greenwich Grounds",
+    address: "3 College Way",
+    longitude: -0.0077,
+    latitude: 51.4826,
+  },
+  {
+    id: 8,
+    name: "Brixton Blend",
+    address: "40 Electric Ave",
+    longitude: -0.1147,
+    latitude: 51.4622,
+  },
+  {
+    id: 9,
+    name: "Hampstead House",
+    address: "77 Heath St",
+    longitude: -0.1786,
+    latitude: 51.5566,
+  },
+  {
+    id: 10,
+    name: "Canary Wharf Cup",
+    address: "5 Cabot Sq",
+    longitude: -0.0235,
+    latitude: 51.5054,
+  },
+  {
+    id: 11,
+    name: "Chelsea Cortado",
+    address: "170 Kings Rd",
+    longitude: -0.1687,
+    latitude: 51.4875,
+  },
+  {
+    id: 12,
+    name: "Islington Espresso",
+    address: "31 Upper St",
+    longitude: -0.1027,
+    latitude: 51.5362,
+  },
 ];
 type Store = (typeof stores)[number];
 
@@ -41,7 +113,11 @@ const StoreLocatorBlock: FC = () => {
 
   return (
     <Box sx={{ position: "relative", height: 560 }}>
-      <Map view={view} onMoveEnd={setView} sx={{ height: "100%", borderRadius: 2 }}>
+      <Map
+        view={view}
+        onMoveEnd={setView}
+        sx={{ height: "100%", borderRadius: 2 }}
+      >
         <MapControls position="top-right" />
         <Cluster
           points={stores}
@@ -78,7 +154,11 @@ const StoreLocatorBlock: FC = () => {
           borderRadius: 2,
         }}
       >
-        <Typography variant="overline" color="text.secondary" sx={{ px: 2, pt: 1.5, display: "block" }}>
+        <Typography
+          variant="overline"
+          color="text.secondary"
+          sx={{ px: 2, pt: 1.5, display: "block" }}
+        >
           {stores.length} stores
         </Typography>
         <List dense disablePadding sx={{ pb: 1 }}>

@@ -41,7 +41,10 @@ const buildings: FeatureCollection<Polygon> = {
           ],
         ],
       },
-      properties: { height, block: `${String.fromCharCode(65 + j + 3)}${i + 4}` },
+      properties: {
+        height,
+        block: `${String.fromCharCode(65 + j + 3)}${i + 4}`,
+      },
     };
   }),
 };
@@ -61,9 +64,10 @@ const byHeight: ChoroplethSpec = {
  * by the same data property; the pitch control drops the camera into 3D.
  */
 const CityExplorer3DBlock: FC = () => {
-  const [picked, setPicked] = useState<{ block: string; height: number } | null>(
-    null,
-  );
+  const [picked, setPicked] = useState<{
+    block: string;
+    height: number;
+  } | null>(null);
 
   return (
     <Box sx={{ position: "relative", height: 560 }}>
@@ -96,7 +100,15 @@ const CityExplorer3DBlock: FC = () => {
       {/* Inspector */}
       <Paper
         elevation={4}
-        sx={{ position: "absolute", top: 16, left: 16, px: 2.5, py: 1.5, borderRadius: 2, minWidth: 170 }}
+        sx={{
+          position: "absolute",
+          top: 16,
+          left: 16,
+          px: 2.5,
+          py: 1.5,
+          borderRadius: 2,
+          minWidth: 170,
+        }}
       >
         <Typography variant="overline" color="text.secondary">
           {picked ? `Block ${picked.block}` : "Click a building"}

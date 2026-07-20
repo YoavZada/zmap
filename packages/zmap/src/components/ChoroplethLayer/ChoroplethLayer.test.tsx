@@ -6,9 +6,7 @@ import type { FeatureCollection } from "geojson";
 import { MapContext } from "../../context/MapContext";
 import { FakeMap } from "../../test/mockMaplibre";
 import { resetDeprecationWarnings } from "../../utils/deprecation";
-import ChoroplethLayer, {
-  type ChoroplethLayerProps,
-} from "./ChoroplethLayer";
+import ChoroplethLayer, { type ChoroplethLayerProps } from "./ChoroplethLayer";
 
 vi.mock("maplibre-gl", () => import("../../test/mockMaplibre"));
 

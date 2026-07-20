@@ -78,7 +78,11 @@ const LayerControlDemo: FC = () => {
         icon={<Place fontSize="small" color="primary" />}
         group="Overlays"
       >
-        <PointLayer points={clusterPoints} fillColor="primary.main" radius={4} />
+        <PointLayer
+          points={clusterPoints}
+          fillColor="primary.main"
+          radius={4}
+        />
       </Layer>
 
       <Layer

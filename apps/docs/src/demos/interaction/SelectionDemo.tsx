@@ -14,7 +14,11 @@ const SelectionDemo: FC = () => {
         zoom={8.5}
         sx={{ height: 440, borderRadius: 2 }}
       >
-        <PointLayer points={clusterPoints} fillColor="primary.main" radius={4} />
+        <PointLayer
+          points={clusterPoints}
+          fillColor="primary.main"
+          radius={4}
+        />
         {/* arm the box or lasso tool, then drag to select — hits are
             highlighted and reported via onSelect */}
         <SelectControl points={clusterPoints} onSelect={setSelected} />

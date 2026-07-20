@@ -120,8 +120,7 @@ const darkTokens: DesignTokens = {
   slate800: "#1e293b",
   previewGradient:
     "linear-gradient(135deg, rgba(129,140,248,0.07) 0%, rgba(244,114,182,0.06) 100%)",
-  cardShadow:
-    "0 1px 2px rgba(0,0,0,0.35), 0 10px 30px -12px rgba(0,0,0,0.55)",
+  cardShadow: "0 1px 2px rgba(0,0,0,0.35), 0 10px 30px -12px rgba(0,0,0,0.55)",
 };
 
 export const SANS = '"Inter", system-ui, -apple-system, "Segoe UI", sans-serif';

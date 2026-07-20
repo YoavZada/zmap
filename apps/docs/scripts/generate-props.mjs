@@ -124,7 +124,10 @@ for (const symbol of checker.getExportsOfModule(moduleSymbol)) {
     resolved.getDocumentationComment(checker),
   );
   // First JSDoc paragraph, unwrapped — a full sentence, not a clipped line.
-  const summary = docText.split(/\n\s*\n/)[0].replace(/\s+/g, " ").trim();
+  const summary = docText
+    .split(/\n\s*\n/)[0]
+    .replace(/\s+/g, " ")
+    .trim();
   exports.push({
     name: symbol.getName(),
     kind: isType ? "type" : "value",
