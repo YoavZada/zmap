@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import DemoSection from "../../components/DemoSection";
+import PageHeader from "../../components/PageHeader";
 import PropsTable from "../../components/PropsTable";
 import MarkerPlayground from "../../demos/markers/MarkerPlayground";
 import markerPlaygroundSource from "../../demos/markers/MarkerPlayground.tsx?raw";
@@ -13,19 +13,20 @@ import DraggableMarker from "../../demos/markers/DraggableMarker";
 import draggableMarkerSource from "../../demos/markers/DraggableMarker.tsx?raw";
 import SymbolLabels from "../../demos/markers/SymbolLabels";
 import symbolLabelsSource from "../../demos/markers/SymbolLabels.tsx?raw";
-import Styles from "./markersPage.style";
 
 const MarkersPage: FC = () => {
   return (
     <Box>
-      <Typography variant="h4" fontWeight={800} gutterBottom>
-        Markers
-      </Typography>
-      <Typography color="text.secondary" sx={Styles.intro}>
-        A <code>Marker</code> places content at a coordinate via a React portal,
-        so you can render any MUI element — icons, chips, avatars, cards. With
-        no children it falls back to a themed pin.
-      </Typography>
+      <PageHeader
+        title="Markers"
+        lead={
+          <>
+            A <code>Marker</code> places content at a coordinate via a React
+            portal, so you can render any MUI element — icons, chips, avatars,
+            cards. With no children it falls back to a themed pin.
+          </>
+        }
+      />
 
       <DemoSection
         title="Interactive playground"

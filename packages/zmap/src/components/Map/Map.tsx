@@ -36,10 +36,11 @@ export type MapViewEventHandler = (
   event: MapLibreEvent,
 ) => void;
 
-export interface MapProps extends Omit<
-  BoxProps,
-  "onLoad" | "ref" | "onClick" | "onDoubleClick" | "onContextMenu"
-> {
+export interface MapProps
+  extends Omit<
+    BoxProps,
+    "onLoad" | "ref" | "onClick" | "onDoubleClick" | "onContextMenu"
+  > {
   /**
    * Basemap source: a built-in id ("carto" | "osm"), a custom MapProvider,
    * a raw style URL, or a full MapLibre StyleSpecification. Defaults to "carto".
@@ -204,6 +205,7 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
   };
 
   // Create the map exactly once.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: created once; later prop changes are handled by the effects below
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -238,8 +240,6 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
       setMap(null);
       setLoaded(false);
     };
-    // Created once; later prop changes are handled by the effects below.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Swap basemap style on provider / color-mode change (skipping the first run,
@@ -247,6 +247,7 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
   // themselves via useMapLayer's "styledata" listener.
   const styleKey = `${providerKey(provider)}::${mode}`;
   const firstStyleRun = useRef(true);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: styleKey encodes provider + color mode; the raw values are intentionally excluded
   useEffect(() => {
     if (firstStyleRun.current) {
       firstStyleRun.current = false;
@@ -255,7 +256,6 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     const instance = mapRef.current;
     if (!instance) return;
     instance.setStyle(resolveStyle(provider, mode));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [styleKey]);
 
   // Toggle the world barrier when `infinite` changes (skip the first run — it's
@@ -313,6 +313,7 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
   const viewZoom = view?.zoom;
   const viewBearing = view?.bearing;
   const viewPitch = view?.pitch;
+  // biome-ignore lint/correctness/useExhaustiveDependencies: keyed by the view fields (not object identity); animate is read via a ref
   useEffect(() => {
     if (!map || !view) return;
     if (matchesCamera(map, view)) return;
@@ -322,7 +323,6 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     } else {
       map.easeTo({ ...view, ...(anim === true ? undefined : anim) });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, viewLng, viewLat, viewZoom, viewBearing, viewPitch]);
 
   // Declarative fitBounds. Keyed by value (not identity) so inline bounds
@@ -330,10 +330,10 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
   const fitBoundsOptionsRef = useRef(fitBoundsOptions);
   fitBoundsOptionsRef.current = fitBoundsOptions;
   const fitBoundsKey = fitBounds ? JSON.stringify(fitBounds) : "";
+  // biome-ignore lint/correctness/useExhaustiveDependencies: keyed by fitBoundsKey value; options are read via a ref to avoid refits on identity change
   useEffect(() => {
     if (!map || !fitBounds) return;
     map.fitBounds(fitBounds, fitBoundsOptionsRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, fitBoundsKey]);
 
   useImperativeHandle(ref, () => map as maplibregl.Map, [map]);

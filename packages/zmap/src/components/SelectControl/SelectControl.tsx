@@ -275,7 +275,7 @@ const SelectControl: FC<SelectControlProps> = ({
         <PointLayer
           id={`${idPrefix}-highlight`}
           points={selectedPoints}
-          color={highlightColor}
+          fillColor={highlightColor}
           radius={9}
           strokeColor="background.paper"
           strokeWidth={2}

@@ -1,6 +1,53 @@
 import type { SxProps, Theme } from "@mui/material/styles";
 
-const hero: SxProps<Theme> = { mb: 10 };
+/* The landing renders on the Layout's full-bleed variant, so this page owns
+ * its own section widths: a wide hero band, then centered content columns. */
+
+// Full-bleed hero band: faint dot-grid plus one soft primary glow, both fading
+// out before the fold — texture, not decoration.
+const heroBleed: SxProps<Theme> = (theme) => ({
+  position: "relative",
+  overflow: "hidden",
+  borderBottom: 1,
+  borderColor: "divider",
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    inset: 0,
+    backgroundImage: `radial-gradient(${
+      theme.palette.mode === "dark"
+        ? "rgba(148,163,184,0.14)"
+        : "rgba(15,23,42,0.10)"
+    } 1px, transparent 1px)`,
+    backgroundSize: "22px 22px",
+    maskImage: "radial-gradient(ellipse 90% 80% at 50% 0%, black, transparent)",
+    pointerEvents: "none",
+  },
+  "&::after": {
+    content: '""',
+    position: "absolute",
+    top: -240,
+    left: "8%",
+    width: 560,
+    height: 560,
+    borderRadius: "50%",
+    background: `radial-gradient(circle, ${
+      theme.palette.mode === "dark"
+        ? "rgba(129,140,248,0.14)"
+        : "rgba(79,70,229,0.10)"
+    } 0%, transparent 70%)`,
+    pointerEvents: "none",
+  },
+});
+
+const heroInner: SxProps<Theme> = {
+  position: "relative",
+  zIndex: 1,
+  maxWidth: 1200,
+  mx: "auto",
+  px: { xs: 2, md: 4 },
+  py: { xs: 6, md: 10 },
+};
 
 // Gradient ink on the headline's key phrase — primary flowing into secondary.
 const accent: SxProps<Theme> = (theme) => ({
@@ -42,18 +89,36 @@ const showcaseHalf: SxProps<Theme> = {
 
 const showcaseMap: SxProps<Theme> = { height: "100%" };
 
-const showcaseChip: SxProps<Theme> = {
+// Plain corner text over the map — frosted for legibility, no chip.
+const showcaseLabel: SxProps<Theme> = (theme) => ({
   position: "absolute",
   bottom: 10,
-  left: 10,
-  bgcolor: "background.paper",
+  left: 12,
+  px: 1,
+  py: 0.25,
+  borderRadius: 1,
+  fontSize: 12,
   fontWeight: 600,
-};
+  color: "text.primary",
+  backdropFilter: "blur(6px)",
+  bgcolor:
+    theme.palette.mode === "dark"
+      ? "rgba(11,17,32,0.55)"
+      : "rgba(246,248,251,0.65)",
+});
 
-const featureSection: SxProps<Theme> = { mb: 10 };
+// Centered content column for everything below the hero.
+const section: SxProps<Theme> = {
+  maxWidth: 1100,
+  mx: "auto",
+  px: { xs: 2, md: 4 },
+  pt: { xs: 6, md: 8 },
+};
 
 const featureLead: SxProps<Theme> = { mb: 4 };
 
+// Bento: cards share one surface language; the grid sizing (in the component)
+// gives them uneven spans so the section reads composed, not templated.
 const featureCard: SxProps<Theme> = (theme) => ({
   p: 3,
   height: "100%",
@@ -76,14 +141,47 @@ const featureIcon: SxProps<Theme> = (theme) => ({
   mb: 2,
 });
 
-const installSection: SxProps<Theme> = { mb: 6 };
+// Pathfinder showcase tile — the demo's home now that it left the navbar.
+const pathfinderTile: SxProps<Theme> = (theme) => ({
+  p: { xs: 3, md: 4 },
+  borderRadius: 3,
+  display: "flex",
+  flexWrap: "wrap",
+  alignItems: "center",
+  gap: 3,
+  background: theme.tokens.previewGradient,
+  transition: "box-shadow .2s, border-color .2s",
+  "&:hover": {
+    boxShadow: theme.tokens.cardShadow,
+    borderColor: "primary.main",
+  },
+});
+
+const pathfinderText: SxProps<Theme> = { flex: "1 1 360px" };
+
+const pathfinderIcon: SxProps<Theme> = (theme) => ({
+  width: 56,
+  height: 56,
+  borderRadius: 2.5,
+  display: "grid",
+  placeItems: "center",
+  color: "primary.main",
+  bgcolor: theme.tokens.surfaceContainerHigh,
+});
 
 const sectionLead: SxProps<Theme> = { mb: 2.5, maxWidth: 720 };
 
-const quickStart: SxProps<Theme> = { scrollMarginTop: 88 };
+const quickStart: SxProps<Theme> = {
+  maxWidth: 1100,
+  mx: "auto",
+  px: { xs: 2, md: 4 },
+  pt: { xs: 6, md: 8 },
+  scrollMarginTop: 88,
+};
 
 const styles: Record<
-  | "hero"
+  | "heroBleed"
+  | "heroInner"
   | "accent"
   | "heroLead"
   | "heroActions"
@@ -92,17 +190,20 @@ const styles: Record<
   | "showcase"
   | "showcaseHalf"
   | "showcaseMap"
-  | "showcaseChip"
-  | "featureSection"
+  | "showcaseLabel"
+  | "section"
   | "featureLead"
   | "featureCard"
   | "featureIcon"
-  | "installSection"
+  | "pathfinderTile"
+  | "pathfinderText"
+  | "pathfinderIcon"
   | "sectionLead"
   | "quickStart",
   SxProps<Theme>
 > = {
-  hero,
+  heroBleed,
+  heroInner,
   accent,
   heroLead,
   heroActions,
@@ -111,12 +212,14 @@ const styles: Record<
   showcase,
   showcaseHalf,
   showcaseMap,
-  showcaseChip,
-  featureSection,
+  showcaseLabel,
+  section,
   featureLead,
   featureCard,
   featureIcon,
-  installSection,
+  pathfinderTile,
+  pathfinderText,
+  pathfinderIcon,
   sectionLead,
   quickStart,
 };

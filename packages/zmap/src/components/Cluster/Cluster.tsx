@@ -16,13 +16,11 @@ import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
 import Marker from "../Marker";
 import { resolvePaletteColor } from "../../utils/color";
 import { featureCollection, pointFeature } from "../../utils/geojson";
+import type { BasePoint } from "../../utils/geojson";
 import Styles from "./cluster.style";
 
-export interface ClusterPoint {
-  longitude: number;
-  latitude: number;
+export interface ClusterPoint extends BasePoint {
   id?: string | number;
-  properties?: Record<string, unknown>;
 }
 
 export interface ClusterProps {
@@ -45,8 +43,8 @@ export interface ClusterProps {
    * `renderCluster`'s third argument.
    */
   clusterProperties?: Record<string, unknown>;
-  /** Fired with the clicked unclustered point. */
-  onPointClick?: (point: ClusterPoint) => void;
+  /** Fired with the clicked unclustered point and its index in `points`. */
+  onPointClick?: (point: ClusterPoint, index: number) => void;
   /**
    * Custom cluster bubble. Receives the count, a zoom-to-expand callback, and
    * the cluster's aggregated properties (see `clusterProperties`).
@@ -289,7 +287,7 @@ const Cluster: FC<ClusterProps> = ({
             longitude={item.lng}
             latitude={item.lat}
             anchor="center"
-            onClick={() => onPointClick?.(points[item.idx])}
+            onClick={() => onPointClick?.(points[item.idx], item.idx)}
           >
             {renderPoint ? (
               renderPoint(points[item.idx])

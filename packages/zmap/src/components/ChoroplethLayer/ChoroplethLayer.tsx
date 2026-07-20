@@ -1,8 +1,11 @@
 import { useMemo, type FC, type ReactNode } from "react";
 import type { GeoJSON } from "geojson";
+import type { MapGeoJSONFeature, MapLayerMouseEvent } from "maplibre-gl";
 import ShapeLayer from "../ShapeLayer";
 import Legend from "../Legend";
 import type { ChoroplethSpec } from "../../utils/choropleth";
+import { warnDeprecatedProp } from "../../utils/deprecation";
+import type { LayerOverride } from "../../utils/layerOverrides";
 import type { ControlPosition } from "../MapControls";
 
 export type ChoroplethLegendConfig = {
@@ -28,13 +31,32 @@ export type ChoroplethLayerProps = {
   /** Fill opacity, 0–1. Default 0.6. */
   fillOpacity?: number;
   /** Outline color (palette token or CSS). Default "divider". */
-  lineColor?: string;
+  strokeColor?: string;
   /** Outline width in pixels. Default 1. */
-  lineWidth?: number;
+  strokeWidth?: number;
   /** Outline opacity, 0–1. Default 1. */
+  strokeOpacity?: number;
+  /**
+   * Deprecated: use `strokeColor` instead.
+   * @deprecated Use `strokeColor`. Removed in v1.0.
+   */
+  lineColor?: string;
+  /**
+   * Deprecated: use `strokeWidth` instead.
+   * @deprecated Use `strokeWidth`. Removed in v1.0.
+   */
+  lineWidth?: number;
+  /**
+   * Deprecated: use `strokeOpacity` instead.
+   * @deprecated Use `strokeOpacity`. Removed in v1.0.
+   */
   lineOpacity?: number;
-  /** Fired with the clicked GeoJSON feature. */
-  onClick?: (feature: any) => void;
+  /** Insert the layers before this existing layer id (e.g. a label layer). */
+  beforeId?: string;
+  /** Paint/layout patches merged into the generated fill/line layers. */
+  layerOverrides?: { fill?: LayerOverride; line?: LayerOverride };
+  /** Fired with the clicked feature and the raw map event. */
+  onClick?: (feature: MapGeoJSONFeature, event: MapLayerMouseEvent) => void;
   /**
    * Render a matching <Legend> from the same stops — pass `true` for defaults,
    * or a config object to set its title, corner, and number format. The legend
@@ -55,12 +77,27 @@ const ChoroplethLayer: FC<ChoroplethLayerProps> = ({
   stops,
   scale = "interpolate",
   fillOpacity = 0.6,
-  lineColor = "divider",
-  lineWidth = 1,
-  lineOpacity = 1,
+  strokeColor,
+  strokeWidth,
+  strokeOpacity,
+  lineColor,
+  lineWidth,
+  lineOpacity,
+  beforeId,
+  layerOverrides,
   onClick,
   legend,
 }) => {
+  if (lineColor !== undefined) {
+    warnDeprecatedProp("ChoroplethLayer", "lineColor", "strokeColor");
+  }
+  if (lineWidth !== undefined) {
+    warnDeprecatedProp("ChoroplethLayer", "lineWidth", "strokeWidth");
+  }
+  if (lineOpacity !== undefined) {
+    warnDeprecatedProp("ChoroplethLayer", "lineOpacity", "strokeOpacity");
+  }
+
   const spec = useMemo<ChoroplethSpec>(
     () => ({ property, stops, type: scale }),
     [property, stops, scale],
@@ -75,9 +112,11 @@ const ChoroplethLayer: FC<ChoroplethLayerProps> = ({
         data={data}
         fillColor={spec}
         fillOpacity={fillOpacity}
-        lineColor={lineColor}
-        lineWidth={lineWidth}
-        lineOpacity={lineOpacity}
+        strokeColor={strokeColor ?? lineColor ?? "divider"}
+        strokeWidth={strokeWidth ?? lineWidth ?? 1}
+        strokeOpacity={strokeOpacity ?? lineOpacity ?? 1}
+        beforeId={beforeId}
+        layerOverrides={layerOverrides}
         onClick={onClick}
       />
       {legendConfig && (

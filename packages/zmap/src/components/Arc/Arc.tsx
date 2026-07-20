@@ -28,7 +28,6 @@ const Arc: FC<ArcProps> = ({
   const coordinates = useMemo(
     () => generateArc(from, to, { curvature, points, type }),
     // Depend on scalar coords so new array identities don't force recompute.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [from[0], from[1], to[0], to[1], curvature, points, type],
   );
 

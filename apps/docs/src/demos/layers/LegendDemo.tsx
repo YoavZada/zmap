@@ -54,7 +54,7 @@ const LegendDemo: FC = () => {
       <ShapeLayer
         data={regions}
         fillColor={sales}
-        lineColor="secondary.main"
+        strokeColor="secondary.main"
         fillOpacity={0.55}
       />
 

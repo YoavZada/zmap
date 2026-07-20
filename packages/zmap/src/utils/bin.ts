@@ -1,10 +1,7 @@
 import type { Feature, FeatureCollection, Polygon } from "geojson";
+import type { BasePoint } from "./geojson";
 
-export type BinPoint = {
-  longitude: number;
-  latitude: number;
-  properties?: Record<string, unknown>;
-};
+export type BinPoint = BasePoint;
 
 export interface BinOptions {
   /** Cell shape. Default "hex". */

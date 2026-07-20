@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import DemoSection from "../../components/DemoSection";
+import PageHeader from "../../components/PageHeader";
 import PropsTable from "../../components/PropsTable";
 import LayerControlDemo from "../../demos/layers/LayerControlDemo";
 import layerControlDemoSource from "../../demos/layers/LayerControlDemo.tsx?raw";
@@ -11,21 +11,22 @@ import GeoJSONLayerDemo from "../../demos/layers/GeoJSONLayerDemo";
 import geoJSONLayerDemoSource from "../../demos/layers/GeoJSONLayerDemo.tsx?raw";
 import GeoJSONFromUrlDemo from "../../demos/layers/GeoJSONFromUrlDemo";
 import geoJSONFromUrlDemoSource from "../../demos/layers/GeoJSONFromUrlDemo.tsx?raw";
-import Styles from "./layersPage.style";
 
 const LayersPage: FC = () => {
   return (
     <Box>
-      <Typography variant="h4" fontWeight={800} gutterBottom>
-        Layers
-      </Typography>
-      <Typography color="text.secondary" sx={Styles.intro}>
-        Wrap any map content in a <code>&lt;Layer&gt;</code> and drop in a{" "}
-        <code>&lt;LayerControl&gt;</code> to get a checkbox panel that toggles
-        each overlay. A layer can be anything — points, a heatmap, GeoJSON
-        shapes (here with a data-driven choropleth fill), clusters, routes. Open
-        the panel (top-right) and toggle the overlays.
-      </Typography>
+      <PageHeader
+        title="Layers"
+        lead={
+          <>
+            Wrap any map content in a <code>&lt;Layer&gt;</code> and drop in a{" "}
+            <code>&lt;LayerControl&gt;</code> to get a checkbox panel that
+            toggles each overlay. A layer can be anything — points, a heatmap,
+            GeoJSON shapes (here with a data-driven choropleth fill), clusters,
+            routes. Open the panel (top-right) and toggle the overlays.
+          </>
+        }
+      />
 
       <DemoSection
         title="Toggleable overlays"

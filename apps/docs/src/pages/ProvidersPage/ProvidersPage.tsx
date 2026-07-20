@@ -1,26 +1,27 @@
 import type { FC } from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import DemoSection from "../../components/DemoSection";
+import PageHeader from "../../components/PageHeader";
 import PropsTable from "../../components/PropsTable";
 import ProviderSwitcher from "../../demos/providers/ProviderSwitcher";
 import providerSwitcherSource from "../../demos/providers/ProviderSwitcher.tsx?raw";
-import Styles from "./providersPage.style";
 
 const ProvidersPage: FC = () => {
   return (
     <Box>
-      <Typography variant="h4" fontWeight={800} gutterBottom>
-        Providers & Theming
-      </Typography>
-      <Typography color="text.secondary" sx={Styles.intro}>
-        Switch basemap providers with a single prop. CARTO, OpenStreetMap, and
-        VersaTiles are built in and need no API key; anything
-        MapLibre-compatible also works via a style URL, spec, or a custom{" "}
-        <code>MapProvider</code>. With <code>colorScheme="auto"</code> the
-        basemap tracks the MUI theme — toggle the app theme (top-right) to see
-        it.
-      </Typography>
+      <PageHeader
+        title="Providers & Theming"
+        lead={
+          <>
+            Switch basemap providers with a single prop. CARTO, OpenStreetMap,
+            and VersaTiles are built in and need no API key; anything
+            MapLibre-compatible also works via a style URL, spec, or a custom{" "}
+            <code>MapProvider</code>. With <code>colorScheme="auto"</code> the
+            basemap tracks the MUI theme — toggle the app theme (top-right) to
+            see it.
+          </>
+        }
+      />
 
       <DemoSection
         title="Live provider switcher"

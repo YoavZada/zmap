@@ -28,10 +28,10 @@ const ExtrudedDataDemo: FC = () => {
       {/* color AND height both driven by the same value — a 3D choropleth */}
       <ExtrusionLayer
         data={usStates}
-        color={ramp}
+        fillColor={ramp}
         heightProperty="value"
         heightScale={1300}
-        opacity={0.9}
+        fillOpacity={0.9}
       />
       <Legend
         title="Population density"

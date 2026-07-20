@@ -133,14 +133,14 @@ const DrawLayers: FC<DrawLayersProps> = ({
         id={`${idPrefix}-shapes`}
         data={shapeData}
         fillColor={color}
-        lineColor={color}
+        strokeColor={color}
         fillOpacity={fillOpacity}
-        lineWidth={lineWidth}
+        strokeWidth={lineWidth}
       />
       <PointLayer
         id={`${idPrefix}-points`}
         points={pointData}
-        color={color}
+        fillColor={color}
         radius={5}
       />
     </>

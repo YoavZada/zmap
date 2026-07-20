@@ -42,16 +42,16 @@ const Layer: FC<LayerProps> = ({
   const { register, unregister, setVisible } = useLayerRegistry();
 
   // Register on mount, unregister on unmount.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: register on mount / unregister on unmount — intentionally keyed only by id
   useEffect(() => {
     register({ id, label, color, icon, group, defaultVisible });
     return () => unregister(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   // Keep metadata in sync without resetting visibility/order.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: re-register only the display metadata that can change
   useEffect(() => {
     register({ id, label, color, icon, group, defaultVisible });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, label, color, group]);
 
   // Controlled: mirror the prop into the registry so the checkbox reflects it.

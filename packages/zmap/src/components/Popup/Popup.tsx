@@ -69,6 +69,7 @@ const Popup: FC<PopupProps> = ({
   }, []);
 
   // Create the popup while `open`; tear it down when closed.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: recreated only on map/open; options + content sync in later effects
   useEffect(() => {
     const content = contentRef.current;
     if (!map || !content || !open) return;
@@ -96,7 +97,6 @@ const Popup: FC<PopupProps> = ({
       popup.remove();
       popupRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, open]);
 
   useEffect(() => {

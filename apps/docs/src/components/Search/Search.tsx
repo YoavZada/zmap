@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FC } from "react";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
+import ButtonBase from "@mui/material/ButtonBase";
 import Chip from "@mui/material/Chip";
 import Dialog from "@mui/material/Dialog";
 import IconButton from "@mui/material/IconButton";
@@ -13,12 +14,20 @@ import Typography from "@mui/material/Typography";
 import SearchIcon from "@mui/icons-material/Search";
 import propsData from "../../generated/props.json";
 import { navItems } from "../../nav";
+import { blocks } from "../../blocks";
 import { DEMO_ROUTE } from "../../apiRoutes";
 import Styles from "./search.style";
 
 type SearchItem = {
   label: string;
-  category: "Page" | "Component" | "Hook" | "Provider" | "Utility" | "Type";
+  category:
+    | "Page"
+    | "Block"
+    | "Component"
+    | "Hook"
+    | "Provider"
+    | "Utility"
+    | "Type";
   to: string;
   description?: string;
 };
@@ -38,6 +47,7 @@ const CATEGORY_OF: Record<string, SearchItem["category"]> = {
 
 const API_ANCHOR: Record<SearchItem["category"], string> = {
   Page: "",
+  Block: "",
   Component: "/api#components",
   Hook: "/api#hooks",
   Provider: "/api#providers",
@@ -45,12 +55,19 @@ const API_ANCHOR: Record<SearchItem["category"], string> = {
   Type: "/api#types",
 };
 
-/** Everything searchable: pages, then the whole generated API surface. */
+/** Everything searchable: pages, blocks, then the whole generated API surface. */
 function buildIndex(): SearchItem[] {
   const pages: SearchItem[] = navItems.map((item) => ({
     label: item.label,
     category: "Page",
     to: item.path,
+  }));
+
+  const blockItems: SearchItem[] = blocks.map((block) => ({
+    label: block.title,
+    category: "Block",
+    to: `/blocks#${block.id}`,
+    description: block.description,
   }));
 
   const components: SearchItem[] = Object.entries(
@@ -75,14 +92,26 @@ function buildIndex(): SearchItem[] {
       };
     });
 
-  return [...pages, ...components, ...rest];
+  return [...pages, ...blockItems, ...components, ...rest];
 }
 
+export type SearchProps = {
+  /**
+   * `"icon"` (default) renders a single search icon button. `"field"` renders a
+   * slim inline field on desktop that collapses to the icon on mobile.
+   */
+  variant?: "icon" | "field";
+};
+
+// The command-palette glyph — a recognized, premium shorthand for the shortcut.
+// The binding itself stays Ctrl-K / Cmd-K (handled in the keydown effect below).
+const SHORTCUT = "⌘K";
+
 /**
- * The docs search: an app-bar button plus a Ctrl/Cmd-K command palette over
+ * The docs search: an app-bar trigger plus a Ctrl/Cmd-K command palette over
  * every page and API symbol (from the generated props.json index).
  */
-const Search: FC = () => {
+const Search: FC<SearchProps> = ({ variant = "icon" }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -157,17 +186,46 @@ const Search: FC = () => {
       ?.scrollIntoView({ block: "nearest" });
   }, [active]);
 
+  const iconTrigger = (mobileOnly = false) => (
+    <Tooltip title={`Search docs (${SHORTCUT})`}>
+      <IconButton
+        color="inherit"
+        onClick={() => setOpen(true)}
+        aria-label="Search docs"
+        sx={mobileOnly ? Styles.iconOnMobile : undefined}
+      >
+        <SearchIcon />
+      </IconButton>
+    </Tooltip>
+  );
+
   return (
     <>
-      <Tooltip title="Search docs (Ctrl+K)">
-        <IconButton
-          color="inherit"
-          onClick={() => setOpen(true)}
-          aria-label="Search docs"
-        >
-          <SearchIcon />
-        </IconButton>
-      </Tooltip>
+      {variant === "field" ? (
+        <>
+          <ButtonBase
+            sx={Styles.field}
+            onClick={() => setOpen(true)}
+            aria-label="Search docs"
+          >
+            <SearchIcon fontSize="small" sx={Styles.fieldIcon} />
+            <Box component="span" sx={Styles.fieldText}>
+              Search…
+            </Box>
+            <Box component="kbd" sx={Styles.fieldKbd}>
+              <Box component="span" sx={Styles.fieldKbdCmd}>
+                ⌘
+              </Box>
+              <Box component="span" sx={Styles.fieldKbdKey}>
+                K
+              </Box>
+            </Box>
+          </ButtonBase>
+          {iconTrigger(true)}
+        </>
+      ) : (
+        iconTrigger()
+      )}
 
       <Dialog open={open} onClose={close} sx={Styles.dialog}>
         <Box sx={Styles.input}>

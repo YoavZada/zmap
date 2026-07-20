@@ -3,6 +3,18 @@ import type { Feature, FeatureCollection, LineString, Point } from "geojson";
 /** A [longitude, latitude] pair. */
 export type LngLatTuple = [number, number];
 
+/**
+ * The minimal point shape shared by every point-driven layer (PointLayer,
+ * SymbolLayer, HeatmapLayer, HexbinLayer, Cluster). Component-specific point
+ * types extend this base, so helpers written against `BasePoint` accept them all.
+ */
+export type BasePoint = {
+  longitude: number;
+  latitude: number;
+  /** Extra per-point properties copied onto the generated GeoJSON feature. */
+  properties?: Record<string, unknown>;
+};
+
 /** Wraps a list of [longitude, latitude] coordinates in a GeoJSON LineString Feature. */
 export function lineFeature(
   coordinates: LngLatTuple[],

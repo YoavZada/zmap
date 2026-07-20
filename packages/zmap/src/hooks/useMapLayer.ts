@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type {
   GeoJSONSource,
   GeoJSONSourceSpecification,
@@ -81,26 +81,39 @@ function removeAll(map: MapLibreMap, cfg: MapLayerConfig) {
  */
 export function useMapLayer(config: MapLayerConfig): void {
   const { map, loaded } = useMapContext();
-  const { id, data, layers } = config;
+  const { id, data, layers, beforeId } = config;
+
+  // The re-add path reads the *latest* config from a ref: layers restored
+  // after a theme swap must carry the current paint (the swap itself usually
+  // changed it), not whatever the mount-time render computed.
+  const cfgRef = useRef(config);
+  cfgRef.current = config;
 
   // Add on load + re-add after every style reload. Keyed by source id only.
+  //
+  // Two events guard the re-add: `styledata` covers the common case, but a
+  // style swap's *final* styledata can fire while isStyleLoaded() is still
+  // false (sprite/glyphs pending) — with no later styledata, the layers would
+  // be lost until something else touched the style. `idle` fires once the map
+  // settles, so it reliably sweeps up that race.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: re-add is keyed by map/loaded; id is included to rebind if it changes
   useEffect(() => {
     if (!map || !loaded) return;
-    // `config` is captured fresh on each (id-keyed) run; that is enough because
-    // data/layout changes are handled by the in-place effects below.
-    const cfg = config;
-    addAll(map, cfg);
+    addAll(map, cfgRef.current);
 
-    const onStyleData = () => {
-      if (!map.getSource(cfg.id) && map.isStyleLoaded()) addAll(map, cfg);
+    const ensure = () => {
+      if (!map.getSource(cfgRef.current.id) && map.isStyleLoaded()) {
+        addAll(map, cfgRef.current);
+      }
     };
-    map.on("styledata", onStyleData);
+    map.on("styledata", ensure);
+    map.on("idle", ensure);
 
     return () => {
-      map.off("styledata", onStyleData);
-      removeAll(map, cfg);
+      map.off("styledata", ensure);
+      map.off("idle", ensure);
+      removeAll(map, cfgRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, loaded, id]);
 
   // Update GeoJSON data in place.
@@ -111,6 +124,16 @@ export function useMapLayer(config: MapLayerConfig): void {
       src.setData(data as never);
     }
   }, [map, loaded, id, data]);
+
+  // Re-anchor when `beforeId` changes after mount — addAll only honors it at
+  // insertion time, so a later change must move the layers explicitly.
+  useEffect(() => {
+    if (!map || !loaded || !beforeId) return;
+    if (!map.getLayer(beforeId)) return;
+    for (const layer of layers) {
+      if (map.getLayer(layer.id)) map.moveLayer(layer.id, beforeId);
+    }
+  }, [map, loaded, beforeId, layers]);
 
   // Update paint/layout in place when layer specs change.
   useEffect(() => {

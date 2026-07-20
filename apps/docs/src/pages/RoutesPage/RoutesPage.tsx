@@ -1,23 +1,24 @@
 import type { FC } from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import DemoSection from "../../components/DemoSection";
+import PageHeader from "../../components/PageHeader";
 import PropsTable from "../../components/PropsTable";
 import RouteDemo from "../../demos/routes/RouteDemo";
 import routeDemoSource from "../../demos/routes/RouteDemo.tsx?raw";
-import Styles from "./routesPage.style";
 
 const RoutesPage: FC = () => {
   return (
     <Box>
-      <Typography variant="h4" fontWeight={800} gutterBottom>
-        Routes
-      </Typography>
-      <Typography color="text.secondary" sx={Styles.intro}>
-        <code>Route</code> draws a polyline from a list of coordinates as a
-        GPU-rendered line layer. Colors accept MUI palette tokens like{" "}
-        <code>"primary.main"</code>, and the line survives theme changes.
-      </Typography>
+      <PageHeader
+        title="Routes"
+        lead={
+          <>
+            <code>Route</code> draws a polyline from a list of coordinates as a
+            GPU-rendered line layer. Colors accept MUI palette tokens like{" "}
+            <code>"primary.main"</code>, and the line survives theme changes.
+          </>
+        }
+      />
 
       <DemoSection
         title="A walking route through London"

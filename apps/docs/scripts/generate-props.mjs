@@ -39,6 +39,8 @@ const parser = withCustomConfig(
     shouldExtractLiteralValuesFromEnum: true,
     shouldRemoveUndefinedFromOptional: true,
     savePropValueAsString: true,
+    // Surface @deprecated (and other tags) so PropsTable can badge them.
+    shouldIncludePropTagMap: true,
     propFilter: (prop) => {
       // Drop props inherited from MUI/React declaration files — the tables
       // document zmap's own surface (Map's table notes the BoxProps passthrough).
@@ -66,9 +68,15 @@ for (const doc of parser.parse(componentFiles)) {
       required: p.required,
       defaultValue: p.defaultValue?.value ?? null,
       description: p.description,
+      // "@deprecated Use `x`. Removed in v1.0." → the tag text (or "" if bare).
+      deprecated: p.tags?.deprecated ?? null,
     }))
     .sort((a, b) => {
+      // Required first, deprecated last, alphabetical within each band.
       if (a.required !== b.required) return a.required ? -1 : 1;
+      const aDep = a.deprecated != null;
+      const bDep = b.deprecated != null;
+      if (aDep !== bDep) return aDep ? 1 : -1;
       return a.name.localeCompare(b.name);
     });
   components[doc.displayName] = {
@@ -116,7 +124,10 @@ for (const symbol of checker.getExportsOfModule(moduleSymbol)) {
     resolved.getDocumentationComment(checker),
   );
   // First JSDoc paragraph, unwrapped — a full sentence, not a clipped line.
-  const summary = docText.split(/\n\s*\n/)[0].replace(/\s+/g, " ").trim();
+  const summary = docText
+    .split(/\n\s*\n/)[0]
+    .replace(/\s+/g, " ")
+    .trim();
   exports.push({
     name: symbol.getName(),
     kind: isType ? "type" : "value",

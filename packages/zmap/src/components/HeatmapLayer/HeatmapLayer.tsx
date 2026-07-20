@@ -4,6 +4,10 @@ import type { ExpressionSpecification } from "maplibre-gl";
 import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
 import { resolvePaletteColor } from "../../utils/color";
 import { featureCollection, pointFeature } from "../../utils/geojson";
+import {
+  applyLayerOverrides,
+  type LayerOverride,
+} from "../../utils/layerOverrides";
 import type { LayerPoint } from "../PointLayer";
 
 export type HeatmapLayerProps = {
@@ -19,9 +23,24 @@ export type HeatmapLayerProps = {
   intensity?: number;
   /** Heatmap opacity, 0–1. Default 0.85. */
   opacity?: number;
-  /** Override the density→color ramp (a MapLibre expression). */
-  colorRamp?: ExpressionSpecification;
+  /**
+   * Override the density→color ramp: either `[density, color]` stops over the
+   * 0–1 density range (colors may be palette tokens, like HexbinLayer's
+   * `colorRamp`), or a raw MapLibre expression.
+   */
+  colorRamp?: [number, string][] | ExpressionSpecification;
+  /** Insert the layer before this existing layer id. */
+  beforeId?: string;
+  /** Paint/layout patches merged into the generated heatmap layer. */
+  layerOverrides?: { heat?: LayerOverride };
 };
+
+/** True for the `[density, color][]` stops form of `colorRamp`. */
+function isStopsRamp(
+  ramp: [number, string][] | ExpressionSpecification,
+): ramp is [number, string][] {
+  return Array.isArray(ramp[0]);
+}
 
 /** Renders points as a density heatmap (MapLibre `heatmap` layer). */
 const HeatmapLayer: FC<HeatmapLayerProps> = ({
@@ -32,6 +51,8 @@ const HeatmapLayer: FC<HeatmapLayerProps> = ({
   intensity = 1,
   opacity = 0.85,
   colorRamp,
+  beforeId,
+  layerOverrides,
 }) => {
   const theme = useTheme();
   const reactId = useId();
@@ -48,8 +69,16 @@ const HeatmapLayer: FC<HeatmapLayerProps> = ({
   );
 
   // Default ramp goes transparent → cool → warm using palette colors.
-  const ramp = useMemo<ExpressionSpecification>(
-    () =>
+  const ramp = useMemo<ExpressionSpecification>(() => {
+    if (colorRamp && isStopsRamp(colorRamp)) {
+      // Stops are keyed on heatmap-density (0–1), not a feature property.
+      const expr: unknown[] = ["interpolate", ["linear"], ["heatmap-density"]];
+      for (const [density, c] of colorRamp) {
+        expr.push(density, resolvePaletteColor(theme, c));
+      }
+      return expr as ExpressionSpecification;
+    }
+    return (
       colorRamp ??
       ([
         "interpolate",
@@ -67,30 +96,34 @@ const HeatmapLayer: FC<HeatmapLayerProps> = ({
         resolvePaletteColor(theme, "error.light"),
         1,
         resolvePaletteColor(theme, "error.main"),
-      ] as ExpressionSpecification),
-    [colorRamp, theme],
-  );
+      ] as ExpressionSpecification)
+    );
+  }, [colorRamp, theme]);
 
   const layers = useMemo<LayerInput[]>(
-    () => [
-      {
-        id: `${baseId}-heat`,
-        type: "heatmap",
-        paint: {
-          "heatmap-weight": weightProperty
-            ? (["get", weightProperty] as ExpressionSpecification)
-            : 1,
-          "heatmap-intensity": intensity,
-          "heatmap-radius": radius,
-          "heatmap-color": ramp,
-          "heatmap-opacity": opacity,
-        },
-      },
-    ],
-    [baseId, weightProperty, intensity, radius, ramp, opacity],
+    () =>
+      applyLayerOverrides(
+        [
+          {
+            id: `${baseId}-heat`,
+            type: "heatmap",
+            paint: {
+              "heatmap-weight": weightProperty
+                ? (["get", weightProperty] as ExpressionSpecification)
+                : 1,
+              "heatmap-intensity": intensity,
+              "heatmap-radius": radius,
+              "heatmap-color": ramp,
+              "heatmap-opacity": opacity,
+            },
+          },
+        ],
+        layerOverrides,
+      ),
+    [baseId, weightProperty, intensity, radius, ramp, opacity, layerOverrides],
   );
 
-  useMapLayer({ id: baseId, data, layers });
+  useMapLayer({ id: baseId, data, layers, beforeId });
   return null;
 };
 

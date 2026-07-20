@@ -76,6 +76,7 @@ const Marker: FC<MarkerProps> = ({
   const resolvedAnchor = anchor ?? (hasChildren ? "center" : "bottom");
 
   // Create once per map instance.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: created once per map; props are mirrored onto the marker via refs + later effects
   useEffect(() => {
     const element = elRef.current;
     if (!map || !element) return;
@@ -117,7 +118,6 @@ const Marker: FC<MarkerProps> = ({
       marker.remove();
       markerRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map]);
 
   // Reflect interactivity onto the element: interactive markers are

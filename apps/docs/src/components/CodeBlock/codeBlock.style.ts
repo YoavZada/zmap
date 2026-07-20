@@ -7,13 +7,13 @@ const container: SxProps<Theme> = {
   position: "relative",
 };
 
-const copyButton: SxProps<Theme> = {
+const copyButton: SxProps<Theme> = (theme) => ({
   position: "absolute",
   top: 8,
   right: 8,
   zIndex: 1,
-  color: "grey.400",
-};
+  color: theme.palette.mode === "dark" ? "grey.400" : "grey.600",
+});
 
 // `prismStyle` is the theme-colored CSSProperties from prism's render prop —
 // the dynamic value passed in; the rest of the shape lives here.

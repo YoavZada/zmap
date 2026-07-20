@@ -1,7 +1,5 @@
 import type { SxProps, Theme } from "@mui/material/styles";
 
-const intro: SxProps<Theme> = { mb: 3, maxWidth: 760 };
-
 const section: SxProps<Theme> = { mb: 5 };
 
 const paper: SxProps<Theme> = (theme) => ({
@@ -37,7 +35,6 @@ const typeChips: SxProps<Theme> = {
 };
 
 const styles: Record<
-  | "intro"
   | "section"
   | "paper"
   | "scroller"
@@ -46,6 +43,6 @@ const styles: Record<
   | "description"
   | "typeChips",
   SxProps<Theme>
-> = { intro, section, paper, scroller, table, name, description, typeChips };
+> = { section, paper, scroller, table, name, description, typeChips };
 
 export default styles;

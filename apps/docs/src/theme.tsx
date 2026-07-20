@@ -1,6 +1,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -78,7 +79,9 @@ const lightTokens: DesignTokens = {
   onSecondaryContainer: "#831843",
   tertiary: "#0e7490",
   tertiaryContainer: "#cffafe",
-  codeBg: "#011627",
+  // nightOwlLight's plain background — keep in sync with the prism theme
+  // CodeBlock picks in light mode.
+  codeBg: "#FBFBFB",
   slate50: "#f8fafc",
   slate200: "#e2e8f0",
   slate800: "#1e293b",
@@ -117,8 +120,7 @@ const darkTokens: DesignTokens = {
   slate800: "#1e293b",
   previewGradient:
     "linear-gradient(135deg, rgba(129,140,248,0.07) 0%, rgba(244,114,182,0.06) 100%)",
-  cardShadow:
-    "0 1px 2px rgba(0,0,0,0.35), 0 10px 30px -12px rgba(0,0,0,0.55)",
+  cardShadow: "0 1px 2px rgba(0,0,0,0.35), 0 10px 30px -12px rgba(0,0,0,0.55)",
 };
 
 export const SANS = '"Inter", system-ui, -apple-system, "Segoe UI", sans-serif';
@@ -236,8 +238,40 @@ export function useColorMode() {
   return useContext(ColorModeContext);
 }
 
+const MODE_STORAGE_KEY = "zmap-docs-color-mode";
+
+// localStorage can throw in privacy modes — treat it as best-effort.
+function readStoredMode(): Mode | null {
+  try {
+    const stored = localStorage.getItem(MODE_STORAGE_KEY);
+    return stored === "light" || stored === "dark" ? stored : null;
+  } catch {
+    return null;
+  }
+}
+
+function initialMode(): Mode {
+  const stored = readStoredMode();
+  if (stored) return stored;
+  if (
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-color-scheme: light)").matches
+  ) {
+    return "light";
+  }
+  return "dark";
+}
+
 export const AppThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [mode, setMode] = useState<Mode>("dark");
+  const [mode, setMode] = useState<Mode>(initialMode);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(MODE_STORAGE_KEY, mode);
+    } catch {
+      // best-effort persistence only
+    }
+  }, [mode]);
 
   const colorMode = useMemo<ColorModeValue>(
     () => ({
