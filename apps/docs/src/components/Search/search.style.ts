@@ -44,16 +44,20 @@ const fieldText: SxProps<Theme> = {
   fontSize: 14,
 };
 
-const fieldKbd: SxProps<Theme> = (theme) => ({
+// The ⌘K glyph — borderless so it blends into the search field. Sans (not
+// mono) so the ⌘ glyph renders crisp.
+const fieldKbd: SxProps<Theme> = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  minWidth: 24,
+  height: 20,
   px: 0.6,
-  py: 0.1,
-  borderRadius: 1,
-  border: `1px solid ${theme.palette.divider}`,
-  fontSize: "0.7rem",
-  fontFamily: "monospace",
-  lineHeight: 1.6,
+  fontSize: "0.75rem",
+  fontWeight: 600,
+  lineHeight: 1,
   color: "text.secondary",
-});
+};
 
 // The icon fallback shown only when the field is hidden (below lg).
 const iconOnMobile: SxProps<Theme> = {

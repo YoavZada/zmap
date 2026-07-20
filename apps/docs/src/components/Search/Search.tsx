@@ -103,11 +103,9 @@ export type SearchProps = {
   variant?: "icon" | "field";
 };
 
-// Compact shortcut hint — ⌘K on Apple platforms, Ctrl K elsewhere.
-const isMac =
-  typeof navigator !== "undefined" &&
-  /Mac|iPhone|iPad|iPod/.test(navigator.platform);
-const SHORTCUT = isMac ? "⌘K" : "Ctrl K";
+// The command-palette glyph — a recognized, premium shorthand for the shortcut.
+// The binding itself stays Ctrl-K / Cmd-K (handled in the keydown effect below).
+const SHORTCUT = "⌘K";
 
 /**
  * The docs search: an app-bar trigger plus a Ctrl/Cmd-K command palette over
