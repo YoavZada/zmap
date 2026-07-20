@@ -213,7 +213,12 @@ const Search: FC<SearchProps> = ({ variant = "icon" }) => {
               Search…
             </Box>
             <Box component="kbd" sx={Styles.fieldKbd}>
-              {SHORTCUT}
+              <Box component="span" sx={Styles.fieldKbdCmd}>
+                ⌘
+              </Box>
+              <Box component="span" sx={Styles.fieldKbdKey}>
+                K
+              </Box>
             </Box>
           </ButtonBase>
           {iconTrigger(true)}

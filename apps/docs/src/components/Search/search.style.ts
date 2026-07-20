@@ -58,35 +58,27 @@ const fieldText: SxProps<Theme> = {
   fontSize: 14,
 };
 
-// A crisp keycap for the ⌘K glyph — hairline border, subtle fill, and a hint
-// of key depth so it pops against the field. Sans so the ⌘ renders sharp.
-const fieldKbd: SxProps<Theme> = (theme) => ({
+// The ⌘K glyph — borderless and unfilled so it blends into the field. The K is
+// slightly larger and spaced from the ⌘ so both read crisply.
+const fieldKbd: SxProps<Theme> = {
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
+  gap: 0.5,
   minWidth: 24,
   height: 20,
   px: 0.6,
-  borderRadius: 1,
-  border: "1px solid",
-  borderColor:
-    theme.palette.mode === "dark"
-      ? "rgba(148,163,184,0.28)"
-      : "rgba(15,23,42,0.16)",
-  bgcolor:
-    theme.palette.mode === "dark"
-      ? "rgba(148,163,184,0.12)"
-      : "rgba(255,255,255,0.95)",
-  boxShadow:
-    theme.palette.mode === "dark"
-      ? "inset 0 -1px 0 rgba(0,0,0,0.4), 0 1px 1px rgba(0,0,0,0.3)"
-      : "inset 0 -1px 0 rgba(15,23,42,0.08), 0 1px 1px rgba(15,23,42,0.06)",
-  fontSize: "0.75rem",
   fontWeight: 700,
   lineHeight: 1,
-  letterSpacing: "0.02em",
   color: "text.primary",
-});
+};
+
+const fieldKbdCmd: SxProps<Theme> = { fontSize: "0.75rem" };
+
+const fieldKbdKey: SxProps<Theme> = {
+  fontSize: "0.875rem",
+  letterSpacing: "0.02em",
+};
 
 // The icon fallback shown only when the field is hidden (below lg).
 const iconOnMobile: SxProps<Theme> = {
@@ -126,6 +118,8 @@ const styles: Record<
   | "fieldIcon"
   | "fieldText"
   | "fieldKbd"
+  | "fieldKbdCmd"
+  | "fieldKbdKey"
   | "iconOnMobile"
   | "dialog"
   | "input"
@@ -139,6 +133,8 @@ const styles: Record<
   fieldIcon,
   fieldText,
   fieldKbd,
+  fieldKbdCmd,
+  fieldKbdKey,
   iconOnMobile,
   dialog,
   input,
