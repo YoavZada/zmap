@@ -23,20 +23,34 @@ const field: SxProps<Theme> = (theme) => ({
   pr: 0.75,
   borderRadius: 2,
   border: "1px solid",
-  borderColor: "divider",
+  borderColor:
+    theme.palette.mode === "dark"
+      ? "rgba(148,163,184,0.18)"
+      : "rgba(15,23,42,0.12)",
   color: "text.secondary",
   bgcolor:
     theme.palette.mode === "dark"
-      ? "rgba(148,163,184,0.06)"
-      : "rgba(15,23,42,0.03)",
+      ? "rgba(148,163,184,0.08)"
+      : "rgba(255,255,255,0.9)",
+  boxShadow:
+    theme.palette.mode === "dark"
+      ? "0 1px 2px rgba(0,0,0,0.35)"
+      : "0 1px 2px rgba(15,23,42,0.08)",
   justifyContent: "flex-start",
-  transition: theme.transitions.create(["border-color", "background-color"], {
-    duration: 150,
-  }),
-  "&:hover": { borderColor: "text.secondary" },
+  transition: theme.transitions.create(
+    ["border-color", "background-color", "box-shadow"],
+    { duration: 150 },
+  ),
+  "&:hover": {
+    borderColor: theme.palette.primary.main,
+    boxShadow:
+      theme.palette.mode === "dark"
+        ? "0 2px 8px rgba(0,0,0,0.45)"
+        : "0 2px 8px rgba(15,23,42,0.12)",
+  },
 });
 
-const fieldIcon: SxProps<Theme> = { fontSize: 18 };
+const fieldIcon: SxProps<Theme> = { fontSize: 18, color: "text.primary" };
 
 const fieldText: SxProps<Theme> = {
   flexGrow: 1,
@@ -44,20 +58,35 @@ const fieldText: SxProps<Theme> = {
   fontSize: 14,
 };
 
-// The ⌘K glyph — borderless so it blends into the search field. Sans (not
-// mono) so the ⌘ glyph renders crisp.
-const fieldKbd: SxProps<Theme> = {
+// A crisp keycap for the ⌘K glyph — hairline border, subtle fill, and a hint
+// of key depth so it pops against the field. Sans so the ⌘ renders sharp.
+const fieldKbd: SxProps<Theme> = (theme) => ({
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
   minWidth: 24,
   height: 20,
   px: 0.6,
+  borderRadius: 1,
+  border: "1px solid",
+  borderColor:
+    theme.palette.mode === "dark"
+      ? "rgba(148,163,184,0.28)"
+      : "rgba(15,23,42,0.16)",
+  bgcolor:
+    theme.palette.mode === "dark"
+      ? "rgba(148,163,184,0.12)"
+      : "rgba(255,255,255,0.95)",
+  boxShadow:
+    theme.palette.mode === "dark"
+      ? "inset 0 -1px 0 rgba(0,0,0,0.4), 0 1px 1px rgba(0,0,0,0.3)"
+      : "inset 0 -1px 0 rgba(15,23,42,0.08), 0 1px 1px rgba(15,23,42,0.06)",
   fontSize: "0.75rem",
-  fontWeight: 600,
+  fontWeight: 700,
   lineHeight: 1,
-  color: "text.secondary",
-};
+  letterSpacing: "0.02em",
+  color: "text.primary",
+});
 
 // The icon fallback shown only when the field is hidden (below lg).
 const iconOnMobile: SxProps<Theme> = {
