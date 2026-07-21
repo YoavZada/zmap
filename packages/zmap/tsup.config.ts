@@ -3,7 +3,10 @@ import { defineConfig } from "tsup";
 export default defineConfig({
   entry: ["src/index.ts"],
   format: ["esm", "cjs"],
-  dts: true,
+  // d.ts comes from `tsc -p tsconfig.build.json` (second step of the build
+  // script), not tsup: dts bundling needs the legacy TypeScript JS API, which
+  // the native TypeScript 7 package no longer ships.
+  dts: false,
   sourcemap: true,
   clean: true,
   treeshake: true,

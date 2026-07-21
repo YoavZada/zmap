@@ -4,7 +4,7 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "noEmit": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals", "node"]
   },
   "include": ["src"]
 }

@@ -1,0 +1,14 @@
+{
+  "name": "@zmap/docgen-ts5",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Legacy TypeScript 5.9 engine for the docs prop-table generator. TypeScript 7 is a native binary without the JS checker API that react-docgen-typescript is built on, so that toolchain stays pinned to 5.9 here — scoped to doc generation only.",
+  "type": "module",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "dependencies": {
+    "react-docgen-typescript": "^2.4.0",
+    "typescript": "^5.9.3"
+  }
+}
