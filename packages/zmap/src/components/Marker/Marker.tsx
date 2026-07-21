@@ -92,7 +92,15 @@ const Marker: FC<MarkerProps> = ({
       .addTo(map);
     markerRef.current = marker;
 
-    const handleClick = (event: MouseEvent) => onClickRef.current?.(event);
+    const handleClick = (event: MouseEvent) => {
+      if (!onClickRef.current) return;
+      // An interactive marker is a control in its own right: without this,
+      // the click bubbles to the canvas container and becomes a map click —
+      // which, e.g., instantly closes a closeOnClick popup the handler just
+      // opened (real pointer events flush React state mid-bubble).
+      event.stopPropagation();
+      onClickRef.current(event);
+    };
     element.addEventListener("click", handleClick);
 
     // Keyboard activation for interactive markers: Enter/Space re-dispatch as

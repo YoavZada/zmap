@@ -1,0 +1,106 @@
+name: CI
+
+# The PR gate: lint + typecheck + unit tests + Playwright e2e against the
+# built docs bundle. The e2e job runs the handwritten suite as blocking and
+# bot-generated specs (tagged @generated) as advisory — a generated spec
+# becomes blocking once a reviewer removes its tag.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test
+
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Resolve Playwright version
+        id: playwright
+        run: |
+          VERSION=$(pnpm --filter @zmap/e2e exec node -e "console.log(require('@playwright/test/package.json').version)")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      - name: Install Chromium
+        run: pnpm --filter @zmap/e2e exec playwright install --with-deps chromium
+
+      # Playwright's webServer builds the docs and serves the production
+      # bundle (vite preview) because CI is set — PRs validate the real
+      # artifact, not the dev server.
+      - name: E2E (core suite, blocking)
+        id: core
+        run: pnpm --filter @zmap/e2e exec playwright test --grep-invert "@generated"
+
+      - name: E2E (generated specs, advisory)
+        id: generated
+        continue-on-error: true
+        run: pnpm --filter @zmap/e2e exec playwright test --grep "@generated" --pass-with-no-tests
+
+      - name: Flag advisory failures
+        if: steps.generated.outcome == 'failure'
+        run: echo "::warning::Bot-generated e2e specs failed (advisory, not blocking). See the playwright-report artifact."
+
+      - name: Upload Playwright report
+        if: always() && (steps.core.outcome == 'failure' || steps.generated.outcome == 'failure')
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            tools/e2e/playwright-report/
+            tools/e2e/test-results/
+          retention-days: 7

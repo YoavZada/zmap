@@ -62,6 +62,7 @@ const ComponentNav: FC<NavProps> = ({ onNavigate }) => {
                 selected={selected}
                 onClick={onNavigate}
                 sx={Styles.navItem}
+                data-testid={`nav-item-${item.path.replace(/\//g, "")}`}
               >
                 <ListItemIcon>
                   <Icon fontSize="small" />
@@ -134,6 +135,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
             onClick={() => setMobileOpen((o) => !o)}
             sx={Styles.menuButton}
             aria-label="Open navigation"
+            data-testid="mobile-menu"
           >
             <MenuIcon />
           </IconButton>
@@ -167,6 +169,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
                 to={d.to}
                 disableRipple
                 sx={Styles.navTab(d.isActive(pathname))}
+                data-testid={`nav-tab-${d.to.replace(/\//g, "") || "home"}`}
               >
                 {d.label}
               </Button>
@@ -179,7 +182,11 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 
           <Box sx={Styles.actions}>
             <Tooltip title={mode === "dark" ? "Light mode" : "Dark mode"}>
-              <IconButton onClick={toggle} color="inherit">
+              <IconButton
+                onClick={toggle}
+                color="inherit"
+                data-testid="theme-toggle"
+              >
                 {mode === "dark" ? <LightMode /> : <DarkMode />}
               </IconButton>
             </Tooltip>

@@ -208,9 +208,10 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
   // biome-ignore lint/correctness/useExhaustiveDependencies: created once; later prop changes are handled by the effects below
   useEffect(() => {
     if (!containerRef.current) return;
+    const container = containerRef.current;
 
     const instance = new maplibregl.Map({
-      container: containerRef.current,
+      container,
       style: resolveStyle(provider, mode),
       center: center ?? initialView?.center ?? [0, 20],
       zoom: zoom ?? initialView?.zoom ?? 1.5,
@@ -229,12 +230,23 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
 
     const handleLoad = () => {
       setLoaded(true);
+      // Tooling affordance (e2e, console debugging): mark the container ready
+      // and hang the instance off it, so external code can reach the map
+      // without React context. Non-enumerable to stay out of DOM iteration.
+      container.setAttribute("data-zmap-loaded", "");
+      Object.defineProperty(container, "__zmapMap", {
+        value: instance,
+        configurable: true,
+      });
       onLoadRef.current?.(instance);
     };
     instance.on("load", handleLoad);
 
     return () => {
       instance.off("load", handleLoad);
+      container.removeAttribute("data-zmap-loaded");
+      delete (container as HTMLDivElement & { __zmapMap?: maplibregl.Map })
+        .__zmapMap;
       instance.remove();
       mapRef.current = null;
       setMap(null);

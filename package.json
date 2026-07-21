@@ -11,6 +11,7 @@
     "docs": "turbo run dev --filter=docs",
     "pathfinder": "turbo run dev --filter=pathfinder",
     "test": "turbo run test",
+    "e2e": "turbo run e2e --filter=@zmap/e2e",
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check --write .",
