@@ -7,7 +7,8 @@
     "dev": "vite",
     "gen:geo": "node scripts/gen-geo.mjs",
     "gen:props": "node scripts/generate-props.mjs",
-    "prebuild": "node scripts/generate-props.mjs",
+    "gen:llms": "node scripts/generate-llms.mjs",
+    "prebuild": "node scripts/generate-props.mjs && node scripts/generate-llms.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
