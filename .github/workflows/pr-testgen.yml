@@ -126,6 +126,12 @@ jobs:
         uses: google-github-actions/run-gemini-cli@v0
         env:
           GH_TOKEN: ${{ github.token }}
+          # A fresh Actions checkout is an untrusted workspace, which makes the
+          # CLI downgrade YOLO mode to interactive approval and then fail in a
+          # headless run. Trust it so tool calls (bash, file edits) run
+          # unattended. Safe here: forks are excluded by the job `if` guard, so
+          # this only ever trusts our own repo's PR-branch checkout.
+          GEMINI_CLI_TRUST_WORKSPACE: "true"
         with:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
           # gemini_model: gemini-2.5-flash  # more free-tier quota, lower quality
