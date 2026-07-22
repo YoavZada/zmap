@@ -47,17 +47,20 @@ export class FakeMap {
   private bearing: number;
   private pitch: number;
 
-  doubleClickZoom = { disable: vi.fn(), enable: vi.fn() };
+  doubleClickZoom: {
+    disable: ReturnType<typeof vi.fn>;
+    enable: ReturnType<typeof vi.fn>;
+  } = { disable: vi.fn(), enable: vi.fn() };
   private canvas = Object.assign(document.createElement("canvas"), {});
 
   setStyle = vi.fn((_style: unknown) => {
     // Real setStyle wipes custom sources/layers; tests that need the wipe +
     // styledata re-add flow call wipeStyle()/fire("styledata") explicitly.
   });
-  setRenderWorldCopies = vi.fn();
-  setPaintProperty = vi.fn();
-  setLayoutProperty = vi.fn();
-  fitBounds = vi.fn();
+  setRenderWorldCopies: ReturnType<typeof vi.fn> = vi.fn();
+  setPaintProperty: ReturnType<typeof vi.fn> = vi.fn();
+  setLayoutProperty: ReturnType<typeof vi.fn> = vi.fn();
+  fitBounds: ReturnType<typeof vi.fn> = vi.fn();
   easeTo = vi.fn((opts: Record<string, unknown>) => this.applyCamera(opts));
   jumpTo = vi.fn((opts: Record<string, unknown>) => this.applyCamera(opts));
 

@@ -43,7 +43,12 @@ const DemoSection: FC<DemoSectionProps> = ({
     .replace(/^-|-$/g, "");
 
   return (
-    <Box component="section" id={anchor} sx={Styles.section}>
+    <Box
+      component="section"
+      id={anchor}
+      data-testid="demo-section"
+      sx={Styles.section}
+    >
       <Typography variant="h5" fontWeight={700} gutterBottom>
         <Link href={`#${anchor}`} sx={Styles.titleLink}>
           {title}

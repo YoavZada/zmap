@@ -11,6 +11,10 @@
       "dependsOn": ["^typecheck"]
     },
     "test": {},
+    "e2e": {
+      "cache": false,
+      "env": ["CI", "E2E_BASE_URL", "BASE_PATH", "VITE_*"]
+    },
     "dev": {
       "cache": false,
       "persistent": true

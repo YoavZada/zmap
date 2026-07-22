@@ -8,13 +8,17 @@ const SITE_DESCRIPTION =
 
 /**
  * Headless: keeps document.title and the meta description in sync with the
- * current route. The Introduction page keeps the full site title; other pages
- * get "Label · zmap".
+ * current route, and resets the scroll position to the top on every route
+ * change so switching pages never lands mid-scroll from the previous page.
+ * The Introduction page keeps the full site title; other pages get
+ * "Label · zmap".
  */
 const RouteMeta: FC = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const item = navItems.find((n) => n.path === pathname);
     document.title =
       !item || item.path === "/" ? SITE_TITLE : `${item.label} · zmap`;

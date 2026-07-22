@@ -12,13 +12,13 @@
 // Run `pnpm gen:props` after changing library props/JSDoc; the JSON is
 // committed so dev servers and CI don't re-parse on every start.
 import { writeFileSync, mkdirSync, readdirSync } from "node:fs";
-import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { withCustomConfig } from "react-docgen-typescript";
-
-const require = createRequire(import.meta.url);
-const ts = require("typescript");
+// react-docgen-typescript is built on the legacy TypeScript JS checker API,
+// which the native TypeScript 7 package no longer ships. @zmap/docgen-ts5
+// (tools/docgen-ts5) pins that toolchain to TypeScript 5.9 and re-exports
+// both pieces resolved from one instance.
+import { ts, withCustomConfig } from "@zmap/docgen-ts5";
 
 const docsDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const repoRoot = path.dirname(path.dirname(docsDir));

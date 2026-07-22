@@ -48,6 +48,18 @@ describe("Map", () => {
     expect(onLoad).toHaveBeenCalledWith(map);
   });
 
+  it("marks the container and exposes the instance once loaded", () => {
+    const { container } = render(<Map />);
+    expect(container.querySelector("[data-zmap-loaded]")).toBeNull();
+
+    const map = loadMap();
+    const el = container.querySelector<
+      HTMLDivElement & { __zmapMap?: unknown }
+    >("[data-zmap-loaded]");
+    expect(el).not.toBeNull();
+    expect(el?.__zmapMap).toBe(map);
+  });
+
   it("provides { map, loaded } through context", () => {
     render(
       <Map>
