@@ -17,22 +17,66 @@ const { components } = JSON.parse(
 
 // Curated route index — keep in sync with apps/docs/src/nav.ts.
 const routes = [
-  ["Introduction", "/", "install zmapgl and drop a themed map into a React + MUI app"],
-  ["Blocks", "/blocks", "five complete copy-paste apps: store locator, regional analytics, flight network, delivery tracker, 3D city"],
-  ["Providers & Theming", "/providers", "basemap providers and automatic MUI light/dark theming"],
-  ["Markers", "/markers", "MUI content at coordinates, draggable markers, symbol labels"],
-  ["Popups & Tooltips", "/popups", "click popups and hover tooltips anchored to coordinates"],
-  ["Controls", "/controls", "zoom, compass, geolocate, fullscreen, pitch, scale"],
-  ["Interaction", "/interaction", "drawing, measuring, context menus, box/lasso selection"],
+  [
+    "Introduction",
+    "/",
+    "install zmapgl and drop a themed map into a React + MUI app",
+  ],
+  [
+    "Blocks",
+    "/blocks",
+    "five complete copy-paste apps: store locator, regional analytics, flight network, delivery tracker, 3D city",
+  ],
+  [
+    "Providers & Theming",
+    "/providers",
+    "basemap providers and automatic MUI light/dark theming",
+  ],
+  [
+    "Markers",
+    "/markers",
+    "MUI content at coordinates, draggable markers, symbol labels",
+  ],
+  [
+    "Popups & Tooltips",
+    "/popups",
+    "click popups and hover tooltips anchored to coordinates",
+  ],
+  [
+    "Controls",
+    "/controls",
+    "zoom, compass, geolocate, fullscreen, pitch, scale",
+  ],
+  [
+    "Interaction",
+    "/interaction",
+    "drawing, measuring, context menus, box/lasso selection",
+  ],
   ["Routes", "/routes", "declarative polylines with palette-token colors"],
   ["Arcs", "/arcs", "curved bezier/geodesic connection lines"],
   ["Clusters", "/clusters", "MapLibre clustering rendered as MUI markers"],
-  ["Layers", "/layers", "toggleable overlays, GeoJSON, points, heatmaps, legends"],
-  ["Choropleth", "/choropleth", "data-driven polygon coloring with ramps and legends"],
+  [
+    "Layers",
+    "/layers",
+    "toggleable overlays, GeoJSON, points, heatmaps, legends",
+  ],
+  [
+    "Choropleth",
+    "/choropleth",
+    "data-driven polygon coloring with ramps and legends",
+  ],
   ["Hexbins & grids", "/hexbins", "hex/square binning, flat or extruded"],
-  ["Time playback", "/time", "animate time-stamped points with a transport bar"],
+  [
+    "Time playback",
+    "/time",
+    "animate time-stamped points with a transport bar",
+  ],
   ["3D Extrusion", "/extrusion", "extrude polygons into 3D"],
-  ["API Reference", "/api", "every exported component, hook, provider, util, and type"],
+  [
+    "API Reference",
+    "/api",
+    "every exported component, hook, provider, util, and type",
+  ],
   ["Changelog", "/changelog", "release history"],
 ];
 
@@ -60,10 +104,18 @@ ${routes.map(([label, path, desc]) => `- [${label}](${SITE}${path}): ${desc}`).j
 `;
 
 const propLine = (p) => {
-  const parts = [`\`${p.name}\` (\`${p.type}\`${p.required ? ", required" : ""})`];
+  const parts = [
+    `\`${p.name}\` (\`${p.type}\`${p.required ? ", required" : ""})`,
+  ];
   if (p.defaultValue != null) parts.push(`default: \`${p.defaultValue}\``);
-  if (p.description) parts.push(p.description);
-  if (p.deprecated) parts.push(`DEPRECATED: ${p.deprecated}`);
+  if (p.deprecated) {
+    parts.push(`DEPRECATED: ${p.deprecated}`);
+  } else if (
+    p.description &&
+    !p.description.toLowerCase().startsWith("deprecated")
+  ) {
+    parts.push(p.description);
+  }
   return `- ${parts.join(" — ")}`;
 };
 
@@ -77,9 +129,11 @@ const propsSection = Object.entries(components)
 const blocksDir = join(docsRoot, "src/blocks");
 const blockFiles = readdirSync(blocksDir, { withFileTypes: true })
   .filter((d) => d.isDirectory())
+  .sort((a, b) => a.name.localeCompare(b.name))
   .flatMap((d) =>
     readdirSync(join(blocksDir, d.name))
       .filter((f) => f.endsWith("Block.tsx"))
+      .sort((a, b) => a.localeCompare(b))
       .map((f) => join(blocksDir, d.name, f)),
   );
 
