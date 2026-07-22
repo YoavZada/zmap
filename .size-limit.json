@@ -1,0 +1,36 @@
+[
+  {
+    "name": "import { Map } (tree-shaken)",
+    "path": "packages/zmap/dist/index.js",
+    "import": "{ Map }",
+    "limit": "4 kB",
+    "ignore": [
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "@mui/material",
+      "@mui/icons-material",
+      "@mui/system",
+      "@emotion/react",
+      "@emotion/styled",
+      "maplibre-gl"
+    ]
+  },
+  {
+    "name": "full barrel",
+    "path": "packages/zmap/dist/index.js",
+    "import": "*",
+    "limit": "21 kB",
+    "ignore": [
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "@mui/material",
+      "@mui/icons-material",
+      "@mui/system",
+      "@emotion/react",
+      "@emotion/styled",
+      "maplibre-gl"
+    ]
+  }
+]
