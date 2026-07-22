@@ -36,6 +36,22 @@ const content: SxProps<Theme> = (theme) => ({
     backgroundColor: theme.palette.action.hover,
   },
   "& strong": { color: theme.palette.text.primary },
+  "& table": {
+    borderCollapse: "collapse",
+    width: "auto",
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
+  "& th, & td": {
+    ...theme.typography.body2,
+    border: `1px solid ${theme.palette.divider}`,
+    padding: theme.spacing(0.75, 1.5),
+    textAlign: "left",
+  },
+  "& th": {
+    fontWeight: 600,
+    color: theme.palette.text.primary,
+  },
 });
 
 const styles: { content: SxProps<Theme> } = { content };

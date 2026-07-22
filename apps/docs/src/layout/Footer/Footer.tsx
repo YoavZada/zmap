@@ -13,7 +13,7 @@ const NPM = "https://www.npmjs.com/package/zmapgl";
 
 type ExtLink = { label: string; href: string };
 
-// Mirrors the navbar's destinations, plus the home page.
+// The navbar's destinations, plus home and changelog.
 const product: { label: string; to: string }[] = [
   { label: "Introduction", to: "/" },
   { label: "Components", to: "/markers" },
