@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "gen:geo": "node scripts/gen-geo.mjs",
     "gen:props": "node scripts/generate-props.mjs",
     "prebuild": "node scripts/generate-props.mjs",
     "build": "vite build",

@@ -42,7 +42,7 @@ export const blocks: BlockDef[] = [
     id: "regional-analytics",
     title: "Regional analytics",
     description:
-      "A choropleth dashboard: revenue by territory with a shared-spec legend, toggleable office overlay, and a KPI strip fed by map clicks.",
+      "A world choropleth of visitors by country with a shared-spec legend, a toggleable top-markets overlay, and a KPI strip fed by map clicks.",
     components: [
       "Map",
       "ChoroplethLayer",

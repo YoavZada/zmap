@@ -1,5 +1,7 @@
-import type { FeatureCollection } from "geojson";
+import type { FeatureCollection, Geometry } from "geojson";
 import type { LngLatTuple } from "zmapgl";
+import worldGeo from "./geo/worldCountries.geo.json";
+import usStatesGeo from "./geo/usStates.geo.json";
 
 export interface City {
   name: string;
@@ -73,7 +75,7 @@ export const flights: Arc[] = [
 
 /** Deterministic pseudo-random scatter so the cluster demo is stable. */
 function mulberry32(seed: number) {
-  return function () {
+  return () => {
     seed |= 0;
     seed = (seed + 0x6d2b79f5) | 0;
     let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
@@ -128,9 +130,101 @@ export const clusterPoints: { longitude: number; latitude: number }[] =
     .map(([longitude, latitude]) => ({ longitude, latitude }));
 
 // ---------------------------------------------------------------------------
-// Data-viz datasets: choropleth & 3D extrusion (usStates, buildings), hexbin
-// (scatterPoints), and time playback (trips).
+// Data-viz datasets. Choropleth / 3D extrusion color *real* boundary polygons
+// (worldCountries, usStates, europeSales — bundled from src/geo, see
+// scripts/gen-geo.mjs), while the synthetic sets below stay procedural because
+// their point is aggregation, not geography: buildings (a stylized block grid),
+// scatterPoints (hexbin/heatmap fodder), and trips (time playback).
 // ---------------------------------------------------------------------------
+
+/** Stable hash of a string → [0, 1). Keeps illustrative demo values fixed. */
+function hash01(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0) / 4294967296;
+}
+
+interface RawBoundary {
+  properties: { name: string; region?: string; density?: number };
+  geometry: Geometry;
+}
+
+/**
+ * Re-tag bundled boundary polygons with a numeric `value` the layers color by,
+ * optionally filtering to a subset. Geometry passes through untouched.
+ */
+function boundaries(
+  raw: { features: RawBoundary[] },
+  value: (props: RawBoundary["properties"]) => number,
+  keep: (props: RawBoundary["properties"]) => boolean = () => true,
+): FeatureCollection {
+  return {
+    type: "FeatureCollection",
+    features: raw.features
+      .filter((f) => keep(f.properties))
+      .map((f) => ({
+        type: "Feature",
+        properties: { name: f.properties.name, value: value(f.properties) },
+        geometry: f.geometry,
+      })),
+  };
+}
+
+const world = worldGeo as unknown as { features: RawBoundary[] };
+const states = usStatesGeo as unknown as { features: RawBoundary[] };
+
+/**
+ * Illustrative "visitors" (thousands) per country — a US/English-leaning
+ * audience: a handful of bright markets over a faint global wash. Not real
+ * analytics, just enough to make a world choropleth read.
+ */
+const TOP_MARKETS: Record<string, number> = {
+  "United States of America": 100,
+  India: 74,
+  "United Kingdom": 66,
+  Germany: 55,
+  Brazil: 50,
+  France: 46,
+  Canada: 44,
+  China: 40,
+  Australia: 36,
+  Netherlands: 30,
+  Spain: 28,
+  Japan: 26,
+  Italy: 24,
+  Mexico: 22,
+  Sweden: 20,
+  Poland: 18,
+  Ireland: 17,
+};
+
+/** World country polygons colored by illustrative visitor counts. */
+export const worldCountries: FeatureCollection = boundaries(
+  world,
+  ({ name }) => TOP_MARKETS[name] ?? Math.round(2 + hash01(name) * 12),
+);
+
+/**
+ * US state polygons carrying real 2010-census population density (people/mi²)
+ * as `value` — drives the choropleth ramp/step demos and the 3D extrusion.
+ */
+export const usStates: FeatureCollection = boundaries(
+  states,
+  ({ density }) => density ?? 0,
+);
+
+/**
+ * European country polygons with an illustrative "sales" value ($M) — for the
+ * Legend and LayerControl demos. Russia is dropped: it dwarfs the frame.
+ */
+export const europeSales: FeatureCollection = boundaries(
+  world,
+  ({ name }) => Math.round(12 + hash01(name) * 84),
+  ({ region, name }) => region === "Europe" && name !== "Russia",
+);
 
 /** A `value`-carrying polygon. `extra` merges extra properties (e.g. height). */
 function box(
@@ -157,27 +251,6 @@ function box(
     },
   };
 }
-
-/**
- * Rough US-state rectangles tagged with a population-density value
- * (people / mi²) — a stand-in for a real states GeoJSON, enough to drive a
- * choropleth and a 3D extrusion without shipping a heavy boundary file.
- */
-export const usStates: FeatureCollection = {
-  type: "FeatureCollection",
-  features: [
-    box("California", 254, [-124, 32.5], [-114.2, 42]),
-    box("Washington", 117, [-124.7, 45.6], [-117, 49]),
-    box("Arizona", 64, [-114.8, 31.4], [-109.1, 37]),
-    box("Colorado", 56, [-109, 37], [-102.1, 41]),
-    box("Texas", 108, [-106.5, 25.9], [-93.6, 36.5]),
-    box("Illinois", 230, [-91.5, 37], [-87.6, 42.5]),
-    box("Ohio", 290, [-84.8, 38.5], [-80.6, 41.9]),
-    box("Georgia", 185, [-85.6, 30.5], [-80.9, 35]),
-    box("Florida", 410, [-87.6, 25], [-80.1, 31]),
-    box("New York", 421, [-79.7, 40.5], [-71.9, 45]),
-  ],
-};
 
 /** A grid of building footprints around Midtown Manhattan, with floor heights. */
 export const buildings: FeatureCollection = (() => {

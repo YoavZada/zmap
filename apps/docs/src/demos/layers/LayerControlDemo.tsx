@@ -3,7 +3,6 @@ import LayersOutlined from "@mui/icons-material/LayersOutlined";
 import Place from "@mui/icons-material/Place";
 import Whatshot from "@mui/icons-material/Whatshot";
 import Public from "@mui/icons-material/Public";
-import type { FeatureCollection } from "geojson";
 import {
   Map,
   LayerControl,
@@ -13,41 +12,7 @@ import {
   ShapeLayer,
 } from "zmapgl";
 import type { ChoroplethSpec } from "zmapgl";
-import { clusterPoints } from "../../data";
-
-function rect(
-  name: string,
-  [w, s]: [number, number],
-  [e, n]: [number, number],
-  value: number,
-): FeatureCollection["features"][number] {
-  return {
-    type: "Feature",
-    properties: { name, value },
-    geometry: {
-      type: "Polygon",
-      coordinates: [
-        [
-          [w, s],
-          [e, s],
-          [e, n],
-          [w, n],
-          [w, s],
-        ],
-      ],
-    },
-  };
-}
-
-const regions: FeatureCollection = {
-  type: "FeatureCollection",
-  features: [
-    rect("Iberia", [-9, 36], [3, 44], 28),
-    rect("France", [-1, 43], [7, 51], 64),
-    rect("Central EU", [7, 45], [19, 54], 88),
-    rect("British Isles", [-8, 50], [2, 59], 45),
-  ],
-};
+import { clusterPoints, europeSales } from "../../data";
 
 const salesSpec: ChoroplethSpec = {
   property: "value",
@@ -103,9 +68,10 @@ const LayerControlDemo: FC = () => {
         defaultVisible={false}
       >
         <ShapeLayer
-          data={regions}
+          data={europeSales}
           fillColor={salesSpec}
           strokeColor="secondary.main"
+          strokeWidth={0.75}
           fillOpacity={0.45}
         />
       </Layer>

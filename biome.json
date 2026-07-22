@@ -8,7 +8,8 @@
       "!**/.vite",
       "!**/.turbo",
       "!**/coverage",
-      "!pnpm-lock.yaml"
+      "!pnpm-lock.yaml",
+      "!**/src/geo/*.geo.json"
     ]
   },
   "formatter": {

@@ -9,9 +9,9 @@ const ramp: ChoroplethSpec = {
   type: "interpolate",
   stops: [
     [0, "info.light"],
-    [150, "warning.light"],
+    [80, "warning.light"],
     [300, "warning.main"],
-    [450, "error.main"],
+    [900, "error.main"],
   ],
 };
 
@@ -30,7 +30,7 @@ const ExtrudedDataDemo: FC = () => {
         data={usStates}
         fillColor={ramp}
         heightProperty="value"
-        heightScale={1300}
+        heightScale={450}
         fillOpacity={0.9}
       />
       <Legend

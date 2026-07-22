@@ -11,9 +11,9 @@ const ChoroplethStepDemo: FC = () => {
         scale="step" // banded instead of a smooth ramp
         stops={[
           [0, "success.light"],
-          [100, "info.main"],
-          [250, "warning.main"],
-          [400, "error.main"],
+          [50, "info.main"],
+          [150, "warning.main"],
+          [500, "error.main"],
         ]}
         fillOpacity={0.75}
         legend={{

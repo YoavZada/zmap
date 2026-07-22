@@ -1,42 +1,9 @@
 import type { FC } from "react";
-import type { FeatureCollection } from "geojson";
 import { Map, ShapeLayer, Legend } from "zmapgl";
 import type { ChoroplethSpec } from "zmapgl";
+import { europeSales } from "../../data";
 
-function rect(
-  name: string,
-  [w, s]: [number, number],
-  [e, n]: [number, number],
-  value: number,
-): FeatureCollection["features"][number] {
-  return {
-    type: "Feature",
-    properties: { name, value },
-    geometry: {
-      type: "Polygon",
-      coordinates: [
-        [
-          [w, s],
-          [e, s],
-          [e, n],
-          [w, n],
-          [w, s],
-        ],
-      ],
-    },
-  };
-}
-
-const regions: FeatureCollection = {
-  type: "FeatureCollection",
-  features: [
-    rect("Iberia", [-9, 36], [3, 44], 28),
-    rect("France", [-1, 43], [7, 51], 64),
-    rect("Central EU", [7, 45], [19, 54], 88),
-    rect("British Isles", [-8, 50], [2, 59], 45),
-  ],
-};
-
+// europeSales: real European country polygons, each carrying a "value" ($M).
 // One spec → both the fill and the legend. They can't drift apart.
 const sales: ChoroplethSpec = {
   property: "value",
@@ -50,11 +17,12 @@ const sales: ChoroplethSpec = {
 
 const LegendDemo: FC = () => {
   return (
-    <Map center={[6, 46]} zoom={3.4} sx={{ height: 480, borderRadius: 2 }}>
+    <Map center={[12, 51]} zoom={3.1} sx={{ height: 480, borderRadius: 2 }}>
       <ShapeLayer
-        data={regions}
+        data={europeSales}
         fillColor={sales}
         strokeColor="secondary.main"
+        strokeWidth={0.75}
         fillOpacity={0.55}
       />
 
