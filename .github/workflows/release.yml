@@ -1,0 +1,66 @@
+name: Release
+
+# Changesets-driven releases. With pending changesets on main, the action
+# opens/updates a "chore: version packages" PR; merging that PR makes this
+# workflow publish zmapgl to npm (with provenance), tag zmapgl@x.y.z, and
+# create the GitHub Release. The version PR is created with GITHUB_TOKEN, so
+# ci.yml does not run on it — accepted trade-off: it only contains
+# version/changelog edits, and this job re-runs all gates before publishing.
+#
+# Requires (user setup): repo public (for provenance), NPM_TOKEN in the
+# `production` environment, and Settings → Actions → "Allow GitHub Actions
+# to create and approve pull requests" enabled.
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history so the changelog generator can attribute changesets.
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm --filter zmapgl typecheck
+
+      - name: Test
+        run: pnpm --filter zmapgl test
+
+      - name: Version PR or publish
+        uses: changesets/action@v1
+        with:
+          publish: pnpm release
+          commit: "chore: version packages"
+          title: "chore: version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # npm provenance — requires a public repo + id-token: write.
+          NPM_CONFIG_PROVENANCE: "true"
