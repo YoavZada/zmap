@@ -47,6 +47,41 @@ describe("Marker accessibility", () => {
     expect(onClick).toHaveBeenCalledTimes(2);
   });
 
+  it("interactive marker clicks do not bubble into a map click", () => {
+    const map = new FakeMap();
+    const onClick = vi.fn();
+    renderMarker(map, { onClick, label: "Office" });
+
+    // The marker element lives in the canvas container; if its click bubbled
+    // there it would become a map click (and e.g. instantly close a
+    // closeOnClick popup the handler just opened).
+    const button = screen.getByRole("button", { name: "Office" });
+    const containerClick = vi.fn();
+    button.parentElement?.addEventListener("click", containerClick);
+
+    act(() => {
+      button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(containerClick).not.toHaveBeenCalled();
+    button.parentElement?.removeEventListener("click", containerClick);
+  });
+
+  it("static marker clicks keep bubbling (map click still fires)", () => {
+    const map = new FakeMap();
+    renderMarker(map, { label: "Just a pin" });
+
+    const el = screen.getByText("pin").parentElement!;
+    const containerClick = vi.fn();
+    document.body.addEventListener("click", containerClick);
+
+    act(() => {
+      el.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    expect(containerClick).toHaveBeenCalledTimes(1);
+    document.body.removeEventListener("click", containerClick);
+  });
+
   it("static markers stay out of the tab order", () => {
     const map = new FakeMap();
     renderMarker(map, { label: "Just a pin" });
