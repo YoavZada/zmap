@@ -21,6 +21,7 @@
     "prism-react-renderer": "^2.4.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.1.0",
     "zmapgl": "workspace:*"
   },

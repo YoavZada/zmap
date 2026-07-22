@@ -33,4 +33,5 @@ export const ROUTES: DocsRoute[] = [
   { path: "/time", name: "time", hasMap: true, hasGlLayers: true },
   { path: "/extrusion", name: "extrusion", hasMap: true, hasGlLayers: true },
   { path: "/api", name: "api", hasMap: false, hasGlLayers: false },
+  { path: "/changelog", name: "changelog", hasMap: false, hasGlLayers: false },
 ];

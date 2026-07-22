@@ -19,6 +19,7 @@ const product: { label: string; to: string }[] = [
   { label: "Components", to: "/markers" },
   { label: "Blocks", to: "/blocks" },
   { label: "API Reference", to: "/api" },
+  { label: "Changelog", to: "/changelog" },
 ];
 
 const community: ExtLink[] = [

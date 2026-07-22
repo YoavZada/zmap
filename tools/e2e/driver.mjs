@@ -40,6 +40,7 @@ const ROUTES = [
   ["/time", "time"],
   ["/extrusion", "extrusion"],
   ["/api", "api"],
+  ["/changelog", "changelog"],
 ];
 
 // Without these, headless Chromium's WebGL silently renders a blank canvas.
