@@ -1,10 +1,18 @@
 name: PR test generation
 
 # On PRs to main that touch testable map surface (library components, docs
-# demos/pages/blocks), Claude injects missing data-testids into the changed
-# files, generates Playwright specs under tools/e2e/tests/generated/ (tagged
-# @generated — advisory in ci.yml until a reviewer promotes them), verifies
-# they pass locally in this runner, and commits the result to the PR branch.
+# demos/pages/blocks), a Gemini CLI agent injects missing data-testids into
+# the changed files, generates Playwright specs under
+# tools/e2e/tests/generated/ (tagged @generated — advisory in ci.yml until a
+# reviewer promotes them), verifies they pass locally in this runner, and
+# commits the result to the PR branch.
+#
+# Auth: GEMINI_API_KEY repo secret — a free Google AI Studio key works
+# (https://aistudio.google.com/apikey). Free-tier quotas are per-minute and
+# per-day, and one agentic run makes many model requests — a busy PR day can
+# exhaust the daily quota, in which case this step fails harmlessly (the bot
+# is advisory; nothing blocks). Uncomment `gemini_model` below to run on
+# gemini-2.5-flash for more free-tier headroom at some quality cost.
 #
 # Known limitation: pushes made with the default GITHUB_TOKEN do not trigger
 # new workflow runs (GitHub anti-recursion), so ci.yml will not re-run on the
@@ -105,13 +113,22 @@ jobs:
         if: steps.gate.outputs.skip == 'false'
         run: pnpm --filter @zmap/e2e exec playwright install --with-deps chromium
 
+      # Commits the agent makes must carry the bot identity, or the loop
+      # guard above won't recognize them on the next synchronize event.
+      - name: Configure git identity
+        if: steps.gate.outputs.skip == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898024+github-actions[bot]@users.noreply.github.com"
+
       - name: Generate testids + e2e specs
         if: steps.gate.outputs.skip == 'false'
-        uses: anthropics/claude-code-action@v1
+        uses: google-github-actions/run-gemini-cli@v0
         env:
           GH_TOKEN: ${{ github.token }}
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          # gemini_model: gemini-2.5-flash  # more free-tier quota, lower quality
           prompt: |
             Follow the instructions in .github/prompts/testgen.md exactly.
 
@@ -120,5 +137,3 @@ jobs:
 
             Changed testable files:
             ${{ steps.gate.outputs.testable }}
-          claude_args: |
-            --allowedTools "Bash,Read,Write,Edit,Glob,Grep"
