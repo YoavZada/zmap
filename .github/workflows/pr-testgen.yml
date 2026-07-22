@@ -134,7 +134,12 @@ jobs:
           GEMINI_CLI_TRUST_WORKSPACE: "true"
         with:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          # gemini_model: gemini-2.5-flash  # more free-tier quota, lower quality
+          # The CLI otherwise defaults to a newer model (gemini-3.5-flash) whose
+          # free tier is ~5 requests/min with a small daily cap — too low for an
+          # agentic run's dozens of calls. 2.5-flash has a separate, more
+          # generous free quota. Still marginal: expect throttling and only a
+          # handful of runs/day on the free tier.
+          gemini_model: gemini-2.5-flash
           prompt: |
             Follow the instructions in .github/prompts/testgen.md exactly.
 
