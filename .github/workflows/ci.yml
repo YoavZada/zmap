@@ -51,6 +51,12 @@ jobs:
       - name: Size limit
         run: pnpm size
 
+      - name: SSR import check
+        run: node --input-type=module -e "await import('./packages/zmap/dist/index.js'); console.log('zmapgl imports clean in Node')"
+
+      - name: Next build (SSR smoke)
+        run: pnpm --filter next-smoke build
+
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 30

@@ -56,6 +56,8 @@ const checks = ["Light & dark mode", "TypeScript-first", "MIT licensed"];
 const installCode = `npm install zmapgl @mui/material @mui/icons-material \\
   @emotion/react @emotion/styled maplibre-gl`;
 
+const stylesheetCode = `import "zmapgl/styles.css";`;
+
 const quickStart = `import type { FC } from "react";
 import { Map, MapControls, Marker } from "zmapgl";
 
@@ -254,10 +256,16 @@ const IntroPage: FC = () => {
           Installation
         </Typography>
         <Typography color="text.secondary" sx={Styles.sectionLead}>
-          Install zmap alongside its MUI and MapLibre peers. The MapLibre
-          stylesheet is bundled automatically — no extra CSS import required.
+          Install zmap alongside its MUI and MapLibre peers, then add the
+          stylesheet once in your app entry.
         </Typography>
         <CodeBlock code={installCode} language="bash" filename="Terminal" />
+        <CodeBlock
+          code={stylesheetCode}
+          language="ts"
+          filename="src/main.tsx"
+          note="Vite: main.tsx · Next.js: app/layout.tsx"
+        />
       </Box>
 
       {/* Quick start */}

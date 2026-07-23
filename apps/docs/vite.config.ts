@@ -31,9 +31,20 @@ export default defineConfig({
   // Pinned so the pathfinder app's "Docs" link has a stable URL in dev.
   server: { port: 5173 },
   resolve: {
-    alias: {
-      zmapgl: zmapSrc,
-    },
+    alias: [
+      // Blocks import the consumer-facing stylesheet; zmapgl is aliased to
+      // source here (no dist), so map the subpath to MapLibre's CSS directly.
+      // Exact-match and ordered before the zmapgl alias below — a bare-string
+      // "zmapgl" alias would otherwise prefix-match "zmapgl/styles.css" too.
+      {
+        find: /^zmapgl\/styles\.css$/,
+        replacement: "maplibre-gl/dist/maplibre-gl.css",
+      },
+      {
+        find: "zmapgl",
+        replacement: zmapSrc,
+      },
+    ],
   },
   define: {
     "import.meta.env.VITE_ZMAP_VERSION": JSON.stringify(version),

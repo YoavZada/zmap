@@ -51,7 +51,7 @@
     "openstreetmap"
   ],
   "scripts": {
-    "build": "tsup && tsc -p tsconfig.build.json && node scripts/strip-css-dts.mjs",
+    "build": "tsup && tsc -p tsconfig.build.json",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"

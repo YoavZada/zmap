@@ -41,6 +41,8 @@ const ROUTES = [
   ["/extrusion", "extrusion"],
   ["/api", "api"],
   ["/changelog", "changelog"],
+  ["/guides/nextjs", "guide-nextjs"],
+  ["/guides/react-map-gl", "guide-react-map-gl"],
 ];
 
 // Without these, headless Chromium's WebGL silently renders a blank canvas.

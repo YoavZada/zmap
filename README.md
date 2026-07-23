@@ -49,9 +49,12 @@ npm install zmapgl @mui/material @mui/icons-material \
   @emotion/react @emotion/styled maplibre-gl
 ```
 
-`react`, `react-dom`, MUI and Emotion are peer dependencies. The MapLibre
-stylesheet is imported by the package automatically — no extra CSS import needed
-with Vite, Next.js, or any bundler that handles library CSS.
+`react`, `react-dom`, MUI and Emotion are peer dependencies. Add the map
+stylesheet once, in your app entry:
+
+```ts
+import "zmapgl/styles.css";
+```
 
 ## Quick start
 
@@ -61,6 +64,7 @@ Components are declared as a typed `FC` arrow, default-exported (the repo
 convention):
 
 ```tsx
+import "zmapgl/styles.css"; // once, in your app entry
 import type { FC } from "react";
 import { Map, MapControls, Marker, Popup } from "zmapgl";
 
@@ -78,6 +82,16 @@ const MyMap: FC = () => {
 
 export default MyMap;
 ```
+
+## Start from a template
+
+```bash
+npx degit YoavZada/zmap/templates/vite my-map-app
+cd my-map-app && npm install && npm run dev
+```
+
+Or open any [Block](https://yoavzada.github.io/zmap/blocks) directly in
+StackBlitz — every block is a complete, runnable app.
 
 ## Components
 

@@ -33,6 +33,16 @@ const routes = [
     "basemap providers and automatic MUI light/dark theming",
   ],
   [
+    "Next.js & SSR guide",
+    "/guides/nextjs",
+    "one stylesheet import, server-component friendly SSR setup",
+  ],
+  [
+    "react-map-gl migration guide",
+    "/guides/react-map-gl",
+    "concept mapping from react-map-gl to zmapgl",
+  ],
+  [
     "Markers",
     "/markers",
     "MUI content at coordinates, draggable markers, symbol labels",

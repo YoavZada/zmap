@@ -18,6 +18,8 @@ import TimePlaybackPage from "./pages/TimePlaybackPage";
 import ExtrusionPage from "./pages/ExtrusionPage";
 import ApiPage from "./pages/ApiPage";
 import ChangelogPage from "./pages/ChangelogPage";
+import NextjsGuidePage from "./pages/NextjsGuidePage";
+import ReactMapGlGuidePage from "./pages/ReactMapGlGuidePage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 const App: FC = () => {
@@ -41,6 +43,8 @@ const App: FC = () => {
         <Route path="/extrusion" element={<ExtrusionPage />} />
         <Route path="/api" element={<ApiPage />} />
         <Route path="/changelog" element={<ChangelogPage />} />
+        <Route path="/guides/nextjs" element={<NextjsGuidePage />} />
+        <Route path="/guides/react-map-gl" element={<ReactMapGlGuidePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Layout>

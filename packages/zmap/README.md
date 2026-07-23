@@ -22,10 +22,8 @@ npm install zmapgl @mui/material @mui/icons-material \
 ```
 
 `react`, `react-dom`, MUI and Emotion are peer dependencies; `maplibre-gl`
-ships as a regular dependency. The MapLibre stylesheet is imported by the
-package automatically — no extra CSS import is required with Vite, Next.js, or
-any bundler that handles library CSS imports. If your setup doesn't, import
-the standalone stylesheet once:
+ships as a regular dependency. Add the map stylesheet once, in your app
+entry (Vite `main.tsx`, Next.js root layout, …):
 
 ```ts
 import "zmapgl/styles.css";

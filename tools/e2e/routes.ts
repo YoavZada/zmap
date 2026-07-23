@@ -34,4 +34,16 @@ export const ROUTES: DocsRoute[] = [
   { path: "/extrusion", name: "extrusion", hasMap: true, hasGlLayers: true },
   { path: "/api", name: "api", hasMap: false, hasGlLayers: false },
   { path: "/changelog", name: "changelog", hasMap: false, hasGlLayers: false },
+  {
+    path: "/guides/nextjs",
+    name: "guide-nextjs",
+    hasMap: false,
+    hasGlLayers: false,
+  },
+  {
+    path: "/guides/react-map-gl",
+    name: "guide-react-map-gl",
+    hasMap: false,
+    hasGlLayers: false,
+  },
 ];

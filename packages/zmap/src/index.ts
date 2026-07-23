@@ -1,4 +1,3 @@
-import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreglNamespace from "maplibre-gl";
 
 // Components
