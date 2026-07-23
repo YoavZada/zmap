@@ -19,3 +19,5 @@ demo-screenshots/
 
 apps/docs/public/llms.txt
 apps/docs/public/llms-full.txt
+
+apps/next-smoke/.next/
