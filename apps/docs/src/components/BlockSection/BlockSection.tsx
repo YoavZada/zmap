@@ -59,15 +59,17 @@ const BlockSection: FC<BlockSectionProps> = ({ block }) => {
             <Tab label="Preview" sx={Styles.tab} />
             <Tab label="Code" sx={Styles.tab} />
           </Tabs>
-          <Tooltip title="Open in StackBlitz">
-            <IconButton
-              size="small"
-              onClick={() => openBlockInStackBlitz(block)}
-              sx={Styles.copyButton}
-            >
-              <Bolt fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          {block.stackblitzPortable !== false && (
+            <Tooltip title="Open in StackBlitz">
+              <IconButton
+                size="small"
+                onClick={() => openBlockInStackBlitz(block)}
+                sx={Styles.copyButton}
+              >
+                <Bolt fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
           <Tooltip title={copied ? "Copied" : "Copy full source"}>
             <IconButton size="small" onClick={copy} sx={Styles.copyButton}>
               {copied ? (

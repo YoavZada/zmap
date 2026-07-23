@@ -1,7 +1,8 @@
-// The Blocks gallery registry. Each block is a fully self-contained file —
-// its own inline data, imports only react/@mui/zmapgl — so the copied source
-// runs verbatim in a consumer's app. Sources are shown (and copied) whole:
-// no ---cut--- markers.
+// The Blocks gallery registry. Self-contained means a block imports only
+// react/@mui/zmapgl (plus type-only `geojson`), so its source runs verbatim
+// as a standalone app — regional-analytics is the documented exception (see
+// stackblitzPortable below). Sources are shown (and copied) whole: no
+// ---cut--- markers.
 import type { FC } from "react";
 import StoreLocatorBlock from "./store-locator/StoreLocatorBlock";
 import storeLocatorSource from "./store-locator/StoreLocatorBlock.tsx?raw";
@@ -26,6 +27,11 @@ export interface BlockDef {
   Component: FC;
   /** The block's full source (?raw import) — shown and copied verbatim. */
   source: string;
+  /**
+   * False when the source imports app-local modules and can't run
+   * standalone (hides the StackBlitz button). Default true.
+   */
+  stackblitzPortable?: boolean;
 }
 
 export const blocks: BlockDef[] = [
@@ -53,6 +59,8 @@ export const blocks: BlockDef[] = [
     ],
     Component: RegionalAnalyticsBlock,
     source: regionalAnalyticsSource,
+    // Imports `../../data` (worldCountries) — can't run standalone.
+    stackblitzPortable: false,
   },
   {
     id: "flight-network",
