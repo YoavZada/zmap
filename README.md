@@ -4,7 +4,7 @@
 
 **MUI-native, theme-aware map components for React — built on [MapLibre GL](https://maplibre.org/).**
 
-Zero config. One install. Markers, popups, tooltips, controls, routes, arcs,
+One install, one stylesheet import. Markers, popups, tooltips, controls, routes, arcs,
 clustering and toggleable data layers — composable components that render through
 MUI and follow your theme, including automatic light/dark basemaps.
 

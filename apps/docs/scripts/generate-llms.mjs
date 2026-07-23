@@ -97,7 +97,7 @@ const index = `# zmapgl
 > layers render as MUI components that follow the app theme, including
 > automatic light/dark basemaps.
 
-Install: \`npm install zmapgl @mui/material @mui/icons-material @emotion/react @emotion/styled\`
+Install: \`npm install zmapgl @mui/material @mui/icons-material @emotion/react @emotion/styled\` then add \`import "zmapgl/styles.css"\` once in your app entry.
 
 ## Docs
 
@@ -164,7 +164,7 @@ ${propsSection}
 
 ---
 
-# Complete examples (Blocks) — each file is a self-contained app
+# Complete examples (Blocks) — each file is a complete example app (see the docs for any local data imports)
 
 ${blocksSection}
 `;

@@ -52,7 +52,9 @@ jobs:
         run: pnpm size
 
       - name: SSR import check
-        run: node --input-type=module -e "await import('./packages/zmap/dist/index.js'); console.log('zmapgl imports clean in Node')"
+        run: |
+          node --input-type=module -e "await import('./packages/zmap/dist/index.js'); console.log('esm import OK')"
+          node -e "require('./packages/zmap/dist/index.cjs'); console.log('cjs require OK')"
 
       - name: Next build (SSR smoke)
         run: pnpm --filter next-smoke build
