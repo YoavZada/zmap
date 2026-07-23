@@ -58,6 +58,11 @@ const routes = [
     "zoom, compass, geolocate, fullscreen, pitch, scale",
   ],
   [
+    "Geocoder",
+    "/geocoder",
+    "MUI Autocomplete place search with pluggable geocoding providers",
+  ],
+  [
     "Interaction",
     "/interaction",
     "drawing, measuring, context menus, box/lasso selection",

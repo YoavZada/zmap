@@ -15,6 +15,7 @@ import type { ControlPosition } from "../MapControls";
 import DrawLayers from "../DrawLayers";
 import Styles from "./drawControl.style";
 
+/** Props for `<DrawControl>`, a drawing palette for point/line/polygon shapes. */
 export type DrawControlProps = {
   /** Corner for the tool palette. Default "top-left". */
   position?: ControlPosition;

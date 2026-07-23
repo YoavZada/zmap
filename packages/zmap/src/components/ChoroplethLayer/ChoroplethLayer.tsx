@@ -8,6 +8,7 @@ import { warnDeprecatedProp } from "../../utils/deprecation";
 import type { LayerOverride } from "../../utils/layerOverrides";
 import type { ControlPosition } from "../MapControls";
 
+/** Configures the optional `<Legend>` a `<ChoroplethLayer>` can render from its own stops. */
 export type ChoroplethLegendConfig = {
   /** Heading shown above the legend. */
   title?: ReactNode;
@@ -17,6 +18,7 @@ export type ChoroplethLegendConfig = {
   formatValue?: (value: number) => string;
 };
 
+/** Props for `<ChoroplethLayer>`, a data-driven polygon fill (choropleth). */
 export type ChoroplethLayerProps = {
   /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;

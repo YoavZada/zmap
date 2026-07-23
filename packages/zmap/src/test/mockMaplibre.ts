@@ -33,6 +33,13 @@ export function resetFakeMaps(): void {
   fakeMaps.length = 0;
 }
 
+/** Every FakeMarker constructed since the last reset (newest last). */
+export const fakeMarkers: FakeMarker[] = [];
+
+export function resetFakeMarkers(): void {
+  fakeMarkers.length = 0;
+}
+
 export class FakeMap {
   options: Record<string, unknown>;
   handlers = new Map<string, Set<Handler>>();
@@ -63,6 +70,7 @@ export class FakeMap {
   fitBounds: ReturnType<typeof vi.fn> = vi.fn();
   easeTo = vi.fn((opts: Record<string, unknown>) => this.applyCamera(opts));
   jumpTo = vi.fn((opts: Record<string, unknown>) => this.applyCamera(opts));
+  flyTo = vi.fn((opts: Record<string, unknown>) => this.applyCamera(opts));
 
   constructor(options: Record<string, unknown> = {}) {
     this.options = options;
@@ -265,6 +273,7 @@ export class FakeMarker {
 
   constructor(options: Record<string, unknown> = {}) {
     this.options = options;
+    fakeMarkers.push(this);
   }
   setLngLat(lngLat: [number, number]): this {
     this.lngLat = lngLat;

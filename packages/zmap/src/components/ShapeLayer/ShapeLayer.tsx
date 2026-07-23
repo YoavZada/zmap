@@ -16,6 +16,7 @@ import {
   type ChoroplethSpec,
 } from "../../utils/choropleth";
 
+/** Props for `<ShapeLayer>`, which renders GeoJSON polygons/lines as fill + outline layers. */
 export type ShapeLayerProps = {
   /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;

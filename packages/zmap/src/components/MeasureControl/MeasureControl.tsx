@@ -22,8 +22,10 @@ import type { ControlPosition } from "../MapControls";
 import DrawLayers from "../DrawLayers";
 import Styles from "./measureControl.style";
 
+/** Which measurement tool is active: distance ("line") or area ("polygon"). */
 export type MeasureMode = "line" | "polygon";
 
+/** Props for `<MeasureControl>`, a measuring tape for line distance and polygon area. */
 export type MeasureControlProps = {
   /** Corner for the tool palette. Default "top-left". */
   position?: ControlPosition;

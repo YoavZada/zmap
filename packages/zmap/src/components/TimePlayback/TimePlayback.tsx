@@ -22,6 +22,7 @@ import TransportBar from "./components/TransportBar";
 
 const SPEEDS = [0.5, 1, 2, 4];
 
+/** Props for `<TimePlayback>`, which animates time-stamped GeoJSON points along a playhead. */
 export type TimePlaybackProps = {
   /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;

@@ -15,7 +15,9 @@ import {
 
 /** A registered overlay layer, as shown in the LayerControl panel. */
 export interface LayerEntry {
+  /** Unique id, matching the `<Layer>` or `LayerConfig` entry that registered it. */
   id: string;
+  /** Label shown in the LayerControl. */
   label: string;
   /** Palette token or CSS color for the swatch in the control. */
   color?: string;
@@ -25,6 +27,7 @@ export interface LayerEntry {
   group?: string;
   /** Stable registration order (for stable panel ordering). */
   order: number;
+  /** Current visibility, driven by the registry. */
   visible: boolean;
 }
 
@@ -37,11 +40,15 @@ export interface RegisterInput {
   defaultVisible?: boolean;
 }
 
+/** The layer registry's state and mutators, provided by `<Map>`. */
 export interface LayerRegistryValue {
   /** Registered layers, sorted by registration order. */
   entries: LayerEntry[];
+  /** Registers a layer (or updates its metadata if already registered). */
   register: (input: RegisterInput) => void;
+  /** Removes a layer from the registry. */
   unregister: (id: string) => void;
+  /** Sets a layer's visibility. */
   setVisible: (id: string, visible: boolean) => void;
   /** Current visibility, or undefined if the id isn't registered yet. */
   isVisible: (id: string) => boolean | undefined;

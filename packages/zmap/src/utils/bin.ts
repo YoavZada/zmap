@@ -1,8 +1,10 @@
 import type { Feature, FeatureCollection, Polygon } from "geojson";
 import type { BasePoint } from "./geojson";
 
+/** A point aggregated by `binPoints` (and rendered by `<HexbinLayer>`). */
 export type BinPoint = BasePoint;
 
+/** Options controlling how `binPoints` aggregates points into cells. */
 export interface BinOptions {
   /** Cell shape. Default "hex". */
   cell?: "hex" | "square";
@@ -13,7 +15,13 @@ export interface BinOptions {
 }
 
 /** Aggregated value (`count`, or summed `weightProperty`) carried by each bin. */
-export type BinProperties = { value: number; count: number };
+export type BinProperties = {
+  /** Aggregated value — the point count, or summed `weightProperty` when set. */
+  value: number;
+  /** Number of points that fell in this bin, regardless of weighting. */
+  count: number;
+};
+/** A FeatureCollection of bin polygons, as returned by `binPoints`. */
 export type BinnedFeatureCollection = FeatureCollection<Polygon, BinProperties>;
 
 const KM_PER_DEG_LAT = 110.574;

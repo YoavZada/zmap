@@ -19,10 +19,13 @@ import { featureCollection, pointFeature } from "../../utils/geojson";
 import type { BasePoint } from "../../utils/geojson";
 import Styles from "./cluster.style";
 
+/** A point clustered by `<Cluster>`. */
 export interface ClusterPoint extends BasePoint {
+  /** Stable identity for the point, used to key it across re-clusters. */
   id?: string | number;
 }
 
+/** Props for `<Cluster>`, which clusters points using MapLibre's native clustering. */
 export interface ClusterProps {
   /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;

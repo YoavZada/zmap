@@ -5,6 +5,7 @@ import PaletteOutlined from "@mui/icons-material/PaletteOutlined";
 import PlaceOutlined from "@mui/icons-material/PlaceOutlined";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import TuneOutlined from "@mui/icons-material/TuneOutlined";
+import TravelExploreOutlined from "@mui/icons-material/TravelExploreOutlined";
 import DesignServicesOutlined from "@mui/icons-material/DesignServicesOutlined";
 import RouteOutlined from "@mui/icons-material/RouteOutlined";
 import TimelineOutlined from "@mui/icons-material/TimelineOutlined";
@@ -83,6 +84,13 @@ export const navItems: NavItem[] = [
     icon: TuneOutlined,
     description:
       "Zoom, compass, geolocate, fullscreen, pitch, and scale controls styled to match your MUI theme.",
+  },
+  {
+    path: "/geocoder",
+    label: "Geocoder",
+    icon: TravelExploreOutlined,
+    description:
+      "Place search with MUI Autocomplete — pluggable geocoding providers, fly-to, and a result marker.",
   },
   {
     path: "/interaction",
@@ -185,7 +193,7 @@ export interface NavGroup {
 
 /** The component reference, grouped for the sidebar. "Guides" collects
  * standalone walkthroughs (Providers & Theming, framework/migration guides);
- * the remaining 12 pages cluster by what they do. */
+ * the remaining 13 pages cluster by what they do. */
 export const componentGroups: NavGroup[] = [
   {
     label: "Guides",
@@ -212,7 +220,12 @@ export const componentGroups: NavGroup[] = [
   },
   {
     label: "Controls & interaction",
-    items: [byPath("/controls"), byPath("/interaction"), byPath("/time")],
+    items: [
+      byPath("/controls"),
+      byPath("/geocoder"),
+      byPath("/interaction"),
+      byPath("/time"),
+    ],
   },
 ];
 

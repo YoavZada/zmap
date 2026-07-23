@@ -73,6 +73,8 @@ export type {
   SelectControlProps,
   SelectTool,
 } from "./components/SelectControl";
+export { default as GeocoderControl } from "./components/GeocoderControl";
+export type { GeocoderControlProps } from "./components/GeocoderControl";
 
 // Hooks & context
 export { useMap, useMapContext } from "./context/useMap";
@@ -99,6 +101,11 @@ export type {
   DrawEngine,
   UseDrawOptions,
 } from "./hooks/useDraw";
+export { useGeocoder } from "./hooks/useGeocoder";
+export type {
+  UseGeocoderOptions,
+  UseGeocoderResult,
+} from "./hooks/useGeocoder";
 
 // Providers
 export {
@@ -118,6 +125,19 @@ export { osm } from "./providers/osm";
 export { versatiles } from "./providers/versatiles";
 export { opentopomap } from "./providers/opentopomap";
 export { maptiler } from "./providers/maptiler";
+export {
+  geocoders,
+  resolveGeocoder,
+  photon,
+  nominatim,
+} from "./providers/geocoding";
+export type {
+  GeocodingProvider,
+  GeocodeResult,
+  GeocodeOptions,
+  GeocoderId,
+  GeocoderInput,
+} from "./providers/geocoding";
 
 // Utils
 export { generateArc } from "./utils/arc";

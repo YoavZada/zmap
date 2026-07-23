@@ -18,6 +18,7 @@ export const ROUTES: DocsRoute[] = [
   { path: "/markers", name: "markers", hasMap: true, hasGlLayers: false },
   { path: "/popups", name: "popups", hasMap: true, hasGlLayers: false },
   { path: "/controls", name: "controls", hasMap: true, hasGlLayers: false },
+  { path: "/geocoder", name: "geocoder", hasMap: true, hasGlLayers: false },
   {
     path: "/interaction",
     name: "interaction",

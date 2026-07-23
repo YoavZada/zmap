@@ -1,7 +1,9 @@
 import type { LngLatTuple } from "./geojson";
 
+/** Arc interpolation style: "bezier" (flight-path bulge) or "geodesic" (great-circle). */
 export type ArcType = "bezier" | "geodesic";
 
+/** Options controlling how `generateArc` interpolates between two points. */
 export interface ArcOptions {
   /** Bulge factor for the bezier arc (0 = straight line). Default 0.3. */
   curvature?: number;

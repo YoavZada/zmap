@@ -10,6 +10,7 @@ import {
 } from "../../utils/layerOverrides";
 import type { LayerPoint } from "../PointLayer";
 
+/** Props for `<HeatmapLayer>`, which renders points as a density heatmap. */
 export type HeatmapLayerProps = {
   /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;

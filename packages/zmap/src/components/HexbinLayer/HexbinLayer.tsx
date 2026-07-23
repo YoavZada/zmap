@@ -13,6 +13,7 @@ import {
 import { binPoints } from "../../utils/bin";
 import type { LayerPoint } from "../PointLayer";
 
+/** Props for `<HexbinLayer>`, which aggregates points into hexagonal or square cells colored by count. */
 export type HexbinLayerProps = {
   /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;

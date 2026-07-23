@@ -6,7 +6,9 @@ import type { LayerInput } from "../hooks/useMapLayer";
  * Entries win over component-computed values.
  */
 export type LayerOverride = {
+  /** Paint property patches, merged over the generated paint object. */
   paint?: Record<string, unknown>;
+  /** Layout property patches, merged over the generated layout object. */
   layout?: Record<string, unknown>;
 };
 

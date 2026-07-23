@@ -29,8 +29,10 @@ import type { ControlPosition } from "../MapControls";
 import PointLayer, { type LayerPoint } from "../PointLayer";
 import Styles from "./selectControl.style";
 
+/** Which selection tool is active: a marquee box or a freehand lasso. */
 export type SelectTool = "box" | "lasso";
 
+/** Props for `<SelectControl>`, marquee/lasso selection over `<PointLayer>` features. */
 export type SelectControlProps = {
   /** The same points fed to your <PointLayer>. Selection runs against these. */
   points: LayerPoint[];

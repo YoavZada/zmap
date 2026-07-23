@@ -8,6 +8,7 @@ import { opentopomap } from "./opentopomap";
 /** Built-in providers, keyed by id. */
 export const providers = { carto, osm, versatiles, opentopomap } as const;
 
+/** One of the built-in basemap provider ids ("carto", "osm", "versatiles", "opentopomap"). */
 export type ProviderId = keyof typeof providers;
 
 /**
