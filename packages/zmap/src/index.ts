@@ -99,6 +99,11 @@ export type {
   DrawEngine,
   UseDrawOptions,
 } from "./hooks/useDraw";
+export { useGeocoder } from "./hooks/useGeocoder";
+export type {
+  UseGeocoderOptions,
+  UseGeocoderResult,
+} from "./hooks/useGeocoder";
 
 // Providers
 export {
