@@ -34,7 +34,7 @@ export default function Home() {
 
 const clientWrapperCode = `"use client";
 
-import { Map, Marker, useMap } from "zmapgl";
+import { Map, Marker } from "zmapgl";
 
 // Reach for a client component when you need interactivity: callbacks,
 // state, or the raw MapLibre instance via useMap().
@@ -44,7 +44,7 @@ export default function InteractiveMap() {
       center={[-0.1276, 51.5072]}
       zoom={11}
       sx={{ height: 400 }}
-      onClick={(lngLat) => console.log(lngLat)}
+      onClick={(e) => console.log(e.lngLat)}
     >
       <Marker longitude={-0.1276} latitude={51.5072} draggable />
     </Map>
