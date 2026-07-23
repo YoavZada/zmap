@@ -2,6 +2,10 @@
 
 **MUI-native map components built on [MapLibre GL](https://maplibre.org/).**
 
+[![npm version](https://img.shields.io/npm/v/zmapgl.svg)](https://www.npmjs.com/package/zmapgl)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/YoavZada/zmap/blob/main/LICENSE)
+[![types: TypeScript](https://img.shields.io/badge/types-TypeScript-3178C6.svg)](https://yoavzada.github.io/zmap/api)
+
 zmapgl gives [Material UI](https://mui.com/) apps a set of composable,
 theme-aware map components — the map equivalent of the MUI components you
 already use. Markers, popups, controls, data layers, clustering, drawing and
