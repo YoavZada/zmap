@@ -33,6 +33,11 @@ const routes = [
     "basemap providers and automatic MUI light/dark theming",
   ],
   [
+    "Next.js & SSR guide",
+    "/guides/nextjs",
+    "one stylesheet import, server-component friendly SSR setup",
+  ],
+  [
     "Markers",
     "/markers",
     "MUI content at coordinates, draggable markers, symbol labels",

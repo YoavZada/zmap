@@ -16,6 +16,7 @@ import PlayCircleOutline from "@mui/icons-material/PlayCircleOutline";
 import ViewInArOutlined from "@mui/icons-material/ViewInArOutlined";
 import MenuBookOutlined from "@mui/icons-material/MenuBookOutlined";
 import HistoryOutlined from "@mui/icons-material/HistoryOutlined";
+import RocketLaunchOutlined from "@mui/icons-material/RocketLaunchOutlined";
 
 export interface NavItem {
   path: string;
@@ -46,6 +47,13 @@ export const navItems: NavItem[] = [
     icon: PaletteOutlined,
     description:
       "Switch basemap providers and let maps follow your MUI theme's light and dark mode automatically.",
+  },
+  {
+    path: "/guides/nextjs",
+    label: "Next.js & SSR",
+    icon: RocketLaunchOutlined,
+    description:
+      "Use zmapgl in Next.js and SSR frameworks — one stylesheet import, server-component friendly.",
   },
   {
     path: "/markers",
@@ -170,7 +178,10 @@ export interface NavGroup {
 /** The component reference, grouped for the sidebar. Providers & Theming leads
  * as a "Guides" entry; the remaining 12 pages cluster by what they do. */
 export const componentGroups: NavGroup[] = [
-  { label: "Guides", items: [byPath("/providers")] },
+  {
+    label: "Guides",
+    items: [byPath("/providers"), byPath("/guides/nextjs")],
+  },
   {
     label: "Overlays",
     items: [byPath("/markers"), byPath("/popups"), byPath("/clusters")],
