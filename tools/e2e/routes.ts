@@ -40,4 +40,10 @@ export const ROUTES: DocsRoute[] = [
     hasMap: false,
     hasGlLayers: false,
   },
+  {
+    path: "/guides/react-map-gl",
+    name: "guide-react-map-gl",
+    hasMap: false,
+    hasGlLayers: false,
+  },
 ];
