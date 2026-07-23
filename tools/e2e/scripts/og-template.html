@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        background:
+          radial-gradient(1000px 600px at 15% 0%, #1c2b4a 0%, transparent 60%),
+          radial-gradient(800px 500px at 100% 100%, #14273a 0%, transparent 55%),
+          #0b1120;
+        color: #f3f6fc;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 96px;
+      }
+      /* faint dot grid — reads as a map graticule without being literal */
+      body::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(148, 170, 210, 0.14) 1.5px, transparent 1.5px);
+        background-size: 42px 42px;
+      }
+      .wordmark { font-size: 120px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+      .wordmark .accent {
+        background: linear-gradient(120deg, #7aa7ff, #4dd6c1);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .tagline { margin-top: 28px; font-size: 34px; font-weight: 500; color: #aebad0; max-width: 820px; line-height: 1.35; }
+      .url { position: absolute; left: 96px; bottom: 56px; font-size: 24px; font-weight: 500; color: #6f7f9c; letter-spacing: 0.01em; }
+      .rule { position: absolute; left: 96px; bottom: 104px; width: 120px; height: 3px; border-radius: 2px;
+        background: linear-gradient(90deg, #7aa7ff, #4dd6c1); }
+    </style>
+  </head>
+  <body>
+    <div class="wordmark">z<span class="accent">map</span></div>
+    <div class="tagline">MUI-native map components for React — theme-aware maps built on MapLibre&nbsp;GL.</div>
+    <div class="rule"></div>
+    <div class="url">yoavzada.github.io/zmap</div>
+  </body>
+</html>
