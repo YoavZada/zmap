@@ -22,6 +22,7 @@ export type LayerInput = DistributiveOmit<LayerSpecification, "source"> & {
   source?: string;
 };
 
+/** Declarative GeoJSON source + layers config consumed by `useMapLayer`. */
 export interface MapLayerConfig {
   /** Unique id for the GeoJSON source backing these layers. */
   id: string;

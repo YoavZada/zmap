@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { useMapLayer, type MapLayerConfig } from "../../hooks/useMapLayer";
 
+/** Props for `<GeoJSONLayer>`, the low-level escape hatch for a declarative GeoJSON source + layers. */
 export type GeoJSONLayerProps = MapLayerConfig;
 
 /**

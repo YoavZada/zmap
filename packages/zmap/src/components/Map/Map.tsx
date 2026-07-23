@@ -23,10 +23,15 @@ import { providerKey, resolveStyle, type MapStyleInput } from "../../providers";
 import type { LngLatTuple } from "../../utils/geojson";
 import Styles from "./map.style";
 
+/** A camera position: center, zoom, bearing, and pitch. */
 export interface MapViewState {
+  /** Camera center as [longitude, latitude]. */
   center?: LngLatTuple;
+  /** Zoom level. */
   zoom?: number;
+  /** Camera rotation in degrees (0 = north up). */
   bearing?: number;
+  /** Camera tilt in degrees (0 = straight down). */
   pitch?: number;
 }
 
@@ -36,6 +41,7 @@ export type MapViewEventHandler = (
   event: MapLibreEvent,
 ) => void;
 
+/** Props for `<Map>`, the container that creates and configures the MapLibre GL instance. */
 export interface MapProps
   extends Omit<
     BoxProps,
@@ -105,6 +111,7 @@ export interface MapProps
   onMoveEnd?: MapViewEventHandler;
   /** Fires once when a zoom gesture/animation settles. */
   onZoomEnd?: MapViewEventHandler;
+  /** Map content — rendered once the map has loaded. Typically markers, popups, controls, and layers. */
   children?: ReactNode;
 }
 

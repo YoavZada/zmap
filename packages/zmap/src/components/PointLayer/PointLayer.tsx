@@ -15,6 +15,7 @@ import {
 /** A point rendered by PointLayer. */
 export type LayerPoint = BasePoint;
 
+/** Props for `<PointLayer>`, which renders many points as a single GPU circle layer. */
 export type PointLayerProps = {
   /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;

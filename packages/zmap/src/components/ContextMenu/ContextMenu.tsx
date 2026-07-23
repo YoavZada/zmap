@@ -14,6 +14,7 @@ import type { LngLatTuple } from "../../utils/geojson";
 import Marker from "../Marker";
 import Styles from "./contextMenu.style";
 
+/** The map location passed to a `ContextMenuItem`'s `onClick`. */
 export type ContextMenuItemContext = {
   /** The coordinate the menu was opened at. */
   lngLat: LngLatTuple;
@@ -21,15 +22,21 @@ export type ContextMenuItemContext = {
   map: MapLibreMap;
 };
 
+/** A single row in a `<ContextMenu>`. */
 export type ContextMenuItem = {
+  /** Menu row text. */
   label: ReactNode;
+  /** Optional icon rendered before the label. */
   icon?: ReactNode;
+  /** Called when the row is clicked, with the map location of the menu. */
   onClick?: (ctx: ContextMenuItemContext) => void;
   /** Render a divider after this item. */
   divider?: boolean;
+  /** Disables the row. */
   disabled?: boolean;
 };
 
+/** Props for `<ContextMenu>`, a theme-aware right-click menu anchored to a map coordinate. */
 export type ContextMenuProps = {
   /**
    * Menu entries — a static array or a builder called with the click

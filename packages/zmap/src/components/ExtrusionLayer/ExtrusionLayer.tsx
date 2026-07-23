@@ -20,6 +20,7 @@ import {
   type ChoroplethSpec,
 } from "../../utils/choropleth";
 
+/** Props for `<ExtrusionLayer>`, which extrudes GeoJSON polygons into 3D prisms. */
 export type ExtrusionLayerProps = {
   /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;

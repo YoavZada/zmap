@@ -8,6 +8,7 @@ import type { ChoroplethSpec } from "../../utils/choropleth";
 import type { ControlPosition } from "../MapControls";
 import Styles from "./legend.style";
 
+/** A single categorical legend row: swatch color + label. */
 export type LegendItem = {
   /** Swatch color — an MUI palette token ("primary.main") or any CSS color. */
   color: string;
@@ -15,6 +16,7 @@ export type LegendItem = {
   label: ReactNode;
 };
 
+/** Props for `<Legend>`, a themed map legend. */
 export type LegendProps = {
   /** Optional heading shown above the legend body. */
   title?: ReactNode;

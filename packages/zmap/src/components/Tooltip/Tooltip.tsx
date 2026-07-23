@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import Popup, { type PopupProps } from "../Popup";
 
+/** Props for `<Tooltip>`, a lightweight non-interactive label anchored to a map coordinate. */
 export type TooltipProps = Omit<PopupProps, "closeButton" | "closeOnClick">;
 
 /**

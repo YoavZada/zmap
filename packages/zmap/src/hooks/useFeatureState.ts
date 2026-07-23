@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { MapGeoJSONFeature, MapLayerMouseEvent } from "maplibre-gl";
 import { useMapContext } from "../context/useMap";
 
+/** Options for `useFeatureState`. */
 export interface FeatureStateOptions {
   /** Layer id to track pointer hover on. */
   layer: string;

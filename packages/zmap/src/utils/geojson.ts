@@ -9,7 +9,9 @@ export type LngLatTuple = [number, number];
  * types extend this base, so helpers written against `BasePoint` accept them all.
  */
 export type BasePoint = {
+  /** Longitude of the point. */
   longitude: number;
+  /** Latitude of the point. */
   latitude: number;
   /** Extra per-point properties copied onto the generated GeoJSON feature. */
   properties?: Record<string, unknown>;

@@ -3,6 +3,7 @@ import Route, { type RouteProps } from "../Route";
 import { generateArc, type ArcType } from "../../utils/arc";
 import type { LngLatTuple } from "../../utils/geojson";
 
+/** Props for `<Arc>`, a curved line between two points (great-circle or bezier). */
 export interface ArcProps extends Omit<RouteProps, "coordinates"> {
   /** Start of the arc as [longitude, latitude]. */
   from: LngLatTuple;

@@ -1,6 +1,8 @@
 /** A pixel-space point, matching MapLibre's `map.project()` return shape. */
 export interface ScreenPoint {
+  /** X coordinate in pixels. */
   x: number;
+  /** Y coordinate in pixels. */
   y: number;
 }
 

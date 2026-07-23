@@ -4,8 +4,10 @@ import type { MapMouseEvent } from "maplibre-gl";
 import { useMapContext } from "../context/useMap";
 import type { LngLatTuple } from "../utils/geojson";
 
+/** Which drawing tool is active: point, line, or polygon. */
 export type DrawMode = "point" | "line" | "polygon";
 
+/** Properties `useDraw` attaches to every completed `DrawFeature`. */
 export interface DrawFeatureProperties {
   /** Stable id for the drawn feature. */
   id: string;
@@ -13,11 +15,13 @@ export interface DrawFeatureProperties {
   mode: DrawMode;
 }
 
+/** A completed shape produced by `useDraw` — plain GeoJSON with `DrawFeatureProperties`. */
 export type DrawFeature = Feature<
   Point | LineString | Polygon,
   DrawFeatureProperties
 >;
 
+/** Options for `useDraw`. */
 export interface UseDrawOptions {
   /** Tools the engine accepts. Default all three. */
   modes?: DrawMode[];
@@ -27,6 +31,7 @@ export interface UseDrawOptions {
   onCreate?: (feature: DrawFeature) => void;
 }
 
+/** The state and actions returned by `useDraw`. */
 export interface DrawEngine {
   /** Active tool, or null when idle. */
   mode: DrawMode | null;

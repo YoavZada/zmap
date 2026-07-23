@@ -4,6 +4,7 @@ import {
   useLayerVisibility,
 } from "../../context/useLayerRegistry";
 
+/** Props for `<Layer>`, which registers a named, toggleable overlay with the map's layer registry. */
 export type LayerProps = {
   /** Unique id, used as the checkbox key in the control. */
   id: string;
@@ -21,6 +22,7 @@ export type LayerProps = {
   visible?: boolean;
   /** Fired when the LayerControl toggles a controlled layer — update `visible` here. */
   onVisibleChange?: (visible: boolean) => void;
+  /** Rendered while the layer is visible. */
   children?: ReactNode;
 };
 

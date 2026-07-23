@@ -7,6 +7,7 @@ import { useMapContext } from "../../context/useMap";
 import type { LngLatTuple } from "../../utils/geojson";
 import Styles from "./marker.style";
 
+/** Props for `<Marker>`, a map marker that renders MUI content via a portal into a MapLibre marker. */
 export interface MarkerProps {
   /** Longitude of the marker position. */
   longitude: number;

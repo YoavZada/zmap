@@ -14,6 +14,7 @@ import {
   type LngLatTuple,
 } from "../../utils/geojson";
 
+/** Props for `<Route>`, which draws a polyline on the map from a list of coordinates. */
 export interface RouteProps {
   /** Explicit source/layer id. Auto-generated when omitted. */
   id?: string;

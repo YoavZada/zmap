@@ -7,7 +7,9 @@ import { resolvePaletteColor } from "./color";
  * are `[value, color]` pairs in ascending order; colors may be palette tokens.
  */
 export interface ChoroplethSpec {
+  /** Feature property whose value is mapped through `stops`. */
   property: string;
+  /** `[value, color]` stops in ascending order; colors may be palette tokens. */
   stops: [number, string][];
   /** "interpolate" (smooth, default) or "step" (banded). */
   type?: "step" | "interpolate";

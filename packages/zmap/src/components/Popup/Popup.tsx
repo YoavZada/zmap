@@ -8,6 +8,7 @@ import {
   injectOverlayStyles,
 } from "../../utils/overlayTheme";
 
+/** Props for `<Popup>`, a theme-aware popup anchored to a map coordinate. */
 export interface PopupProps {
   /** Longitude of the anchor coordinate. */
   longitude: number;
@@ -31,6 +32,7 @@ export interface PopupProps {
   maxWidth?: string;
   /** Extra class name(s) for the popup container. */
   className?: string;
+  /** Content rendered inside the popup. */
   children?: ReactNode;
 }
 

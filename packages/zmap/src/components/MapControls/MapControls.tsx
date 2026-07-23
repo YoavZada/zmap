@@ -16,12 +16,14 @@ import ViewInAr from "@mui/icons-material/ViewInAr";
 import { useMapContext } from "../../context/useMap";
 import Styles from "./mapControls.style";
 
+/** Which corner of the map a control is anchored to. */
 export type ControlPosition =
   | "top-left"
   | "top-right"
   | "bottom-left"
   | "bottom-right";
 
+/** Props for `<MapControls>`, a cluster of MUI-styled map controls (zoom, compass, geolocate, fullscreen, scale). */
 export interface MapControlsProps {
   /** Corner for the zoom/compass/geolocate/fullscreen cluster. */
   position?: ControlPosition;

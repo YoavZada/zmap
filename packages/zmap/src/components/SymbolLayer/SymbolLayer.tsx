@@ -12,11 +12,13 @@ import {
   type LayerOverride,
 } from "../../utils/layerOverrides";
 
+/** A labeled point rendered by `<SymbolLayer>`. */
 export type SymbolPoint = BasePoint & {
   /** The text rendered at this point. */
   label?: string;
 };
 
+/** Props for `<SymbolLayer>`, text labels (optionally with an icon) rendered as a single GPU symbol layer. */
 export type SymbolLayerProps = {
   /** Unique source/layer id. Auto-generated when omitted. */
   id?: string;

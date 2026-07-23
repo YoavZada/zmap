@@ -18,11 +18,17 @@ import Styles from "./layerControl.style";
 
 /** A fully-controlled layer definition for the `layers` config API. */
 export type LayerConfig = {
+  /** Unique id, used as the checkbox key in the control. */
   id: string;
+  /** Label shown in the LayerControl. */
   label: string;
+  /** Palette token or CSS color for the control's swatch. */
   color?: string;
+  /** Optional icon shown in the control (set once at registration). */
   icon?: ReactNode;
+  /** Optional section heading to group the layer under. */
   group?: string;
+  /** Initial visibility. Default true. */
   defaultVisible?: boolean;
   /** The map content for this layer (shown/hidden with the checkbox). */
   render?: () => ReactNode;
@@ -30,11 +36,13 @@ export type LayerConfig = {
 
 /** Handle passed to `renderItem` for a custom row. */
 export interface LayerItemControls {
+  /** Whether the layer is currently visible. */
   checked: boolean;
   /** Toggle (no arg) or set visibility. */
   toggle: (visible?: boolean) => void;
 }
 
+/** Props for `<LayerControl>`, a collapsible MUI panel listing registered overlay layers as checkboxes. */
 export type LayerControlProps = {
   /** Corner to anchor the control. Default "top-right". */
   position?: ControlPosition;

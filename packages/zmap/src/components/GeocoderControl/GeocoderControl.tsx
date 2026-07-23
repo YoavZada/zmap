@@ -14,6 +14,7 @@ import type { ControlPosition } from "../MapControls";
 import Marker from "../Marker";
 import Styles from "./geocoderControl.style";
 
+/** Props for `<GeocoderControl>`, a themed place-search box over a pluggable geocoding provider. */
 export type GeocoderControlProps = {
   /** Corner of the map for the search box. Default "top-left". */
   position?: ControlPosition;

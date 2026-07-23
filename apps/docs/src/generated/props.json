@@ -950,6 +950,14 @@
           "deprecated": null
         },
         {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "defaultValue": null,
+          "description": "Rendered while the layer is visible.",
+          "deprecated": null
+        },
+        {
           "name": "color",
           "type": "string",
           "required": false,
@@ -1162,6 +1170,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Shorthand for `initialView.center`. Initial-only, like `initialView`.",
+          "deprecated": null
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "defaultValue": null,
+          "description": "Map content — rendered once the map has loaded. Typically markers, popups, controls, and layers.",
           "deprecated": null
         },
         {
@@ -1675,6 +1691,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Edge to pin to the coordinate (e.g. \"bottom\"). Auto-chosen to fit the view when omitted.",
+          "deprecated": null
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "defaultValue": null,
+          "description": "Content rendered inside the popup.",
           "deprecated": null
         },
         {
@@ -2332,6 +2356,14 @@
           "deprecated": null
         },
         {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "defaultValue": null,
+          "description": "Content rendered inside the popup.",
+          "deprecated": null
+        },
+        {
           "name": "className",
           "type": "string",
           "required": false,
@@ -2393,19 +2425,19 @@
       "name": "ArcOptions",
       "kind": "type",
       "category": "util",
-      "description": ""
+      "description": "Options controlling how `generateArc` interpolates between two points."
     },
     {
       "name": "ArcProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<Arc>`, a curved line between two points (great-circle or bezier)."
     },
     {
       "name": "ArcType",
       "kind": "type",
       "category": "util",
-      "description": ""
+      "description": "Arc interpolation style: \"bezier\" (flight-path bulge) or \"geodesic\" (great-circle)."
     },
     {
       "name": "BasePoint",
@@ -2417,19 +2449,19 @@
       "name": "BinnedFeatureCollection",
       "kind": "type",
       "category": "util",
-      "description": ""
+      "description": "A FeatureCollection of bin polygons, as returned by `binPoints`."
     },
     {
       "name": "BinOptions",
       "kind": "type",
       "category": "util",
-      "description": ""
+      "description": "Options controlling how `binPoints` aggregates points into cells."
     },
     {
       "name": "BinPoint",
       "kind": "type",
       "category": "util",
-      "description": ""
+      "description": "A point aggregated by `binPoints` (and rendered by `<HexbinLayer>`)."
     },
     {
       "name": "binPoints",
@@ -2465,13 +2497,13 @@
       "name": "ChoroplethLayerProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<ChoroplethLayer>`, a data-driven polygon fill (choropleth)."
     },
     {
       "name": "ChoroplethLegendConfig",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Configures the optional `<Legend>` a `<ChoroplethLayer>` can render from its own stops."
     },
     {
       "name": "ChoroplethSpec",
@@ -2489,13 +2521,13 @@
       "name": "ClusterPoint",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "A point clustered by `<Cluster>`."
     },
     {
       "name": "ClusterProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<Cluster>`, which clusters points using MapLibre's native clustering."
     },
     {
       "name": "ColorMode",
@@ -2519,25 +2551,25 @@
       "name": "ContextMenuItem",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "A single row in a `<ContextMenu>`."
     },
     {
       "name": "ContextMenuItemContext",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "The map location passed to a `ContextMenuItem`'s `onClick`."
     },
     {
       "name": "ContextMenuProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<ContextMenu>`, a theme-aware right-click menu anchored to a map coordinate."
     },
     {
       "name": "ControlPosition",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Which corner of the map a control is anchored to."
     },
     {
       "name": "DrawControl",
@@ -2549,31 +2581,31 @@
       "name": "DrawControlProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<DrawControl>`, a drawing palette for point/line/polygon shapes."
     },
     {
       "name": "DrawEngine",
       "kind": "type",
       "category": "hook",
-      "description": ""
+      "description": "The state and actions returned by `useDraw`."
     },
     {
       "name": "DrawFeature",
       "kind": "type",
       "category": "hook",
-      "description": ""
+      "description": "A completed shape produced by `useDraw` — plain GeoJSON with `DrawFeatureProperties`."
     },
     {
       "name": "DrawFeatureProperties",
       "kind": "type",
       "category": "hook",
-      "description": ""
+      "description": "Properties `useDraw` attaches to every completed `DrawFeature`."
     },
     {
       "name": "DrawMode",
       "kind": "type",
       "category": "hook",
-      "description": ""
+      "description": "Which drawing tool is active: point, line, or polygon."
     },
     {
       "name": "ExtrusionLayer",
@@ -2585,7 +2617,7 @@
       "name": "ExtrusionLayerProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<ExtrusionLayer>`, which extrudes GeoJSON polygons into 3D prisms."
     },
     {
       "name": "featureCollection",
@@ -2597,7 +2629,7 @@
       "name": "FeatureStateOptions",
       "kind": "type",
       "category": "hook",
-      "description": ""
+      "description": "Options for `useFeatureState`."
     },
     {
       "name": "formatArea",
@@ -2633,7 +2665,7 @@
       "name": "GeocoderControlProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<GeocoderControl>`, a themed place-search box over a pluggable geocoding provider."
     },
     {
       "name": "GeocodeResult",
@@ -2675,7 +2707,7 @@
       "name": "GeoJSONLayerProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<GeoJSONLayer>`, the low-level escape hatch for a declarative GeoJSON source + layers."
     },
     {
       "name": "haversineDistance",
@@ -2693,7 +2725,7 @@
       "name": "HeatmapLayerProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<HeatmapLayer>`, which renders points as a density heatmap."
     },
     {
       "name": "HexbinLayer",
@@ -2705,7 +2737,7 @@
       "name": "HexbinLayerProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<HexbinLayer>`, which aggregates points into hexagonal or square cells colored by count."
     },
     {
       "name": "isChoroplethSpec",
@@ -2735,7 +2767,7 @@
       "name": "LayerControlProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<LayerControl>`, a collapsible MUI panel listing registered overlay layers as checkboxes."
     },
     {
       "name": "LayerEntry",
@@ -2771,13 +2803,13 @@
       "name": "LayerProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<Layer>`, which registers a named, toggleable overlay with the map's layer registry."
     },
     {
       "name": "LayerRegistryValue",
       "kind": "type",
       "category": "hook",
-      "description": ""
+      "description": "The layer registry's state and mutators, provided by `<Map>`."
     },
     {
       "name": "Legend",
@@ -2789,13 +2821,13 @@
       "name": "LegendItem",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "A single categorical legend row: swatch color + label."
     },
     {
       "name": "LegendProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<Legend>`, a themed map legend."
     },
     {
       "name": "lineDistance",
@@ -2825,7 +2857,7 @@
       "name": "MapContextValue",
       "kind": "type",
       "category": "hook",
-      "description": ""
+      "description": "The value provided by `<Map>` through `MapContext`."
     },
     {
       "name": "MapControls",
@@ -2837,13 +2869,13 @@
       "name": "MapControlsProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<MapControls>`, a cluster of MUI-styled map controls (zoom, compass, geolocate, fullscreen, scale)."
     },
     {
       "name": "MapLayerConfig",
       "kind": "type",
       "category": "hook",
-      "description": ""
+      "description": "Declarative GeoJSON source + layers config consumed by `useMapLayer`."
     },
     {
       "name": "maplibregl",
@@ -2855,7 +2887,7 @@
       "name": "MapProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<Map>`, the container that creates and configures the MapLibre GL instance."
     },
     {
       "name": "MapProvider",
@@ -2885,7 +2917,7 @@
       "name": "MapViewState",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "A camera position: center, zoom, bearing, and pitch."
     },
     {
       "name": "Marker",
@@ -2897,7 +2929,7 @@
       "name": "MarkerProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<Marker>`, a map marker that renders MUI content via a portal into a MapLibre marker."
     },
     {
       "name": "MeasureControl",
@@ -2909,19 +2941,19 @@
       "name": "MeasureControlProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<MeasureControl>`, a measuring tape for line distance and polygon area."
     },
     {
       "name": "MeasureMode",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Which measurement tool is active: distance (\"line\") or area (\"polygon\")."
     },
     {
       "name": "MeasureUnit",
       "kind": "type",
       "category": "util",
-      "description": ""
+      "description": "Unit system for measurement readouts: metric (meters/km) or imperial (feet/miles)."
     },
     {
       "name": "nominatim",
@@ -2975,7 +3007,7 @@
       "name": "PointLayerProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<PointLayer>`, which renders many points as a single GPU circle layer."
     },
     {
       "name": "polygonArea",
@@ -2993,13 +3025,13 @@
       "name": "PopupProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<Popup>`, a theme-aware popup anchored to a map coordinate."
     },
     {
       "name": "ProviderId",
       "kind": "type",
       "category": "provider",
-      "description": ""
+      "description": "One of the built-in basemap provider ids (\"carto\", \"osm\", \"versatiles\", \"opentopomap\")."
     },
     {
       "name": "providerKey",
@@ -3047,7 +3079,7 @@
       "name": "RouteProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<Route>`, which draws a polyline on the map from a list of coordinates."
     },
     {
       "name": "ScreenPoint",
@@ -3065,13 +3097,13 @@
       "name": "SelectControlProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<SelectControl>`, marquee/lasso selection over `<PointLayer>` features."
     },
     {
       "name": "SelectTool",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Which selection tool is active: a marquee box or a freehand lasso."
     },
     {
       "name": "ShapeLayer",
@@ -3083,7 +3115,7 @@
       "name": "ShapeLayerProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<ShapeLayer>`, which renders GeoJSON polygons/lines as fill + outline layers."
     },
     {
       "name": "SymbolLayer",
@@ -3095,13 +3127,13 @@
       "name": "SymbolLayerProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<SymbolLayer>`, text labels (optionally with an icon) rendered as a single GPU symbol layer."
     },
     {
       "name": "SymbolPoint",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "A labeled point rendered by `<SymbolLayer>`."
     },
     {
       "name": "TimePlayback",
@@ -3113,7 +3145,7 @@
       "name": "TimePlaybackProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<TimePlayback>`, which animates time-stamped GeoJSON points along a playhead."
     },
     {
       "name": "Tooltip",
@@ -3125,7 +3157,7 @@
       "name": "TooltipProps",
       "kind": "type",
       "category": "component",
-      "description": ""
+      "description": "Props for `<Tooltip>`, a lightweight non-interactive label anchored to a map coordinate."
     },
     {
       "name": "useColorScheme",
@@ -3143,7 +3175,7 @@
       "name": "UseDrawOptions",
       "kind": "type",
       "category": "hook",
-      "description": ""
+      "description": "Options for `useDraw`."
     },
     {
       "name": "useFeatureState",

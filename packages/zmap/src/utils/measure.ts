@@ -6,6 +6,7 @@ const EARTH_RADIUS = 6371008.8;
 const EARTH_RADIUS_EQ = 6378137;
 const DEG2RAD = Math.PI / 180;
 
+/** Unit system for measurement readouts: metric (meters/km) or imperial (feet/miles). */
 export type MeasureUnit = "metric" | "imperial";
 
 /** Great-circle (haversine) distance between two lng/lat points, in metres. */
