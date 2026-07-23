@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0
+
+### Minor Changes
+
+- [#12](https://github.com/YoavZada/zmap/pull/12) [`761af99`](https://github.com/YoavZada/zmap/commit/761af99e918bcde935c82ba19ba0ae28c910c823) Thanks [@YoavZada](https://github.com/YoavZada)! - New `GeocoderControl`: MUI Autocomplete place search on the map with pluggable geocoding providers — built-in `photon` (default) and `nominatim`, custom backends via the `GeocodingProvider` interface — plus fly-to/fitBounds on select, an optional result marker, and a public headless `useGeocoder` hook. All exported props and types now carry complete JSDoc, so docs prop tables and IDE hovers show a description for every field.
+
 ## 0.6.0
 
 ### Minor Changes
