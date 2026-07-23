@@ -10,8 +10,10 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import Check from "@mui/icons-material/Check";
 import ContentCopy from "@mui/icons-material/ContentCopy";
+import Bolt from "@mui/icons-material/Bolt";
 import CodeBlock from "../CodeBlock";
 import { useRevealOnScroll } from "../../utils/useRevealOnScroll";
+import { openBlockInStackBlitz } from "../../utils/stackblitz";
 import type { BlockDef } from "../../blocks";
 import Styles from "./blockSection.style";
 
@@ -57,6 +59,15 @@ const BlockSection: FC<BlockSectionProps> = ({ block }) => {
             <Tab label="Preview" sx={Styles.tab} />
             <Tab label="Code" sx={Styles.tab} />
           </Tabs>
+          <Tooltip title="Open in StackBlitz">
+            <IconButton
+              size="small"
+              onClick={() => openBlockInStackBlitz(block)}
+              sx={Styles.copyButton}
+            >
+              <Bolt fontSize="small" />
+            </IconButton>
+          </Tooltip>
           <Tooltip title={copied ? "Copied" : "Copy full source"}>
             <IconButton size="small" onClick={copy} sx={Styles.copyButton}>
               {copied ? (

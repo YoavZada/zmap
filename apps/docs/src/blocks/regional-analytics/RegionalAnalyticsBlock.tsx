@@ -1,3 +1,4 @@
+import "zmapgl/styles.css";
 import { useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";

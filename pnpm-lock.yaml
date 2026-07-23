@@ -44,6 +44,9 @@ importers:
       '@mui/material':
         specifier: ^7.0.0
         version: 7.3.11(@emotion/react@11.14.0(@types/react@19.2.16)(react@19.2.7))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.16)(react@19.2.7))(@types/react@19.2.16)(react@19.2.7))(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@stackblitz/sdk':
+        specifier: ^1.11.1
+        version: 1.11.1
       maplibre-gl:
         specifier: ^5.15.0
         version: 5.24.0
@@ -1496,6 +1499,9 @@ packages:
     resolution: {integrity: sha512-TVVQ/iuHbaGtHJrjur5s4XKYEyGk0nIwUAqhuzhKPbTyV9nYOH/laDelQ4vg3cGmm8sayRx998wxEdnwM/Yewg==}
     peerDependencies:
       size-limit: 12.1.0
+
+  '@stackblitz/sdk@1.11.1':
+    resolution: {integrity: sha512-5wl1j3IhtmE7POTl2W9VGQdbQyBQrRsF3jcYBK+0V353AuO8H2GFZkiFNyTRxL+TDY3HIFCHc3G983Osmg76Lg==}
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -4453,6 +4459,8 @@ snapshots:
       '@size-limit/esbuild': 12.1.0(size-limit@12.1.0)
       '@size-limit/file': 12.1.0(size-limit@12.1.0)
       size-limit: 12.1.0
+
+  '@stackblitz/sdk@1.11.1': {}
 
   '@standard-schema/spec@1.1.0': {}
 
