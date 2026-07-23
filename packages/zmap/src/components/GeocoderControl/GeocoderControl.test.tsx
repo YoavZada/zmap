@@ -30,7 +30,9 @@ const BAVARIA: GeocodeResult = {
   bbox: [8.9771, 47.2703, 13.8397, 50.5647],
 };
 
-function makeProvider(results: GeocodeResult[]): GeocodingProvider {
+function makeProvider(
+  results: GeocodeResult[],
+): GeocodingProvider & { search: ReturnType<typeof vi.fn> } {
   return {
     id: "test",
     debounceMs: 0,
@@ -147,5 +149,73 @@ describe("GeocoderControl", () => {
     fireEvent.click(screen.getByLabelText("Clear"));
     expect(onClear).toHaveBeenCalled();
     await waitFor(() => expect(fakeMarkers[0].removed).toBe(true));
+  });
+
+  it("proximity map-center is read from the map at request time", async () => {
+    const map = new FakeMap({ center: [30, 40] });
+    const provider = makeProvider([BERLIN]);
+    renderControl(map, { provider });
+
+    const input = screen.getByRole("combobox");
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: "ber" } });
+
+    await waitFor(() =>
+      expect(provider.search).toHaveBeenCalledWith(
+        "ber",
+        expect.objectContaining({ proximity: [30, 40] }),
+      ),
+    );
+  });
+
+  it("proximity={false} sends no bias", async () => {
+    const map = new FakeMap({ center: [30, 40] });
+    const provider = makeProvider([BERLIN]);
+    renderControl(map, { provider, proximity: false });
+
+    const input = screen.getByRole("combobox");
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: "ber" } });
+
+    await waitFor(() =>
+      expect(provider.search).toHaveBeenCalledWith(
+        "ber",
+        expect.objectContaining({ proximity: undefined }),
+      ),
+    );
+  });
+
+  it("listbox closes on select and reopens only on fresh typing; next pick replaces the marker", async () => {
+    const map = new FakeMap();
+    renderControl(map, { provider: makeProvider([BERLIN, BAVARIA]) });
+    const input = screen.getByRole("combobox");
+
+    await searchAndPick("Berlin");
+
+    // Picking a result closes the listbox.
+    await waitFor(() => {
+      expect(screen.queryByRole("listbox")).toBeNull();
+      expect(screen.queryByText("Bavaria")).toBeNull();
+    });
+    await waitFor(() => expect(fakeMarkers).toHaveLength(1));
+    expect(fakeMarkers[0].lngLat).toEqual(BERLIN.center);
+
+    // Fresh typing reopens it.
+    fireEvent.change(input, { target: { value: "bav" } });
+    const bavariaOption = await screen.findByText("Bavaria");
+    expect(bavariaOption).toBeTruthy();
+
+    // Picking again moves the same marker in place — it doesn't add a new one.
+    fireEvent.click(bavariaOption);
+    await waitFor(() => {
+      expect(fakeMarkers).toHaveLength(1);
+      expect(fakeMarkers[0].lngLat).toEqual(BAVARIA.center);
+    });
+
+    // Clearing also closes the listbox.
+    fireEvent.change(input, { target: { value: "bav" } });
+    await screen.findByText("Bavaria");
+    fireEvent.click(screen.getByLabelText("Clear"));
+    await waitFor(() => expect(screen.queryByRole("listbox")).toBeNull());
   });
 });
