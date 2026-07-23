@@ -30,6 +30,7 @@ const ROUTES = [
   ["/markers", "markers"],
   ["/popups", "popups"],
   ["/controls", "controls"],
+  ["/geocoder", "geocoder"],
   ["/interaction", "interaction"],
   ["/routes", "routes"],
   ["/arcs", "arcs"],

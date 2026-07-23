@@ -558,6 +558,107 @@
         }
       ]
     },
+    "GeocoderControl": {
+      "description": "A themed place-search box for the map: MUI Autocomplete over a pluggable\ngeocoding provider. Picking a result flies the camera there (fitBounds\nwhen the result has a bounding box) and drops a marker; both behaviors\ncan be turned off.",
+      "props": [
+        {
+          "name": "flyTo",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": "Fly the camera to a picked result. Default true.",
+          "deprecated": null
+        },
+        {
+          "name": "language",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Preferred result language, passed through to the provider.",
+          "deprecated": null
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "required": false,
+          "defaultValue": "5",
+          "description": "Maximum number of results. Default 5.",
+          "deprecated": null
+        },
+        {
+          "name": "marker",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "true",
+          "description": "Drop a marker at the picked result. Default true.",
+          "deprecated": null
+        },
+        {
+          "name": "noOptionsText",
+          "type": "string",
+          "required": false,
+          "defaultValue": "No places found",
+          "description": "Empty-state text, also shown when the provider errors. Default \"No places found\".",
+          "deprecated": null
+        },
+        {
+          "name": "onClear",
+          "type": "(() => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fires when the input is cleared.",
+          "deprecated": null
+        },
+        {
+          "name": "onSelect",
+          "type": "((result: GeocodeResult) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fires when the user picks a result.",
+          "deprecated": null
+        },
+        {
+          "name": "placeholder",
+          "type": "string",
+          "required": false,
+          "defaultValue": "Search places…",
+          "description": "Input placeholder, also used as the accessible label. Default \"Search places…\".",
+          "deprecated": null
+        },
+        {
+          "name": "position",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "top-left",
+          "description": "Corner of the map for the search box. Default \"top-left\".",
+          "deprecated": null
+        },
+        {
+          "name": "provider",
+          "type": "GeocoderInput",
+          "required": false,
+          "defaultValue": "photon",
+          "description": "Built-in provider id or a custom GeocodingProvider. Default \"photon\".",
+          "deprecated": null
+        },
+        {
+          "name": "proximity",
+          "type": "false | LngLatTuple | \"map-center\"",
+          "required": false,
+          "defaultValue": "map-center",
+          "description": "Bias results toward a point. Default \"map-center\".",
+          "deprecated": null
+        },
+        {
+          "name": "zoom",
+          "type": "number",
+          "required": false,
+          "defaultValue": "14",
+          "description": "Target zoom when a picked result has no bounding box. Default 14.",
+          "deprecated": null
+        }
+      ]
+    },
     "GeoJSONLayer": {
       "description": "Low-level escape hatch: declaratively add a GeoJSON source + layers, kept\nalive across theme-driven style swaps. Build Route/Arc/Cluster-style features\nyourself when the higher-level components don't fit.",
       "props": [
@@ -2517,6 +2618,54 @@
       "description": "Generates the coordinate path for an arc between two points."
     },
     {
+      "name": "GeocodeOptions",
+      "kind": "type",
+      "category": "provider",
+      "description": "Options passed to GeocodingProvider.search."
+    },
+    {
+      "name": "GeocoderControl",
+      "kind": "value",
+      "category": "component",
+      "description": "A themed place-search box for the map: MUI Autocomplete over a pluggable geocoding provider. Picking a result flies the camera there (fitBounds when the result has a bounding box) and drops a marker; both behaviors can be turned off."
+    },
+    {
+      "name": "GeocoderControlProps",
+      "kind": "type",
+      "category": "component",
+      "description": ""
+    },
+    {
+      "name": "GeocodeResult",
+      "kind": "type",
+      "category": "provider",
+      "description": "One place returned by a geocoding provider."
+    },
+    {
+      "name": "GeocoderId",
+      "kind": "type",
+      "category": "provider",
+      "description": "Id of a built-in geocoding provider."
+    },
+    {
+      "name": "GeocoderInput",
+      "kind": "type",
+      "category": "provider",
+      "description": "A built-in provider id or a custom GeocodingProvider implementation."
+    },
+    {
+      "name": "geocoders",
+      "kind": "value",
+      "category": "provider",
+      "description": "Built-in geocoding providers, keyed by id."
+    },
+    {
+      "name": "GeocodingProvider",
+      "kind": "type",
+      "category": "provider",
+      "description": "A pluggable geocoding backend for GeocoderControl / useGeocoder."
+    },
+    {
       "name": "GeoJSONLayer",
       "kind": "value",
       "category": "component",
@@ -2775,6 +2924,12 @@
       "description": ""
     },
     {
+      "name": "nominatim",
+      "kind": "value",
+      "category": "provider",
+      "description": "Nominatim (nominatim.openstreetmap.org) — OSM's classic geocoder. The public instance forbids heavy autocomplete (max ~1 req/s), so this provider ships with an 1100 ms debounce; `proximity` is ignored (no bias parameter). Self-host for production traffic."
+    },
+    {
       "name": "opentopomap",
       "kind": "value",
       "category": "provider",
@@ -2785,6 +2940,12 @@
       "kind": "value",
       "category": "provider",
       "description": "Standard OpenStreetMap raster tiles — free, no API key. One style serves both modes (OSM has no native dark raster set in v1)."
+    },
+    {
+      "name": "photon",
+      "kind": "value",
+      "category": "provider",
+      "description": "Photon (photon.komoot.io) — free OSM geocoder built for search-as-you-type. Fair-use public instance; point `search` at a self-hosted Photon for production traffic by supplying a custom provider instead."
     },
     {
       "name": "pointFeature",
@@ -2857,6 +3018,12 @@
       "kind": "value",
       "category": "provider",
       "description": "The attribution string for a provider input, when one is known."
+    },
+    {
+      "name": "resolveGeocoder",
+      "kind": "value",
+      "category": "provider",
+      "description": "Resolve a built-in id, or pass a custom provider through unchanged."
     },
     {
       "name": "resolvePaletteColor",
@@ -2983,6 +3150,24 @@
       "kind": "value",
       "category": "hook",
       "description": "Tracks pointer hover over a layer and mirrors it into MapLibre feature-state, so paint expressions can react per feature:"
+    },
+    {
+      "name": "useGeocoder",
+      "kind": "value",
+      "category": "hook",
+      "description": "Headless place search: debounced, abortable, stale-safe. GeocoderControl is a thin MUI surface over this hook; use it directly for custom UIs."
+    },
+    {
+      "name": "UseGeocoderOptions",
+      "kind": "type",
+      "category": "hook",
+      "description": "Options for useGeocoder."
+    },
+    {
+      "name": "UseGeocoderResult",
+      "kind": "type",
+      "category": "hook",
+      "description": "State and actions returned by useGeocoder."
     },
     {
       "name": "useLayerRegistry",
