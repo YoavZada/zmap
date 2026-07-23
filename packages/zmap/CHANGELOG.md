@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- [#9](https://github.com/YoavZada/zmap/pull/9) [`8ddc53e`](https://github.com/YoavZada/zmap/commit/8ddc53e25a63ceef04735d8c6bed7e94528f8deb) Thanks [@YoavZada](https://github.com/YoavZada)! - **CSS is now an explicit import.** zmapgl no longer injects MapLibre's stylesheet via a JS side-effect — add it once in your app entry (Vite `main.tsx`, Next.js root layout, etc.):
+
+  ```ts
+  import "zmapgl/styles.css";
+  ```
+
+  Why: the side-effect import made `import "zmapgl"` crash in plain Node (SSR frameworks, `react-dom/server`, Vite SSR externals), and bundler tree-shaking could silently drop it anyway. The package also now ships a `"use client"` banner, so zmapgl components can be imported directly from React Server Components.
+
 ## 0.5.1
 
 ### Patch Changes
