@@ -45,6 +45,12 @@ jobs:
       - name: Unit tests
         run: pnpm test
 
+      - name: Build library
+        run: pnpm build:lib
+
+      - name: Size limit
+        run: pnpm size
+
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 30

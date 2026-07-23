@@ -15,6 +15,7 @@ import HexagonOutlined from "@mui/icons-material/HexagonOutlined";
 import PlayCircleOutline from "@mui/icons-material/PlayCircleOutline";
 import ViewInArOutlined from "@mui/icons-material/ViewInArOutlined";
 import MenuBookOutlined from "@mui/icons-material/MenuBookOutlined";
+import HistoryOutlined from "@mui/icons-material/HistoryOutlined";
 
 export interface NavItem {
   path: string;
@@ -136,6 +137,13 @@ export const navItems: NavItem[] = [
     icon: MenuBookOutlined,
     description:
       "Every component, hook, provider, utility, and type zmapgl ships, with links into the demos.",
+  },
+  {
+    path: "/changelog",
+    label: "Changelog",
+    icon: HistoryOutlined,
+    description:
+      "Release history for zmapgl — every version and its changes, newest first.",
   },
 ];
 

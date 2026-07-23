@@ -17,6 +17,7 @@ import HexbinPage from "./pages/HexbinPage";
 import TimePlaybackPage from "./pages/TimePlaybackPage";
 import ExtrusionPage from "./pages/ExtrusionPage";
 import ApiPage from "./pages/ApiPage";
+import ChangelogPage from "./pages/ChangelogPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 const App: FC = () => {
@@ -39,6 +40,7 @@ const App: FC = () => {
         <Route path="/time" element={<TimePlaybackPage />} />
         <Route path="/extrusion" element={<ExtrusionPage />} />
         <Route path="/api" element={<ApiPage />} />
+        <Route path="/changelog" element={<ChangelogPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Layout>

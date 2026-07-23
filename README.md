@@ -8,9 +8,9 @@ Zero config. One install. Markers, popups, tooltips, controls, routes, arcs,
 clustering and toggleable data layers — composable components that render through
 MUI and follow your theme, including automatic light/dark basemaps.
 
-[Quick start](#quick-start) · [Components](#components) · [Providers & theming](#providers--theming) · [Development](DEVELOPMENT.md)
+[**Docs & live demos**](https://yoavzada.github.io/zmap) · [Quick start](#quick-start) · [Components](#components) · [Providers & theming](#providers--theming)
 
-[![npm version](https://img.shields.io/npm/v/zmap.svg)](https://www.npmjs.com/package/zmapgl)
+[![npm version](https://img.shields.io/npm/v/zmapgl.svg)](https://www.npmjs.com/package/zmapgl)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![MapLibre GL](https://img.shields.io/badge/MapLibre%20GL-1A1A2E)](https://maplibre.org/)
 [![MUI](https://img.shields.io/badge/MUI-007FFF?logo=mui&logoColor=white)](https://mui.com/)
@@ -58,7 +58,7 @@ with Vite, Next.js, or any bundler that handles library CSS.
 Wrap your app in an MUI `ThemeProvider` (as you already do), then compose a map:
 
 Components are declared as a typed `FC` arrow, default-exported (the repo
-convention — see [CLAUDE.md](CLAUDE.md)):
+convention):
 
 ```tsx
 import type { FC } from "react";
@@ -81,24 +81,35 @@ export default MyMap;
 
 ## Components
 
-| Component      | What it does                                                       |
-| -------------- | ------------------------------------------------------------------ |
-| `Map`          | Container; creates the MapLibre instance and provides context.     |
-| `Marker`       | Renders any MUI content at a coordinate (portal-based).            |
-| `Popup`        | Theme-aware popup anchored to a coordinate.                        |
-| `Tooltip`      | Lightweight, non-interactive label (a Popup variant).              |
-| `MapControls`  | MUI zoom / compass / geolocate / fullscreen / scale cluster.       |
-| `Route`        | Draws a polyline from coordinates.                                 |
-| `Arc`          | Draws a curved (bezier or great-circle) line between two points.   |
-| `Cluster`      | Native MapLibre clustering rendered as themed MUI markers.         |
-| `LayerControl` | Collapsible MUI panel that toggles registered layers on/off.       |
-| `Layer`        | Registers a named, toggleable overlay (pairs with `LayerControl`). |
-| `PointLayer`   | Renders many points as a single GPU circle layer.                  |
-| `HeatmapLayer` | Renders points as a density heatmap.                               |
-| `ShapeLayer`   | GeoJSON polygons / lines, with optional choropleth fill.           |
-| `GeoJSONLayer` | Low-level escape hatch for custom sources + layers.                |
+| Component         | What it does                                                       |
+| ----------------- | ------------------------------------------------------------------ |
+| `Map`             | Container; creates the MapLibre instance and provides context.     |
+| `Marker`          | Renders any MUI content at a coordinate (portal-based).            |
+| `Popup`           | Theme-aware popup anchored to a coordinate.                        |
+| `Tooltip`         | Lightweight, non-interactive label (a Popup variant).              |
+| `MapControls`     | MUI zoom / compass / geolocate / fullscreen / scale cluster.       |
+| `Route`           | Draws a polyline from coordinates.                                 |
+| `Arc`             | Draws a curved (bezier or great-circle) line between two points.   |
+| `Cluster`         | Native MapLibre clustering rendered as themed MUI markers.         |
+| `LayerControl`    | Collapsible MUI panel that toggles registered layers on/off.       |
+| `Layer`           | Registers a named, toggleable overlay (pairs with `LayerControl`). |
+| `PointLayer`      | Renders many points as a single GPU circle layer.                  |
+| `HeatmapLayer`    | Renders points as a density heatmap.                               |
+| `ShapeLayer`      | GeoJSON polygons / lines, with optional choropleth fill.           |
+| `GeoJSONLayer`    | Low-level escape hatch for custom sources + layers.                |
+| `SymbolLayer`     | GPU text labels/icons for many points.                             |
+| `ChoroplethLayer` | Data-driven polygon coloring with ramps and hover states.          |
+| `HexbinLayer`     | Aggregates points into hex/square bins, flat or extruded.          |
+| `ExtrusionLayer`  | Extrudes polygons into 3D prisms (buildings, data heights).        |
+| `TimePlayback`    | Animates time-stamped points with a themed transport bar.          |
+| `DrawControl`     | Draw points, lines, and polygons with a themed toolbar.            |
+| `MeasureControl`  | Measure distances and areas interactively.                         |
+| `SelectControl`   | Box and lasso selection over map features.                         |
+| `ContextMenu`     | Right-click menu with MUI menu items at the clicked location.      |
+| `Legend`          | Themed legend panel for color ramps and categories.                |
 
-Hooks: `useMap()` (the raw MapLibre instance), `useMapLayer()`, `useColorScheme()`.
+Hooks: `useMap()` (the raw MapLibre instance), `useMapLayer()`, `useColorScheme()`,
+`useFeatureState()`, `useDraw()`, `useLayerVisibility()`.
 
 ## Providers & theming
 
@@ -131,12 +142,13 @@ for development:
 ## Development
 
 This is a pnpm monorepo (the `zmap` package, a docs/showcase site, and a
-Dijkstra pathfinding demo). Setup, commands, and architecture live in
-**[DEVELOPMENT.md](DEVELOPMENT.md)**. To preview locally:
+Dijkstra pathfinding demo), orchestrated by Turborepo:
 
 ```bash
 pnpm install
 pnpm docs      # docs & component showcase
+pnpm build     # build every package (library, docs, pathfinder demo)
+pnpm test      # run the library test suite
 ```
 
 ## Contributing
@@ -146,11 +158,12 @@ Contributions are welcome!
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m "Add amazing feature"`)
-4. Push the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+4. Add a changeset if the change is user-visible (`pnpm changeset`)
+5. Push the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
 
-Please follow the repo conventions documented in [CLAUDE.md](CLAUDE.md) and keep
-`pnpm typecheck` and `pnpm lint` green.
+Please follow the repo's coding conventions (see the [docs site](https://yoavzada.github.io/zmap))
+and keep `pnpm typecheck` and `pnpm lint` green.
 
 ## License
 

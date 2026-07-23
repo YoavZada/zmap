@@ -16,3 +16,6 @@ DEVELOPMENT.md
 PUBLISHING.md
 demo-screenshots/
 .env*
+
+apps/docs/public/llms.txt
+apps/docs/public/llms-full.txt
