@@ -218,4 +218,18 @@ describe("GeocoderControl", () => {
     fireEvent.click(screen.getByLabelText("Clear"));
     await waitFor(() => expect(screen.queryByRole("listbox")).toBeNull());
   });
+
+  it("Escape closes the listbox; typing reopens it", async () => {
+    renderControl(new FakeMap());
+    const input = screen.getByRole("combobox");
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: "ber" } });
+    await screen.findByText("Berlin");
+
+    fireEvent.keyDown(input, { key: "Escape" });
+    expect(screen.queryByRole("listbox")).toBeNull();
+
+    fireEvent.change(input, { target: { value: "berl" } });
+    expect(await screen.findByText("Berlin")).toBeTruthy();
+  });
 });

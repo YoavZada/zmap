@@ -30,7 +30,7 @@ export type UseGeocoderResult = {
 };
 
 const DEFAULT_DEBOUNCE_MS = 300;
-const DEFAULT_MIN_QUERY_LENGTH = 2;
+export const DEFAULT_MIN_QUERY_LENGTH = 2;
 const DEFAULT_LIMIT = 5;
 
 /**
@@ -76,11 +76,11 @@ export function useGeocoder(
         setLoading(false);
         return;
       }
+      setLoading(true);
       timerRef.current = setTimeout(() => {
         timerRef.current = null;
         const controller = new AbortController();
         controllerRef.current = controller;
-        setLoading(true);
         const prox = proximityRef.current;
         const proximityValue = typeof prox === "function" ? prox() : prox;
         resolved

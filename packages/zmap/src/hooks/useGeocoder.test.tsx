@@ -55,6 +55,26 @@ describe("useGeocoder", () => {
     expect(result.current.loading).toBe(false);
   });
 
+  it("is loading during the debounce window, before the request fires", async () => {
+    vi.useFakeTimers();
+    const provider = makeProvider();
+    const { result } = renderHook(() => useGeocoder(provider));
+
+    act(() => result.current.setQuery("ber"));
+    expect(result.current.loading).toBe(true);
+    expect(provider.search).not.toHaveBeenCalled();
+
+    act(() => result.current.setQuery("b")); // dip below min length
+    expect(result.current.loading).toBe(false);
+
+    act(() => result.current.setQuery("ber"));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+    expect(result.current.loading).toBe(false); // settled
+    expect(result.current.results).toEqual([BERLIN]);
+  });
+
   it("never searches below minQueryLength and clears stale results", async () => {
     vi.useFakeTimers();
     const provider = makeProvider();

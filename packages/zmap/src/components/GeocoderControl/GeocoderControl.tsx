@@ -6,7 +6,7 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import { type FC, useMemo, useState } from "react";
 import { useMapContext } from "../../context/useMap";
-import { useGeocoder } from "../../hooks/useGeocoder";
+import { DEFAULT_MIN_QUERY_LENGTH, useGeocoder } from "../../hooks/useGeocoder";
 import { resolveGeocoder } from "../../providers/geocoding";
 import type { GeocodeResult, GeocoderInput } from "../../providers/geocoding";
 import type { LngLatTuple } from "../../utils/geojson";
@@ -89,7 +89,7 @@ const GeocoderControl: FC<GeocoderControlProps> = ({
     proximity: proximityGetter,
   });
 
-  const minLength = resolvedProvider.minQueryLength ?? 2;
+  const minLength = resolvedProvider.minQueryLength ?? DEFAULT_MIN_QUERY_LENGTH;
   const open = focused && dirty && inputText.trim().length >= minLength;
 
   const handleChange = (result: GeocodeResult | null) => {
@@ -135,6 +135,7 @@ const GeocoderControl: FC<GeocoderControlProps> = ({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           open={open}
+          onClose={() => setDirty(false)}
           loading={loading}
           filterOptions={(options) => options}
           getOptionLabel={(option) => option.name}
