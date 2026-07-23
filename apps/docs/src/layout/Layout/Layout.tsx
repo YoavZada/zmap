@@ -28,10 +28,10 @@ import ApiToc from "./components/ApiToc";
 import Styles from "./layout.style";
 
 // Library version, injected from packages/zmap/package.json at build time
-// (see vite.config.ts). The release workflow keeps the package version and the
-// git tag in lockstep, so this reflects the published GitHub release.
+// (see vite.config.ts). Changesets tags each release as `zmapgl@x.y.z`, so
+// this reflects the published GitHub release.
 const ZMAP_VERSION = import.meta.env.VITE_ZMAP_VERSION ?? "dev";
-const RELEASE_URL = `https://github.com/YoavZada/zmap/releases/tag/v${ZMAP_VERSION}`;
+const RELEASE_URL = `https://github.com/YoavZada/zmap/releases/tag/zmapgl@${ZMAP_VERSION}`;
 const NPM_URL = "https://www.npmjs.com/package/zmapgl";
 
 type NavProps = { onNavigate?: () => void };

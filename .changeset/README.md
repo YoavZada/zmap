@@ -15,4 +15,7 @@ Full docs: https://github.com/changesets/changesets
 3. Merging the version PR publishes `zmapgl` to npm with provenance, tags
    `zmapgl@x.y.z`, and creates the GitHub Release.
 
+Releases are tagged `zmapgl@x.y.z`, not `v*` — tooling/scripts that look up
+release tags must not assume a `v*` prefix.
+
 Manual fallback (needs npm access): `pnpm release`.
