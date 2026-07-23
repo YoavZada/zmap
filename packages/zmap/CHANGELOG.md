@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1
+
+### Patch Changes
+
+- [#7](https://github.com/YoavZada/zmap/pull/7) [`4e0529b`](https://github.com/YoavZada/zmap/commit/4e0529b15b2030c18046873fcd71ef7cea5c12ff) Thanks [@YoavZada](https://github.com/YoavZada)! - Refresh the npm README: badges, a complete component table, and a prominent link to the docs site.
+
 <!--
 All notable changes to **zmapgl** are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
@@ -40,7 +46,7 @@ keep working and warn once in dev; they'll be removed in v1.0.
   `defaultPlayhead` for the uncontrolled start. `autoplay` stays the
   uncontrolled initial.
 - **`BasePoint`** exported type — the shared `{ longitude, latitude,
-  properties? }` shape that `LayerPoint`, `SymbolPoint`, `ClusterPoint`, and
+properties? }` shape that `LayerPoint`, `SymbolPoint`, `ClusterPoint`, and
   `BinPoint` now all extend, so helpers can be written once.
 - **`HeatmapLayer.colorRamp`** now also accepts `[density, color][]` stops
   (palette tokens allowed) — same shape as HexbinLayer's ramp — in addition to
@@ -57,13 +63,13 @@ keep working and warn once in dev; they'll be removed in v1.0.
 Old props keep working (new prop wins when both are set) and warn once per
 prop in dev builds. Removal is planned for v1.0.
 
-| Component | Deprecated | Use instead |
-| --- | --- | --- |
-| PointLayer | `color`, `opacity` | `fillColor`, `fillOpacity` |
-| ShapeLayer | `lineColor`, `lineWidth`, `lineOpacity` | `strokeColor`, `strokeWidth`, `strokeOpacity` |
+| Component       | Deprecated                              | Use instead                                   |
+| --------------- | --------------------------------------- | --------------------------------------------- |
+| PointLayer      | `color`, `opacity`                      | `fillColor`, `fillOpacity`                    |
+| ShapeLayer      | `lineColor`, `lineWidth`, `lineOpacity` | `strokeColor`, `strokeWidth`, `strokeOpacity` |
 | ChoroplethLayer | `lineColor`, `lineWidth`, `lineOpacity` | `strokeColor`, `strokeWidth`, `strokeOpacity` |
-| HexbinLayer | `opacity`, `lineColor`, `lineWidth` | `fillOpacity`, `strokeColor`, `strokeWidth` |
-| ExtrusionLayer | `color`, `opacity` | `fillColor`, `fillOpacity` |
+| HexbinLayer     | `opacity`, `lineColor`, `lineWidth`     | `fillOpacity`, `strokeColor`, `strokeWidth`   |
+| ExtrusionLayer  | `color`, `opacity`                      | `fillColor`, `fillOpacity`                    |
 
 (Route/Arc keep `color`/`width`/`opacity` — a line has no fill/stroke split.
 SymbolLayer keeps `color` + `haloColor`; Cluster/TimePlayback/Marker keep
@@ -81,7 +87,7 @@ their domain colors.)
   final `styledata` event fired before `isStyleLoaded()` turned true, the
   re-add never ran and every custom layer stayed gone. `useMapLayer` now also
   sweeps on `idle`, which reliably catches that race. Re-added layers also now
-  carry the *current* paint/layout (the re-add previously used the mount-time
+  carry the _current_ paint/layout (the re-add previously used the mount-time
   specs, so layers restored after a theme flip kept the old theme's colors).
 - `resolvePaletteColor` now resolves top-level palette string entries like
   `"divider"` — previously ChoroplethLayer's default outline color reached
