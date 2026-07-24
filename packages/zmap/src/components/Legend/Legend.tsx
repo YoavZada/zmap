@@ -148,7 +148,9 @@ const Legend: FC<LegendProps> = ({
     items && items.length > 0
       ? `${title ? `${titleText(title)}: ` : ""}legend, ${items.length} categories`
       : spec && spec.stops.length > 0
-        ? `${title ? `${titleText(title)}: ` : ""}color scale`
+        ? `${title ? `${titleText(title)}: ` : ""}color scale from ${formatValue(
+            spec.stops[0][0],
+          )} to ${formatValue(spec.stops[spec.stops.length - 1][0])}`
         : "legend";
 
   return (

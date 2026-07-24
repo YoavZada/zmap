@@ -336,7 +336,7 @@ const SelectControl: FC<SelectControlProps> = ({
         />
       )}
 
-      {tool != null && <KeyboardCrosshair />}
+      {tool === "box" && <KeyboardCrosshair />}
       {kbCornerPending && (
         <Box sx={Styles.kbHint} aria-live="polite">
           Space: set the second corner

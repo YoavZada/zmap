@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { revealDemo, revealMaps, setColorMode } from "../helpers/map";
+import { mapZoom, revealDemo, revealMaps, setColorMode } from "../helpers/map";
 
 test("MapControls zoom is keyboard operable", async ({ page }) => {
   await setColorMode(page, "light");
@@ -8,7 +8,10 @@ test("MapControls zoom is keyboard operable", async ({ page }) => {
   const zoomIn = page.getByRole("button", { name: "Zoom in" }).first();
   await zoomIn.focus();
   await expect(zoomIn).toBeFocused();
+  const before = await mapZoom(page);
   await zoomIn.press("Enter"); // activates without a mouse
+  // Assert the activation actually zoomed — not just that the key was pressed.
+  await expect.poll(() => mapZoom(page)).toBeGreaterThan(before);
 });
 
 // Anchor verified against /popups: DemoSection slugifies "Click-to-open

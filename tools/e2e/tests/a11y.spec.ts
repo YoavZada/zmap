@@ -19,7 +19,15 @@ for (const route of ROUTES) {
       test.slow();
       await setColorMode(page, mode);
       await page.goto(route.path);
-      if (route.hasMap) await revealAllDemos(page);
+      if (route.hasMap) {
+        await revealAllDemos(page);
+        // Settle before the snapshot: let tiles/React finish so a transient
+        // mid-render state under load can't flake the gate. Bounded so endless
+        // real-tile loading can't hang it.
+        await page
+          .waitForLoadState("networkidle", { timeout: 4000 })
+          .catch(() => {});
+      }
 
       const results = await new AxeBuilder({ page })
         // MapLibre's own attribution control ships third-party markup we don't
