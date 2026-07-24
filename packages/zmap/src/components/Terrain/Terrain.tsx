@@ -76,6 +76,10 @@ const Terrain: FC<TerrainProps> = ({
   const resolvedEncoding =
     demSource === undefined ? terrariumDem.encoding : encoding;
 
+  // `tiles` is a fresh array each render but only its *contents* matter; the
+  // deps join it to a stable string. The remaining deps are primitives / stable
+  // references, so the exhaustive-deps check's array-identity worry is moot.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: tiles compared by content
   const apply = useCallback(
     (m: MapLibreMap) => {
       if (!m.getSource(sourceId)) {
@@ -90,9 +94,6 @@ const Terrain: FC<TerrainProps> = ({
       m.setTerrain({ source: sourceId, exaggeration });
       if (sky) m.setSky(sky === true ? DEFAULT_SKY : sky);
     },
-    // tiles is a fresh array each render but its *contents* are what matter;
-    // join to a stable dep. exaggeration/sky/encoding/tileSize are primitives.
-    // biome-ignore lint/correctness/useExhaustiveDependencies: tiles compared by content
     [
       sourceId,
       tiles.join("|"),
