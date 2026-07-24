@@ -75,6 +75,8 @@ export type {
 } from "./components/SelectControl";
 export { default as GeocoderControl } from "./components/GeocoderControl";
 export type { GeocoderControlProps } from "./components/GeocoderControl";
+export { default as Terrain, terrariumDem } from "./components/Terrain";
+export type { TerrainProps } from "./components/Terrain";
 
 // Hooks & context
 export { useMap, useMapContext } from "./context/useMap";

@@ -79,6 +79,18 @@ export class FakeMap {
     return this.projection;
   }
 
+  private terrain: unknown = null;
+  setTerrain = vi.fn((spec: unknown) => {
+    this.terrain = spec;
+  });
+  getTerrain() {
+    return this.terrain;
+  }
+  sky: unknown = null;
+  setSky = vi.fn((spec: unknown) => {
+    this.sky = spec;
+  });
+
   constructor(options: Record<string, unknown> = {}) {
     this.options = options;
     this.center = (options.center as [number, number]) ?? [0, 0];
