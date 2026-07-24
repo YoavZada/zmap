@@ -7,6 +7,9 @@ export type {
   MapViewState,
   MapViewEventHandler,
 } from "./components/Map";
+// The built-in loader component is private; only its props type is public,
+// for typing `<Map loaderProps={…}>`.
+export type { MapLoaderProps } from "./components/Map/components/MapLoader";
 export { default as Marker } from "./components/Marker";
 export type { MarkerProps } from "./components/Marker";
 export { default as Popup } from "./components/Popup";

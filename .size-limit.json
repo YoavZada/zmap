@@ -3,7 +3,7 @@
     "name": "import { Map } (tree-shaken)",
     "path": "packages/zmap/dist/index.js",
     "import": "{ Map }",
-    "limit": "4 kB",
+    "limit": "5.5 kB",
     "ignore": [
       "react",
       "react-dom",

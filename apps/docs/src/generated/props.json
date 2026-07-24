@@ -1245,6 +1245,22 @@
           "deprecated": null
         },
         {
+          "name": "loader",
+          "type": "ReactNode",
+          "required": false,
+          "defaultValue": null,
+          "description": "Show a loading indicator while the map initializes. Off by default. Pass\n`true` for the built-in themed loader, or a ReactNode to render your own\nindicator instead. Either way it is removed once the map has loaded.",
+          "deprecated": null
+        },
+        {
+          "name": "loaderProps",
+          "type": "MapLoaderProps",
+          "required": false,
+          "defaultValue": null,
+          "description": "Configures the built-in loader — variant (\"overlay\" frosted screen,\n\"spinner\", or \"bar\"), label, controlled `progress` (0–100), and spinner\n`size`. Ignored when `loader` is a custom ReactNode.",
+          "deprecated": null
+        },
+        {
           "name": "mapOptions",
           "type": "Partial<MapOptions>",
           "required": false,
@@ -3070,6 +3086,12 @@
       "kind": "value",
       "category": "reexport",
       "description": "The underlying MapLibre GL namespace, re-exported for power users."
+    },
+    {
+      "name": "MapLoaderProps",
+      "kind": "type",
+      "category": "component",
+      "description": "Configures the built-in `<Map>` loading indicator (see `Map`'s `loaderProps`)."
     },
     {
       "name": "MapProps",

@@ -18,6 +18,8 @@ import maplibregl, {
   type MapOptions,
 } from "maplibre-gl";
 import Box, { type BoxProps } from "@mui/material/Box";
+import Fade from "@mui/material/Fade";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { MapContext } from "../../context/MapContext";
 import { LayerRegistryProvider } from "../../context/LayerRegistryContext";
 import { useColorScheme, type ColorScheme } from "../../hooks/useColorScheme";
@@ -26,6 +28,7 @@ import { providerKey, resolveStyle, type MapStyleInput } from "../../providers";
 import { registerPmtilesProtocol, usesPmtiles } from "../../providers/pmtiles";
 import type { LngLatTuple } from "../../utils/geojson";
 import MapErrorPanel from "./components/MapErrorPanel";
+import MapLoader, { type MapLoaderProps } from "./components/MapLoader";
 import Styles from "./map.style";
 
 /** A camera position: center, zoom, bearing, and pitch. */
@@ -122,6 +125,18 @@ export interface MapProps
    * themed panel with a "Unable to load the map" message.
    */
   fallback?: ReactNode;
+  /**
+   * Show a loading indicator while the map initializes. Off by default. Pass
+   * `true` for the built-in themed loader, or a ReactNode to render your own
+   * indicator instead. Either way it is removed once the map has loaded.
+   */
+  loader?: boolean | ReactNode;
+  /**
+   * Configures the built-in loader — variant ("overlay" frosted screen,
+   * "spinner", or "bar"), label, controlled `progress` (0–100), and spinner
+   * `size`. Ignored when `loader` is a custom ReactNode.
+   */
+  loaderProps?: MapLoaderProps;
   /** Click on the map. `e.lngLat` has the clicked coordinate. */
   onClick?: (e: MapMouseEvent) => void;
   /** Double-click on the map. */
@@ -198,6 +213,8 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     onLoad,
     onError,
     fallback,
+    loader,
+    loaderProps,
     onClick,
     onDblClick,
     onContextMenu,
@@ -217,6 +234,7 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
   const [mapError, setMapError] = useState<Error | null>(null);
 
   const mode = useColorScheme(colorScheme);
+  const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   // Keep latest handlers without re-creating the map or re-subscribing.
   const onLoadRef = useRef(onLoad);
@@ -428,12 +446,30 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
 
   const value = useMemo(() => ({ map, loaded }), [map, loaded]);
 
+  // Loading indicator (opt-in via `loader`, off by default), shown until the
+  // map loads. The built-in loader cross-fades out via `Fade` (disabled under
+  // reduced-motion); a custom node is mounted/unmounted plainly so we never
+  // require ref-forwarding from arbitrary nodes.
+  let loaderElement: ReactNode = null;
+  if (loader && !mapError) {
+    if (typeof loader === "boolean") {
+      loaderElement = (
+        <Fade in={!loaded} unmountOnExit timeout={reduceMotion ? 0 : undefined}>
+          <MapLoader {...loaderProps} />
+        </Fade>
+      );
+    } else if (!loaded) {
+      loaderElement = loader;
+    }
+  }
+
   return (
     <MapContext.Provider value={value}>
       <Box
         ref={containerRef}
         role="region"
         aria-label="Interactive map"
+        aria-busy={loader ? !loaded : undefined}
         sx={[Styles.container, ...(Array.isArray(sx) ? sx : [sx])]}
         {...boxProps}
       >
@@ -444,6 +480,7 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
             {loaded ? children : null}
           </LayerRegistryProvider>
         )}
+        {loaderElement}
       </Box>
     </MapContext.Provider>
   );

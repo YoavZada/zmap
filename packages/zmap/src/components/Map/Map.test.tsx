@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { createRef, type FC } from "react";
 import type maplibregl from "maplibre-gl";
 import { useMapContext } from "../../context/useMap";
@@ -304,6 +304,52 @@ describe("Map", () => {
       expect(onError).toHaveBeenCalledWith(
         expect.objectContaining({ message: "tile 404" }),
       );
+    });
+  });
+
+  describe("loader", () => {
+    const region = (container: HTMLElement) =>
+      container.querySelector('[role="region"]');
+
+    it("shows no loader and no aria-busy by default", () => {
+      const { container } = render(<Map />);
+      expect(screen.queryByRole("status")).toBeNull();
+      expect(region(container)?.getAttribute("aria-busy")).toBeNull();
+    });
+
+    it("shows the built-in loader until load, then removes it", async () => {
+      const { container } = render(<Map loader />);
+      expect(screen.getByRole("status")).toBeDefined();
+      expect(region(container)?.getAttribute("aria-busy")).toBe("true");
+
+      loadMap();
+      // aria-busy flips synchronously with `loaded`; the loader fades out.
+      expect(region(container)?.getAttribute("aria-busy")).toBe("false");
+      await waitFor(() => expect(screen.queryByRole("status")).toBeNull());
+    });
+
+    it("honors loaderProps.variant with a linear bar", () => {
+      const { container } = render(
+        <Map loader loaderProps={{ variant: "bar" }} />,
+      );
+      expect(screen.getByRole("progressbar")).toBeDefined();
+      expect(container.querySelector(".MuiLinearProgress-root")).not.toBeNull();
+    });
+
+    it("renders a custom loader node and unmounts it on load", () => {
+      render(<Map loader={<div data-testid="my-loader" />} />);
+      expect(screen.getByTestId("my-loader")).toBeDefined();
+
+      loadMap();
+      expect(screen.queryByTestId("my-loader")).toBeNull();
+    });
+
+    it("shows the error panel, not the loader, on creation failure", () => {
+      setFakeMapConstructError(new Error("no gl"));
+      render(<Map loader />);
+      expect(screen.getByText(/unable to load the map/i)).toBeTruthy();
+      expect(screen.queryByRole("status")).toBeNull();
+      setFakeMapConstructError(null);
     });
   });
 });
