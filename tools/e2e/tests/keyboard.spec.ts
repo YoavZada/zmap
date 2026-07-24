@@ -13,25 +13,39 @@ test("MapControls zoom is keyboard operable", async ({ page }) => {
 
 // Anchor verified against /popups: DemoSection slugifies "Click-to-open
 // popups" -> "click-to-open-popups" (see markers-popups.spec.ts). The demo
-// (ClickPopups.tsx) opens Tokyo's popup by default, so the real trigger is
-// exercised by closing it and reopening via a marker click before testing Esc.
+// (ClickPopups.tsx) opens Tokyo's popup by default and labels every marker
+// "Open <city> popup" (aria-label, added for axe's aria-command-name rule) —
+// closing Tokyo's popup first, then driving a *different* city purely from
+// the keyboard, exercises the real trigger without depending on `cities`'
+// array order (a future reorder can't make this accidentally re-target the
+// one already open, unlike a bare `.first()`).
 test("Popup closes on Escape and returns focus", async ({ page }) => {
   await setColorMode(page, "light");
   await page.goto("/popups");
   const demo = await revealDemo(page, "click-to-open-popups");
 
   const popup = demo.locator(".zmap-popup");
-  await expect(popup).toHaveCount(1);
+  await expect(popup).toHaveCount(1); // Tokyo, open by default
   await popup.locator(".maplibregl-popup-close-button").click();
   await expect(popup).toHaveCount(0);
 
-  // Real trigger: clicking a marker opens its popup (Popup.tsx moves focus
-  // into the popup content on mount).
-  await demo.locator(".maplibregl-marker").first().click();
+  // Paris's marker (role="button", aria-label from Marker's `label` prop) —
+  // distinct from the default-open "Tokyo" so this can't silently no-op.
+  const parisMarker = demo.getByRole("button", { name: "Open Paris popup" });
+  await parisMarker.focus();
+  await expect(parisMarker).toBeFocused();
+  await parisMarker.press("Enter"); // Marker re-dispatches Enter/Space as click
+
   await expect(popup).toHaveCount(1);
+  // Popup.tsx sets role="dialog" on its content and moves focus into it once
+  // mounted — assert that actually happened, not just that the popup exists.
+  const dialog = popup.locator('[role="dialog"]');
+  await expect(dialog).toBeFocused();
 
   await page.keyboard.press("Escape");
   await expect(popup).toHaveCount(0);
+  // Popup.tsx restores focus to whatever was focused before it opened.
+  await expect(parisMarker).toBeFocused();
 });
 
 // Anchor verified against /interaction: DemoSection slugifies "Draw tools" ->
