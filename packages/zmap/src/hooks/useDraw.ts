@@ -171,10 +171,9 @@ export function useDraw(options: UseDrawOptions = {}): DrawEngine {
   useEffect(() => {
     if (!map) return;
 
-    const onClick = (e: MapMouseEvent) => {
+    const placeVertex = (p: LngLatTuple) => {
       const m = modeRef.current;
       if (!m) return;
-      const p: LngLatTuple = [e.lngLat.lng, e.lngLat.lat];
       if (m === "point") {
         const id = `draw-${(idRef.current += 1)}`;
         const feature: DrawFeature = {
@@ -182,13 +181,27 @@ export function useDraw(options: UseDrawOptions = {}): DrawEngine {
           geometry: { type: "Point", coordinates: p },
           properties: { id, mode: "point" },
         };
-        const next = [...featuresRef.current, feature];
-        commitFeatures(next);
+        commitFeatures([...featuresRef.current, feature]);
         onCreateRef.current?.(feature);
       } else {
         setDraft([...draftRef.current, p]);
       }
     };
+
+    const onClick = (e: MapMouseEvent) => {
+      placeVertex([e.lngLat.lng, e.lngLat.lat]);
+    };
+
+    const canvas = map.getCanvas();
+    const onCanvasKeyDown = (e: KeyboardEvent) => {
+      if (!modeRef.current) return;
+      if (e.key === " " || e.code === "Space") {
+        e.preventDefault();
+        const c = map.getCenter();
+        placeVertex([c.lng, c.lat]);
+      }
+    };
+    canvas.addEventListener("keydown", onCanvasKeyDown);
 
     const onMove = (e: MapMouseEvent) => {
       const m = modeRef.current;
@@ -227,6 +240,7 @@ export function useDraw(options: UseDrawOptions = {}): DrawEngine {
       map.off("mousemove", onMove);
       map.off("dblclick", onDblClick);
       window.removeEventListener("keydown", onKeyDown);
+      canvas.removeEventListener("keydown", onCanvasKeyDown);
     };
   }, [map, commitFeatures, finish, setDraft]);
 

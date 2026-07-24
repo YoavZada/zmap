@@ -28,7 +28,7 @@ const outFile = path.join(docsDir, "src", "generated", "props.json");
 // --- 1. Component props via react-docgen-typescript ---
 
 const componentsDir = path.join(zmapSrc, "components");
-const PRIVATE_COMPONENTS = new Set(["DrawLayers"]);
+const PRIVATE_COMPONENTS = new Set(["DrawLayers", "KeyboardCrosshair"]);
 const componentFiles = readdirSync(componentsDir)
   .filter((name) => !PRIVATE_COMPONENTS.has(name))
   .map((name) => path.join(componentsDir, name, `${name}.tsx`));

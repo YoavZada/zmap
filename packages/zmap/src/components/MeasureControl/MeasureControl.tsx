@@ -20,6 +20,7 @@ import {
 import type { LngLatTuple } from "../../utils/geojson";
 import type { ControlPosition } from "../MapControls";
 import DrawLayers from "../DrawLayers";
+import KeyboardCrosshair from "../KeyboardCrosshair";
 import Styles from "./measureControl.style";
 
 /** Which measurement tool is active: distance ("line") or area ("polygon"). */
@@ -183,6 +184,8 @@ const MeasureControl: FC<MeasureControlProps> = ({
         idPrefix={idPrefix}
         color={color}
       />
+
+      {mode != null && <KeyboardCrosshair />}
     </>
   );
 };

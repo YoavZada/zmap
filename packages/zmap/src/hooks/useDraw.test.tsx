@@ -285,3 +285,65 @@ describe("useDraw", () => {
     expect(map.handlerCount("dblclick")).toBe(0);
   });
 });
+
+function pressSpace(map: FakeMap) {
+  const canvas = map.getCanvas();
+  const ev = new KeyboardEvent("keydown", {
+    key: " ",
+    bubbles: true,
+    cancelable: true,
+  });
+  canvas.dispatchEvent(ev);
+}
+
+describe("useDraw keyboard placement", () => {
+  it("places a point at map center on Space when a tool is armed", () => {
+    const map = new FakeMap({ center: [10, 20] });
+    const { result } = renderDraw(map);
+
+    act(() => {
+      result.current.setMode("point");
+    });
+    act(() => {
+      pressSpace(map);
+    });
+
+    expect(result.current.features).toHaveLength(1);
+    expect(result.current.features[0].geometry).toMatchObject({
+      type: "Point",
+      coordinates: [10, 20],
+    });
+  });
+
+  it("appends a draft vertex at center on Space for line mode", () => {
+    const map = new FakeMap({ center: [1, 2] });
+    const { result } = renderDraw(map);
+
+    act(() => {
+      result.current.setMode("line");
+    });
+    act(() => {
+      pressSpace(map);
+    });
+    act(() => {
+      pressSpace(map);
+    });
+
+    expect(result.current.draft).toEqual([
+      [1, 2],
+      [1, 2],
+    ]);
+  });
+
+  it("does nothing on Space when no tool is armed", () => {
+    const map = new FakeMap({ center: [0, 0] });
+    const { result } = renderDraw(map);
+
+    act(() => {
+      pressSpace(map);
+    });
+
+    expect(result.current.features).toHaveLength(0);
+    expect(result.current.draft).toEqual([]);
+  });
+});
