@@ -144,6 +144,10 @@ export type {
   GeocoderId,
   GeocoderInput,
 } from "./providers/geocoding";
+export {
+  registerPmtilesProtocol,
+  isPmtilesRegistered,
+} from "./providers/pmtiles";
 
 // Utils
 export { generateArc } from "./utils/arc";

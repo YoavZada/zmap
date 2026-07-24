@@ -57,7 +57,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "maplibre-gl": "^5.15.0"
+    "maplibre-gl": "^5.15.0",
+    "pmtiles": "^4.4.1"
   },
   "peerDependencies": {
     "@emotion/react": "^11.11.0",
