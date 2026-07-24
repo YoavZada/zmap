@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0
+
+### Minor Changes
+
+- [#15](https://github.com/YoavZada/zmap/pull/15) [`45dc488`](https://github.com/YoavZada/zmap/commit/45dc488992c8ca7b75fb42a964d2a166b24c4568) Thanks [@YoavZada](https://github.com/YoavZada)! - Basemap & 3D: globe projection (`<Map projection="globe">`), 3D terrain (`<Terrain>`, defaulting to a free elevation tileset, with optional sky), raster tile layers (`<RasterLayer>` for XYZ/WMS), and PMTiles support (`registerPmtilesProtocol()`, auto-registered by `<Map>` on a `pmtiles://` style). All new props/types carry full JSDoc.
+
 ## 0.7.0
 
 ### Minor Changes
