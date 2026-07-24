@@ -19,11 +19,14 @@ export async function registerPmtilesProtocol(): Promise<void> {
   if (registered) return;
   if (registering) return registering;
   registering = (async () => {
-    const { Protocol } = await import("pmtiles");
-    const protocol = new Protocol();
-    maplibregl.addProtocol("pmtiles", protocol.tile);
-    registered = true;
-    registering = null;
+    try {
+      const { Protocol } = await import("pmtiles");
+      const protocol = new Protocol();
+      maplibregl.addProtocol("pmtiles", protocol.tile);
+      registered = true;
+    } finally {
+      registering = null;
+    }
   })();
   return registering;
 }

@@ -18,18 +18,34 @@ describe("pmtiles", () => {
     addProtocol.mockClear();
   });
 
-  it("registers the pmtiles:// protocol exactly once (idempotent)", async () => {
+  it("registers the pmtiles:// protocol exactly once (concurrent + repeat)", async () => {
     const mod = await import("./pmtiles");
     expect(mod.isPmtilesRegistered()).toBe(false);
-    await mod.registerPmtilesProtocol();
-    await mod.registerPmtilesProtocol();
-    await Promise.all([
+    // Concurrent: both fire before the first resolves — exercises the in-flight guard.
+    const [p1, p2] = [
       mod.registerPmtilesProtocol(),
       mod.registerPmtilesProtocol(),
-    ]);
+    ];
+    await Promise.all([p1, p2]);
+    // Repeat after resolution — exercises the `registered` fast-path.
+    await mod.registerPmtilesProtocol();
     expect(addProtocol).toHaveBeenCalledTimes(1);
     expect(addProtocol).toHaveBeenCalledWith("pmtiles", expect.any(Function));
     expect(mod.isPmtilesRegistered()).toBe(true);
+  });
+
+  it("resets after a failed registration so a later call can retry", async () => {
+    const mod = await import("./pmtiles");
+    // Arrange the first addProtocol call to throw once (transient failure).
+    addProtocol.mockImplementationOnce(() => {
+      throw new Error("boom");
+    });
+    await expect(mod.registerPmtilesProtocol()).rejects.toThrow("boom");
+    expect(mod.isPmtilesRegistered()).toBe(false);
+    // Retry now succeeds.
+    await mod.registerPmtilesProtocol();
+    expect(mod.isPmtilesRegistered()).toBe(true);
+    expect(addProtocol).toHaveBeenCalledTimes(2);
   });
 
   it("detects pmtiles:// in a style URL and in a StyleSpecification", async () => {

@@ -267,7 +267,11 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     };
 
     if (usesPmtiles(resolvedStyle)) {
-      void registerPmtilesProtocol().then(create);
+      registerPmtilesProtocol()
+        .catch((err) => {
+          console.warn("zmap: failed to register the pmtiles protocol", err);
+        })
+        .then(create);
     } else {
       create();
     }
