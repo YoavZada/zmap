@@ -264,4 +264,11 @@ describe("Map", () => {
       expect(map.fitBounds).toHaveBeenCalledTimes(2);
     });
   });
+
+  it("marks the container as a labeled region", () => {
+    const { container } = render(<Map />);
+    const region = container.querySelector('[role="region"]');
+    expect(region).not.toBeNull();
+    expect(region?.getAttribute("aria-label")).toBe("Interactive map");
+  });
 });
