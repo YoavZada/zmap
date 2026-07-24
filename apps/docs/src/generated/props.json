@@ -1317,6 +1317,14 @@
           "deprecated": null
         },
         {
+          "name": "projection",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "mercator",
+          "description": "Map projection. `\"globe\"` renders the world as a 3D sphere (most visible at\nlow zoom); `\"mercator\"` is the flat default. Survives theme swaps.",
+          "deprecated": null
+        },
+        {
           "name": "provider",
           "type": "MapStyleInput",
           "required": false,
@@ -1767,6 +1775,83 @@
         }
       ]
     },
+    "RasterLayer": {
+      "description": "Renders raster tiles (XYZ/WMS) as a MapLibre `raster` layer.",
+      "props": [
+        {
+          "name": "attribution",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Attribution shown for this source.",
+          "deprecated": null
+        },
+        {
+          "name": "beforeId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Insert the layer before this existing layer id.",
+          "deprecated": null
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Shared source/layer id. Auto-generated when omitted.",
+          "deprecated": null
+        },
+        {
+          "name": "layerOverrides",
+          "type": "{ raster?: LayerOverride; }",
+          "required": false,
+          "defaultValue": null,
+          "description": "Per-role paint/layout patch for the raster layer.",
+          "deprecated": null
+        },
+        {
+          "name": "opacity",
+          "type": "number",
+          "required": false,
+          "defaultValue": "1",
+          "description": "Raster opacity, 0–1. Default 1.",
+          "deprecated": null
+        },
+        {
+          "name": "sourceOptions",
+          "type": "Record<string, unknown>",
+          "required": false,
+          "defaultValue": null,
+          "description": "Escape hatch merged into the raster source spec (WMS, bounds, min/maxzoom).",
+          "deprecated": null
+        },
+        {
+          "name": "tiles",
+          "type": "string | string[]",
+          "required": false,
+          "defaultValue": null,
+          "description": "XYZ tile URL template(s).",
+          "deprecated": null
+        },
+        {
+          "name": "tileSize",
+          "type": "number",
+          "required": false,
+          "defaultValue": "256",
+          "description": "Tile size in px. Default 256.",
+          "deprecated": null
+        },
+        {
+          "name": "url",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Alias for a single tile URL template.",
+          "deprecated": null
+        }
+      ]
+    },
     "Route": {
       "description": "Draws a polyline (LineString) on the map from a list of coordinates.",
       "props": [
@@ -2159,6 +2244,71 @@
           "required": false,
           "defaultValue": "12",
           "description": "Text size in px. Default 12.",
+          "deprecated": null
+        }
+      ]
+    },
+    "terrariumDem": {
+      "description": "The free AWS Terrarium elevation tileset — the default terrain DEM source.",
+      "props": []
+    },
+    "Terrain": {
+      "description": "Enables 3D terrain: adds a raster-DEM source and calls `setTerrain`, with an\noptional atmospheric sky. Re-applies itself after theme-driven style swaps,\nand disables terrain on unmount.",
+      "props": [
+        {
+          "name": "demSource",
+          "type": "string | string[]",
+          "required": false,
+          "defaultValue": null,
+          "description": "Raster-DEM tile URL template or explicit tiles array. Defaults to the free\nAWS Terrarium elevation tileset (`terrariumDem`) — fair use; self-host for\nproduction traffic.",
+          "deprecated": null
+        },
+        {
+          "name": "demSourceOptions",
+          "type": "Partial<Omit<RasterDEMSourceSpecification, \"type\" | \"url\" | \"tiles\">>",
+          "required": false,
+          "defaultValue": null,
+          "description": "Escape hatch merged into the raster-dem source spec.",
+          "deprecated": null
+        },
+        {
+          "name": "encoding",
+          "type": "enum",
+          "required": false,
+          "defaultValue": "terrarium",
+          "description": "DEM encoding. Default \"terrarium\" (matches the default source).",
+          "deprecated": null
+        },
+        {
+          "name": "exaggeration",
+          "type": "number",
+          "required": false,
+          "defaultValue": "1",
+          "description": "Vertical exaggeration of the terrain. Default 1.",
+          "deprecated": null
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Stable raster-dem source id. Auto-generated when omitted.",
+          "deprecated": null
+        },
+        {
+          "name": "sky",
+          "type": "boolean | SkySpecification",
+          "required": false,
+          "defaultValue": null,
+          "description": "Add an atmospheric sky. `true` uses a default; pass a spec to customize.",
+          "deprecated": null
+        },
+        {
+          "name": "tileSize",
+          "type": "number",
+          "required": false,
+          "defaultValue": "256",
+          "description": "DEM tile size in px. Default 256.",
           "deprecated": null
         }
       ]
@@ -2746,6 +2896,12 @@
       "description": "True if a `fillColor` value is a choropleth spec rather than a plain color."
     },
     {
+      "name": "isPmtilesRegistered",
+      "kind": "value",
+      "category": "provider",
+      "description": "True once the `pmtiles://` protocol has been registered on maplibre-gl."
+    },
+    {
       "name": "Layer",
       "kind": "value",
       "category": "component",
@@ -3046,6 +3202,30 @@
       "description": "Built-in providers, keyed by id."
     },
     {
+      "name": "RasterLayer",
+      "kind": "value",
+      "category": "component",
+      "description": "Renders raster tiles (XYZ/WMS) as a MapLibre `raster` layer."
+    },
+    {
+      "name": "RasterLayerConfig",
+      "kind": "type",
+      "category": "hook",
+      "description": "Declarative raster source + layer config consumed by `useRasterLayer`."
+    },
+    {
+      "name": "RasterLayerProps",
+      "kind": "type",
+      "category": "component",
+      "description": "Props for `<RasterLayer>`, which renders XYZ/WMS raster tiles as a layer."
+    },
+    {
+      "name": "registerPmtilesProtocol",
+      "kind": "value",
+      "category": "provider",
+      "description": "Register the `pmtiles://` protocol handler on maplibre-gl so styles and sources can reference `.pmtiles` archives. Idempotent and safe to call concurrently; the `pmtiles` package is dynamically imported, so it stays out of the base bundle and never runs at module load (SSR-safe)."
+    },
+    {
       "name": "resolveAttribution",
       "kind": "value",
       "category": "provider",
@@ -3134,6 +3314,24 @@
       "kind": "type",
       "category": "component",
       "description": "A labeled point rendered by `<SymbolLayer>`."
+    },
+    {
+      "name": "Terrain",
+      "kind": "value",
+      "category": "component",
+      "description": "Enables 3D terrain: adds a raster-DEM source and calls `setTerrain`, with an optional atmospheric sky. Re-applies itself after theme-driven style swaps, and disables terrain on unmount."
+    },
+    {
+      "name": "TerrainProps",
+      "kind": "type",
+      "category": "component",
+      "description": "Props for `<Terrain>`, which drapes the basemap over 3D elevation."
+    },
+    {
+      "name": "terrariumDem",
+      "kind": "value",
+      "category": "component",
+      "description": "The free AWS Terrarium elevation tileset — the default terrain DEM source."
     },
     {
       "name": "TimePlayback",
@@ -3230,6 +3428,12 @@
       "kind": "value",
       "category": "hook",
       "description": "Adds a GeoJSON source + layers to the map and keeps them alive across theme-driven style swaps (MapLibre's `setStyle` wipes custom layers, so we re-add on `styledata`). Data and paint/layout updates are applied in place."
+    },
+    {
+      "name": "useRasterLayer",
+      "kind": "value",
+      "category": "hook",
+      "description": "Adds a raster tile source + layer and keeps them alive across theme-driven style swaps (via `useStyleReapply`). Removes both on unmount."
     },
     {
       "name": "versatiles",

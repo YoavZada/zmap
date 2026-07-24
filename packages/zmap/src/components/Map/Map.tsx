@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -11,6 +12,7 @@ import maplibregl, {
   type AnimationOptions,
   type FitBoundsOptions,
   type LngLatBoundsLike,
+  type Map as MapLibreMap,
   type MapLibreEvent,
   type MapMouseEvent,
   type MapOptions,
@@ -19,7 +21,9 @@ import Box, { type BoxProps } from "@mui/material/Box";
 import { MapContext } from "../../context/MapContext";
 import { LayerRegistryProvider } from "../../context/LayerRegistryContext";
 import { useColorScheme, type ColorScheme } from "../../hooks/useColorScheme";
+import { useStyleReapply } from "../../hooks/useStyleReapply";
 import { providerKey, resolveStyle, type MapStyleInput } from "../../providers";
+import { registerPmtilesProtocol, usesPmtiles } from "../../providers/pmtiles";
 import type { LngLatTuple } from "../../utils/geojson";
 import Styles from "./map.style";
 
@@ -97,6 +101,12 @@ export interface MapProps
   hideAttribution?: boolean;
   /** Escape hatch for any other MapLibre map option. */
   mapOptions?: Partial<MapOptions>;
+  /**
+   * Map projection. `"globe"` renders the world as a 3D sphere (most visible at
+   * low zoom); `"mercator"` is the flat default. Survives theme swaps.
+   * @default "mercator"
+   */
+  projection?: "mercator" | "globe";
   /** Called once with the map instance after the "load" event. */
   onLoad?: (map: maplibregl.Map) => void;
   /** Click on the map. `e.lngLat` has the clicked coordinate. */
@@ -171,6 +181,7 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     infinite = false,
     hideAttribution = false,
     mapOptions,
+    projection = "mercator",
     onLoad,
     onClick,
     onDblClick,
@@ -216,45 +227,64 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
+    const resolvedStyle = resolveStyle(provider, mode);
 
-    const instance = new maplibregl.Map({
-      container,
-      style: resolveStyle(provider, mode),
-      center: center ?? initialView?.center ?? [0, 20],
-      zoom: zoom ?? initialView?.zoom ?? 1.5,
-      bearing: initialView?.bearing ?? 0,
-      pitch: initialView?.pitch ?? 0,
-      minZoom,
-      maxZoom,
-      interactive,
-      renderWorldCopies: infinite,
-      attributionControl: hideAttribution ? false : undefined,
-      ...mapOptions,
-    });
+    let cancelled = false;
+    let instance: maplibregl.Map | null = null;
+    let handleLoad: (() => void) | null = null;
 
-    mapRef.current = instance;
-    setMap(instance);
-
-    const handleLoad = () => {
-      setLoaded(true);
-      // Tooling affordance (e2e, console debugging): mark the container ready
-      // and hang the instance off it, so external code can reach the map
-      // without React context. Non-enumerable to stay out of DOM iteration.
-      container.setAttribute("data-zmap-loaded", "");
-      Object.defineProperty(container, "__zmapMap", {
-        value: instance,
-        configurable: true,
+    const create = () => {
+      if (cancelled) return;
+      instance = new maplibregl.Map({
+        container,
+        style: resolvedStyle,
+        center: center ?? initialView?.center ?? [0, 20],
+        zoom: zoom ?? initialView?.zoom ?? 1.5,
+        bearing: initialView?.bearing ?? 0,
+        pitch: initialView?.pitch ?? 0,
+        minZoom,
+        maxZoom,
+        interactive,
+        renderWorldCopies: infinite,
+        attributionControl: hideAttribution ? false : undefined,
+        ...mapOptions,
       });
-      onLoadRef.current?.(instance);
+      mapRef.current = instance;
+      setMap(instance);
+      handleLoad = () => {
+        setLoaded(true);
+        // Tooling affordance (e2e, console debugging): mark the container ready
+        // and hang the instance off it, so external code can reach the map
+        // without React context. Non-enumerable to stay out of DOM iteration.
+        container.setAttribute("data-zmap-loaded", "");
+        Object.defineProperty(container, "__zmapMap", {
+          value: instance,
+          configurable: true,
+        });
+        onLoadRef.current?.(instance as maplibregl.Map);
+      };
+      instance.on("load", handleLoad);
     };
-    instance.on("load", handleLoad);
+
+    if (usesPmtiles(resolvedStyle)) {
+      registerPmtilesProtocol()
+        .catch((err) => {
+          console.warn("zmap: failed to register the pmtiles protocol", err);
+        })
+        .then(create);
+    } else {
+      create();
+    }
 
     return () => {
-      instance.off("load", handleLoad);
-      container.removeAttribute("data-zmap-loaded");
-      delete (container as HTMLDivElement & { __zmapMap?: maplibregl.Map })
-        .__zmapMap;
-      instance.remove();
+      cancelled = true;
+      if (instance) {
+        if (handleLoad) instance.off("load", handleLoad);
+        container.removeAttribute("data-zmap-loaded");
+        delete (container as HTMLDivElement & { __zmapMap?: maplibregl.Map })
+          .__zmapMap;
+        instance.remove();
+      }
       mapRef.current = null;
       setMap(null);
       setLoaded(false);
@@ -288,6 +318,17 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     }
     mapRef.current?.setRenderWorldCopies(infinite);
   }, [infinite]);
+
+  // Apply the projection on load and re-apply after every style swap
+  // (setStyle resets projection to the style's declared default).
+  useStyleReapply(
+    map,
+    loaded,
+    useCallback(
+      (m: MapLibreMap) => m.setProjection({ type: projection }),
+      [projection],
+    ),
+  );
 
   // Map-level event props. Subscribed once per map instance; the handlers stay
   // fresh through handlersRef, so consumers can pass inline closures freely.

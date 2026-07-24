@@ -13,14 +13,15 @@
       "@mui/system",
       "@emotion/react",
       "@emotion/styled",
-      "maplibre-gl"
+      "maplibre-gl",
+      "pmtiles"
     ]
   },
   {
     "name": "full barrel",
     "path": "packages/zmap/dist/index.js",
     "import": "*",
-    "limit": "21 kB",
+    "limit": "24 kB",
     "ignore": [
       "react",
       "react-dom",
@@ -30,7 +31,8 @@
       "@mui/system",
       "@emotion/react",
       "@emotion/styled",
-      "maplibre-gl"
+      "maplibre-gl",
+      "pmtiles"
     ]
   }
 ]

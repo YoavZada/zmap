@@ -8,6 +8,8 @@ import MarkersPage from "./pages/MarkersPage";
 import PopupsPage from "./pages/PopupsPage";
 import ControlsPage from "./pages/ControlsPage";
 import GeocoderPage from "./pages/GeocoderPage";
+import TerrainPage from "./pages/TerrainPage";
+import RasterPage from "./pages/RasterPage";
 import InteractionPage from "./pages/InteractionPage";
 import RoutesPage from "./pages/RoutesPage";
 import ArcsPage from "./pages/ArcsPage";
@@ -34,6 +36,8 @@ const App: FC = () => {
         <Route path="/popups" element={<PopupsPage />} />
         <Route path="/controls" element={<ControlsPage />} />
         <Route path="/geocoder" element={<GeocoderPage />} />
+        <Route path="/terrain" element={<TerrainPage />} />
+        <Route path="/raster" element={<RasterPage />} />
         <Route path="/interaction" element={<InteractionPage />} />
         <Route path="/routes" element={<RoutesPage />} />
         <Route path="/arcs" element={<ArcsPage />} />
