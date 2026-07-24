@@ -21,26 +21,11 @@ for (const route of ROUTES) {
       await page.goto(route.path);
       if (route.hasMap) await revealAllDemos(page);
 
-      const builder = new AxeBuilder({ page })
+      const results = await new AxeBuilder({ page })
         // MapLibre's own attribution control ships third-party markup we don't
         // own and can't change (a11y is MapLibre's to fix upstream).
-        .exclude(".maplibregl-ctrl-attrib");
-
-      if (route.name === "blocks") {
-        // Real findings, both inside block files under apps/docs/src/blocks/*
-        // — locked to edits other than library a11y fixes (CLAUDE.md: each
-        // block is copy-pasted verbatim as a standalone StackBlitz app, kept
-        // deliberately self-contained). Neither is a library component, so
-        // both are out of scope here. Tracked as known gaps; see
-        // task-6-report.md.
-        // - #store-locator: <List dense><ListItemButton> with no <li>
-        //   wrapper trips the "list" rule (WCAG 1.3.1).
-        // - #delivery-tracker: its <LinearProgress> has no accessible name,
-        //   tripping "aria-progressbar-name" (WCAG 1.1.1).
-        builder.exclude("#store-locator").exclude("#delivery-tracker");
-      }
-
-      const results = await builder.analyze();
+        .exclude(".maplibregl-ctrl-attrib")
+        .analyze();
       const serious = results.violations.filter(
         (v) => v.impact === "serious" || v.impact === "critical",
       );

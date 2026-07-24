@@ -130,7 +130,10 @@ const Marker: FC<MarkerProps> = ({
   }, [map]);
 
   // Reflect interactivity onto the element: interactive markers are
-  // keyboard-focusable buttons; static ones stay out of the tab order.
+  // keyboard-focusable buttons; static ones stay out of the tab order. A
+  // static-but-labeled marker still needs a role — `aria-label` on a plain,
+  // role-less `<div>` is invalid ARIA (axe: aria-prohibited-attr) — so it
+  // gets `role="img"` instead, the correct role for a static labeled graphic.
   const interactive = onClick != null;
   useEffect(() => {
     const element = elRef.current;
@@ -138,6 +141,9 @@ const Marker: FC<MarkerProps> = ({
     if (interactive) {
       element.setAttribute("role", "button");
       element.tabIndex = 0;
+    } else if (label) {
+      element.setAttribute("role", "img");
+      element.removeAttribute("tabindex");
     } else {
       element.removeAttribute("role");
       element.removeAttribute("tabindex");
