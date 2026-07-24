@@ -20,11 +20,13 @@ import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import type { MapMouseEvent } from "maplibre-gl";
 import { useMapContext } from "../../context/useMap";
 import { resolvePaletteColor } from "../../utils/color";
+import type { LngLatTuple } from "../../utils/geojson";
 import {
   pointInBox,
   pointInPolygon,
   type ScreenPoint,
 } from "../../utils/geometry";
+import KeyboardCrosshair from "../KeyboardCrosshair";
 import type { ControlPosition } from "../MapControls";
 import PointLayer, { type LayerPoint } from "../PointLayer";
 import Styles from "./selectControl.style";
@@ -193,6 +195,56 @@ const SelectControl: FC<SelectControlProps> = ({
     };
   }, [map, tool]);
 
+  // Keyboard box selection: Space marks corner 1 at center, next Space marks
+  // corner 2 and selects. Box-only (lasso stays pointer-only).
+  const kbCornerRef = useRef<LngLatTuple | null>(null);
+  const [kbCornerPending, setKbCornerPending] = useState(false);
+  useEffect(() => {
+    if (!map || tool !== "box") return;
+    const canvas = map.getCanvas();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== " " && e.code !== "Space") return;
+      e.preventDefault();
+      const c = map.getCenter();
+      const here: LngLatTuple = [c.lng, c.lat];
+      if (!kbCornerRef.current) {
+        kbCornerRef.current = here;
+        setKbCornerPending(true);
+        return;
+      }
+      const a = map.project(kbCornerRef.current);
+      const b = map.project(here);
+      const start: ScreenPoint = { x: a.x, y: a.y };
+      const end: ScreenPoint = { x: b.x, y: b.y };
+      const indices: number[] = [];
+      pointsRef.current.forEach((p, i) => {
+        const pt = map.project([p.longitude, p.latitude]);
+        if (pointInBox({ x: pt.x, y: pt.y }, start, end)) indices.push(i);
+      });
+      setSelected(indices);
+      onSelectRef.current?.(
+        indices.map((i) => pointsRef.current[i]),
+        indices,
+      );
+      kbCornerRef.current = null;
+      setKbCornerPending(false);
+    };
+    const onKeyEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        kbCornerRef.current = null;
+        setKbCornerPending(false);
+      }
+    };
+    canvas.addEventListener("keydown", onKey);
+    canvas.addEventListener("keydown", onKeyEsc);
+    return () => {
+      canvas.removeEventListener("keydown", onKey);
+      canvas.removeEventListener("keydown", onKeyEsc);
+      kbCornerRef.current = null;
+      setKbCornerPending(false);
+    };
+  }, [map, tool]);
+
   const stroke = resolvePaletteColor(theme, selectionColor);
 
   const selectedPoints = useMemo(
@@ -282,6 +334,13 @@ const SelectControl: FC<SelectControlProps> = ({
           strokeColor="background.paper"
           strokeWidth={2}
         />
+      )}
+
+      {tool != null && <KeyboardCrosshair />}
+      {kbCornerPending && (
+        <Box sx={Styles.kbHint} aria-live="polite">
+          Space: set the second corner
+        </Box>
       )}
     </>
   );

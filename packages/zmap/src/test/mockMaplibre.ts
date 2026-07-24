@@ -58,6 +58,14 @@ export class FakeMap {
     disable: ReturnType<typeof vi.fn>;
     enable: ReturnType<typeof vi.fn>;
   } = { disable: vi.fn(), enable: vi.fn() };
+  dragPan: {
+    disable: ReturnType<typeof vi.fn>;
+    enable: ReturnType<typeof vi.fn>;
+  } = { disable: vi.fn(), enable: vi.fn() };
+  boxZoom: {
+    disable: ReturnType<typeof vi.fn>;
+    enable: ReturnType<typeof vi.fn>;
+  } = { disable: vi.fn(), enable: vi.fn() };
   private canvas = Object.assign(document.createElement("canvas"), {});
 
   setStyle = vi.fn((_style: unknown) => {
@@ -159,6 +167,24 @@ export class FakeMap {
   }
   getPitch() {
     return this.pitch;
+  }
+  /**
+   * Naive stand-in for maplibre's Mercator projection (identity lng/lat →
+   * x/y) — enough for tests that only assert on relative screen positions.
+   * Tests needing real projection math should override `map.project`.
+   */
+  project(lngLat: [number, number] | { lng: number; lat: number }): {
+    x: number;
+    y: number;
+  } {
+    const [lng, lat] = Array.isArray(lngLat)
+      ? lngLat
+      : [lngLat.lng, lngLat.lat];
+    return { x: lng, y: lat };
+  }
+  /** Test-only: move the center directly, without a camera call/event. */
+  setCenterForTest(center: [number, number]): void {
+    this.center = center;
   }
 
   // --- sources & layers ---
