@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { Map as MapLibreMap } from "maplibre-gl";
 
 /**
@@ -31,12 +31,24 @@ export function useStyleReapply(
   const cleanupRef = useRef(cleanup);
   cleanupRef.current = cleanup;
 
+  // A bad source/layer spec must fail in isolation, not crash the React tree —
+  // log and move on instead of rethrowing. Stable identity (empty deps; reads
+  // the latest `apply` via `applyRef`) so including it below never changes how
+  // often the effects re-run.
+  const safeApply = useCallback((m: MapLibreMap) => {
+    try {
+      applyRef.current(m);
+    } catch (err) {
+      console.error("zmap: failed to apply a map layer/source", err);
+    }
+  }, []);
+
   // Subscribe to style reloads once per map; re-add on styledata/idle. Keyed on
   // [map, loaded] only, so changing apply/cleanup identity never resubscribes.
   useEffect(() => {
     if (!map || !loaded) return;
     const ensure = () => {
-      if (map.isStyleLoaded()) applyRef.current(map);
+      if (map.isStyleLoaded()) safeApply(map);
     };
     map.on("styledata", ensure);
     map.on("idle", ensure);
@@ -45,7 +57,7 @@ export function useStyleReapply(
       map.off("idle", ensure);
       cleanupRef.current?.(map);
     };
-  }, [map, loaded]);
+  }, [map, loaded, safeApply]);
 
   // Apply on mount and whenever the (memoized) apply changes — so prop-driven
   // updates take effect immediately, without waiting for a map event. `apply`
@@ -54,6 +66,6 @@ export function useStyleReapply(
   // that's what makes the effect re-run when the caller passes a new identity.
   // biome-ignore lint/correctness/useExhaustiveDependencies: apply is intentionally a dep (triggers re-apply on identity change) though the body reads it via ref
   useEffect(() => {
-    if (map && loaded) applyRef.current(map);
-  }, [map, loaded, apply]);
+    if (map && loaded) safeApply(map);
+  }, [map, loaded, apply, safeApply]);
 }

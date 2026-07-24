@@ -100,11 +100,21 @@ export function useMapLayer(config: MapLayerConfig): void {
   // biome-ignore lint/correctness/useExhaustiveDependencies: re-add is keyed by map/loaded; id is included to rebind if it changes
   useEffect(() => {
     if (!map || !loaded) return;
-    addAll(map, cfgRef.current);
+    // A bad source/layer spec must fail in isolation, not crash the React
+    // tree — log and move on instead of rethrowing.
+    try {
+      addAll(map, cfgRef.current);
+    } catch (err) {
+      console.error("zmap: failed to apply a map layer/source", err);
+    }
 
     const ensure = () => {
       if (!map.getSource(cfgRef.current.id) && map.isStyleLoaded()) {
-        addAll(map, cfgRef.current);
+        try {
+          addAll(map, cfgRef.current);
+        } catch (err) {
+          console.error("zmap: failed to apply a map layer/source", err);
+        }
       }
     };
     map.on("styledata", ensure);

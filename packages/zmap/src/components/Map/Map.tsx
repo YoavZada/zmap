@@ -25,6 +25,7 @@ import { useStyleReapply } from "../../hooks/useStyleReapply";
 import { providerKey, resolveStyle, type MapStyleInput } from "../../providers";
 import { registerPmtilesProtocol, usesPmtiles } from "../../providers/pmtiles";
 import type { LngLatTuple } from "../../utils/geojson";
+import MapErrorPanel from "./components/MapErrorPanel";
 import Styles from "./map.style";
 
 /** A camera position: center, zoom, bearing, and pitch. */
@@ -49,7 +50,7 @@ export type MapViewEventHandler = (
 export interface MapProps
   extends Omit<
     BoxProps,
-    "onLoad" | "ref" | "onClick" | "onDoubleClick" | "onContextMenu"
+    "onLoad" | "ref" | "onClick" | "onDoubleClick" | "onContextMenu" | "onError"
   > {
   /**
    * Basemap source: a built-in id ("carto" | "osm"), a custom MapProvider,
@@ -109,6 +110,18 @@ export interface MapProps
   projection?: "mercator" | "globe";
   /** Called once with the map instance after the "load" event. */
   onLoad?: (map: maplibregl.Map) => void;
+  /**
+   * Called when the map instance fails to initialize (e.g. WebGL unavailable)
+   * or emits a runtime error event (e.g. a tile request failing). On
+   * initialization failure, a themed fallback replaces the map — see
+   * `fallback` to customize it.
+   */
+  onError?: (error: Error) => void;
+  /**
+   * Rendered in place of the map when it fails to initialize. Defaults to a
+   * themed panel with a "Unable to load the map" message.
+   */
+  fallback?: ReactNode;
   /** Click on the map. `e.lngLat` has the clicked coordinate. */
   onClick?: (e: MapMouseEvent) => void;
   /** Double-click on the map. */
@@ -183,6 +196,8 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     mapOptions,
     projection = "mercator",
     onLoad,
+    onError,
+    fallback,
     onClick,
     onDblClick,
     onContextMenu,
@@ -199,12 +214,15 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [map, setMap] = useState<maplibregl.Map | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [mapError, setMapError] = useState<Error | null>(null);
 
   const mode = useColorScheme(colorScheme);
 
   // Keep latest handlers without re-creating the map or re-subscribing.
   const onLoadRef = useRef(onLoad);
   onLoadRef.current = onLoad;
+  const onErrorRef = useRef(onError);
+  onErrorRef.current = onError;
   const handlersRef = useRef({
     onClick,
     onDblClick,
@@ -235,22 +253,32 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
 
     const create = () => {
       if (cancelled) return;
-      instance = new maplibregl.Map({
-        container,
-        style: resolvedStyle,
-        center: center ?? initialView?.center ?? [0, 20],
-        zoom: zoom ?? initialView?.zoom ?? 1.5,
-        bearing: initialView?.bearing ?? 0,
-        pitch: initialView?.pitch ?? 0,
-        minZoom,
-        maxZoom,
-        interactive,
-        renderWorldCopies: infinite,
-        attributionControl: hideAttribution ? false : undefined,
-        ...mapOptions,
-      });
+      try {
+        instance = new maplibregl.Map({
+          container,
+          style: resolvedStyle,
+          center: center ?? initialView?.center ?? [0, 20],
+          zoom: zoom ?? initialView?.zoom ?? 1.5,
+          bearing: initialView?.bearing ?? 0,
+          pitch: initialView?.pitch ?? 0,
+          minZoom,
+          maxZoom,
+          interactive,
+          renderWorldCopies: infinite,
+          attributionControl: hideAttribution ? false : undefined,
+          ...mapOptions,
+        });
+      } catch (err) {
+        const e = err instanceof Error ? err : new Error(String(err));
+        onErrorRef.current?.(e);
+        setMapError(e);
+        return;
+      }
       mapRef.current = instance;
       setMap(instance);
+      instance.on("error", (ev: { error?: Error }) =>
+        onErrorRef.current?.(ev?.error ?? new Error("map error")),
+      );
       handleLoad = () => {
         setLoaded(true);
         // Tooling affordance (e2e, console debugging): mark the container ready
@@ -409,9 +437,13 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
         sx={[Styles.container, ...(Array.isArray(sx) ? sx : [sx])]}
         {...boxProps}
       >
-        <LayerRegistryProvider>
-          {loaded ? children : null}
-        </LayerRegistryProvider>
+        {mapError ? (
+          (fallback ?? <MapErrorPanel error={mapError} />)
+        ) : (
+          <LayerRegistryProvider>
+            {loaded ? children : null}
+          </LayerRegistryProvider>
+        )}
       </Box>
     </MapContext.Provider>
   );

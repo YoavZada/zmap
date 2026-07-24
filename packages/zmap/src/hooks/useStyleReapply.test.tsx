@@ -74,4 +74,21 @@ describe("useStyleReapply", () => {
     rerender({ apply: second }); // no map event
     expect(second).toHaveBeenCalledTimes(1);
   });
+
+  it("logs and does not throw when apply fails", () => {
+    const map = new FakeMap();
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const apply = vi.fn(() => {
+      throw new Error("bad apply");
+    });
+
+    expect(() =>
+      renderHook(() => useStyleReapply(map as never, true, apply)),
+    ).not.toThrow();
+    expect(consoleError).toHaveBeenCalled();
+
+    consoleError.mockRestore();
+  });
 });

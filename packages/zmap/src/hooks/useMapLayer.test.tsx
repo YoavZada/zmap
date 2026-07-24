@@ -255,4 +255,19 @@ describe("useMapLayer", () => {
     // _removed guard means nothing was touched after teardown.
     expect(map.getSource("src-1")).toBeDefined();
   });
+
+  it("logs and does not throw when addLayer fails", () => {
+    const map = new FakeMap();
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    vi.spyOn(map, "addLayer").mockImplementationOnce(() => {
+      throw new Error("bad layer spec");
+    });
+
+    expect(() => renderMapLayer(map, baseConfig())).not.toThrow();
+    expect(consoleError).toHaveBeenCalled();
+
+    consoleError.mockRestore();
+  });
 });

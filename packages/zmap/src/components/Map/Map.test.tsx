@@ -4,7 +4,11 @@ import { act, render, screen } from "@testing-library/react";
 import { createRef, type FC } from "react";
 import type maplibregl from "maplibre-gl";
 import { useMapContext } from "../../context/useMap";
-import { lastFakeMap, resetFakeMaps } from "../../test/mockMaplibre";
+import {
+  lastFakeMap,
+  resetFakeMaps,
+  setFakeMapConstructError,
+} from "../../test/mockMaplibre";
 import Map from "./Map";
 
 vi.mock("maplibre-gl", () => import("../../test/mockMaplibre"));
@@ -270,5 +274,36 @@ describe("Map", () => {
     const region = container.querySelector('[role="region"]');
     expect(region).not.toBeNull();
     expect(region?.getAttribute("aria-label")).toBe("Interactive map");
+  });
+
+  describe("error resilience", () => {
+    it("renders a themed fallback and calls onError when map creation throws", () => {
+      const boom = new Error("WebGL unavailable");
+      setFakeMapConstructError(boom);
+      const onError = vi.fn();
+      const { getByText } = render(<Map onError={onError} />);
+      expect(onError).toHaveBeenCalledWith(boom);
+      expect(getByText(/unable to load the map/i)).toBeTruthy();
+      setFakeMapConstructError(null);
+    });
+
+    it("renders a custom fallback on creation failure", () => {
+      setFakeMapConstructError(new Error("no gl"));
+      const { getByText } = render(
+        <Map fallback={<div>custom fallback</div>} />,
+      );
+      expect(getByText("custom fallback")).toBeTruthy();
+      setFakeMapConstructError(null);
+    });
+
+    it("forwards runtime map error events to onError", () => {
+      const onError = vi.fn();
+      render(<Map onError={onError} />);
+      const map = lastFakeMap();
+      act(() => map.fire("error", { error: new Error("tile 404") }));
+      expect(onError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: "tile 404" }),
+      );
+    });
   });
 });

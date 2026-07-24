@@ -31,6 +31,13 @@ export function lastFakeMap(): FakeMap {
 
 export function resetFakeMaps(): void {
   fakeMaps.length = 0;
+  constructError = null;
+}
+
+let constructError: Error | null = null;
+/** Make the next FakeMap construction throw (test seam for Map error handling). */
+export function setFakeMapConstructError(err: Error | null): void {
+  constructError = err;
 }
 
 /** Every FakeMarker constructed since the last reset (newest last). */
@@ -100,6 +107,10 @@ export class FakeMap {
   });
 
   constructor(options: Record<string, unknown> = {}) {
+    if (constructError) {
+      const e = constructError;
+      throw e;
+    }
     this.options = options;
     this.center = (options.center as [number, number]) ?? [0, 0];
     this.zoom = (options.zoom as number) ?? 0;
