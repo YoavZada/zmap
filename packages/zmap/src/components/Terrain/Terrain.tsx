@@ -50,8 +50,9 @@ export type TerrainProps = {
 
 /**
  * Enables 3D terrain: adds a raster-DEM source and calls `setTerrain`, with an
- * optional atmospheric sky. Re-applies itself after theme-driven style swaps,
- * and disables terrain on unmount.
+ * optional atmospheric sky. Re-applies itself on mount, whenever a prop
+ * changes (e.g. `exaggeration`, `sky`), and after theme-driven style swaps;
+ * disables terrain and resets the sky on unmount.
  */
 const Terrain: FC<TerrainProps> = ({
   demSource,
@@ -92,7 +93,9 @@ const Terrain: FC<TerrainProps> = ({
         } as RasterDEMSourceSpecification);
       }
       m.setTerrain({ source: sourceId, exaggeration });
-      if (sky) m.setSky(sky === true ? DEFAULT_SKY : sky);
+      // Always call setSky (not just when truthy) so toggling sky off at
+      // runtime resets it instead of leaving the last-applied sky in place.
+      m.setSky(sky ? (sky === true ? DEFAULT_SKY : sky) : (undefined as never));
     },
     [
       sourceId,
@@ -107,6 +110,7 @@ const Terrain: FC<TerrainProps> = ({
 
   const cleanup = useCallback(
     (m: MapLibreMap) => {
+      m.setSky(undefined as never);
       m.setTerrain(null);
       if (m.getSource(sourceId)) m.removeSource(sourceId);
     },

@@ -63,10 +63,28 @@ describe("Terrain", () => {
     expect(map.setTerrain).toHaveBeenCalled();
   });
 
+  it("re-applies terrain immediately when exaggeration changes (no map event)", () => {
+    const map = new FakeMap();
+    const { rerender } = renderTerrain(map, { exaggeration: 1 });
+    map.setTerrain.mockClear();
+
+    rerender(<Terrain exaggeration={2.5} />);
+    expect(map.setTerrain).toHaveBeenCalledWith(
+      expect.objectContaining({ exaggeration: 2.5 }),
+    );
+  });
+
   it("disables terrain on unmount", () => {
     const map = new FakeMap();
     const { unmount } = renderTerrain(map);
     unmount();
     expect(map.setTerrain).toHaveBeenLastCalledWith(null);
+  });
+
+  it("resets the sky on unmount", () => {
+    const map = new FakeMap();
+    const { unmount } = renderTerrain(map, { sky: true });
+    unmount();
+    expect(map.setSky).toHaveBeenLastCalledWith(undefined);
   });
 });

@@ -24,12 +24,17 @@ export interface RasterLayerConfig {
   /** Extra raster paint properties merged into the layer. */
   paint?: Record<string, unknown>;
   /** Escape hatch merged into the raster source spec. */
-  sourceOptions?: Partial<Omit<RasterSourceSpecification, "type" | "tiles" | "url">>;
+  sourceOptions?: Partial<
+    Omit<RasterSourceSpecification, "type" | "tiles" | "url">
+  >;
 }
 
 /**
  * Adds a raster tile source + layer and keeps them alive across theme-driven
- * style swaps (via `useStyleReapply`). Removes both on unmount.
+ * style swaps (via `useStyleReapply`). Paint (`opacity`, `paint` overrides) is
+ * re-applied in place whenever it changes, so those props are reactive; the
+ * source itself (`tiles`, `tileSize`, `beforeId`, …) is mount-oriented and
+ * only recreated after a style swap wipes it. Removes both on unmount.
  */
 export function useRasterLayer(config: RasterLayerConfig): void {
   const { map, loaded } = useMapContext();
@@ -56,6 +61,7 @@ export function useRasterLayer(config: RasterLayerConfig): void {
           ...sourceOptions,
         } as RasterSourceSpecification);
       }
+      const resolvedPaint = { "raster-opacity": opacity, ...paint };
       if (!m.getLayer(id)) {
         const before = beforeId && m.getLayer(beforeId) ? beforeId : undefined;
         m.addLayer(
@@ -63,13 +69,29 @@ export function useRasterLayer(config: RasterLayerConfig): void {
             id,
             type: "raster",
             source: id,
-            paint: { "raster-opacity": opacity, ...paint },
+            paint: resolvedPaint,
           } as RasterLayerSpecification,
           before,
         );
       }
+      // Apply paint unconditionally (mirrors useMapLayer's in-place update) so
+      // opacity/layerOverrides changes take effect on an already-added layer,
+      // not just at creation. A no-op on the just-added-layer path above, since
+      // addLayer already set these values.
+      for (const [key, value] of Object.entries(resolvedPaint)) {
+        m.setPaintProperty(id, key, value);
+      }
     },
-    [id, tiles.join("|"), tileSize, opacity, attribution, beforeId, JSON.stringify(paint), sourceOptions],
+    [
+      id,
+      tiles.join("|"),
+      tileSize,
+      opacity,
+      attribution,
+      beforeId,
+      JSON.stringify(paint),
+      sourceOptions,
+    ],
   );
 
   const cleanup = useCallback(

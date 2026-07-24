@@ -34,6 +34,27 @@ describe("useRasterLayer", () => {
     expect(layer.paint["raster-opacity"]).toBe(0.7);
   });
 
+  it("re-applies paint in place when opacity changes (no map event)", () => {
+    const map = new FakeMap();
+    const { rerender } = renderHook(
+      ({ opacity }) =>
+        useRasterLayer({
+          id: "r",
+          tiles: ["https://t/{z}/{x}/{y}.png"],
+          opacity,
+        }),
+      { wrapper: wrap(map), initialProps: { opacity: 1 } },
+    );
+    map.setPaintProperty.mockClear();
+
+    rerender({ opacity: 0.4 });
+    expect(map.setPaintProperty).toHaveBeenCalledWith(
+      "r",
+      "raster-opacity",
+      0.4,
+    );
+  });
+
   it("re-adds after a style swap and removes on unmount", () => {
     const map = new FakeMap();
     const { unmount } = renderHook(

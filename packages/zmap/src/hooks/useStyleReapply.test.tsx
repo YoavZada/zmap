@@ -61,4 +61,17 @@ describe("useStyleReapply", () => {
     rerender({ apply: vi.fn() }); // new identity
     expect(map.handlerCount("styledata")).toBe(before); // still 1, not 2
   });
+
+  it("re-applies when the apply callback identity changes (prop-driven update)", () => {
+    const map = new FakeMap();
+    const first = vi.fn();
+    const second = vi.fn();
+    const { rerender } = renderHook(
+      ({ apply }) => useStyleReapply(map as never, true, apply),
+      { initialProps: { apply: first } },
+    );
+    expect(first).toHaveBeenCalledTimes(1);
+    rerender({ apply: second }); // no map event
+    expect(second).toHaveBeenCalledTimes(1);
+  });
 });

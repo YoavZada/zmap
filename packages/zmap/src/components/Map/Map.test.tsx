@@ -113,6 +113,16 @@ describe("Map", () => {
     expect(map.setProjection).toHaveBeenCalledWith({ type: "mercator" });
   });
 
+  it("re-applies projection when the prop changes, without a map event", () => {
+    const { rerender } = render(<Map projection="globe" />);
+    const map = loadMap();
+    expect(map.setProjection).toHaveBeenCalledWith({ type: "globe" });
+
+    map.setProjection.mockClear();
+    rerender(<Map projection="mercator" />);
+    expect(map.setProjection).toHaveBeenCalledWith({ type: "mercator" });
+  });
+
   describe("event props", () => {
     it("forwards mouse events with their payload", () => {
       const onClick = vi.fn();
