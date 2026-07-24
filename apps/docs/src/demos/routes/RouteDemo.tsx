@@ -28,6 +28,7 @@ const RouteDemo: FC = () => {
             Width: {width}px
           </Typography>
           <Slider
+            aria-label="Route width"
             size="small"
             min={1}
             max={12}

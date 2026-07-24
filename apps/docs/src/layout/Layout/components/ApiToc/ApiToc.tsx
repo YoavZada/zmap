@@ -1,6 +1,7 @@
 import { useEffect, useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
@@ -48,17 +49,18 @@ const ApiToc: FC = () => {
       </Typography>
       <List sx={Styles.list}>
         {apiSections.map((s) => (
-          <ListItemButton
-            key={s.id}
-            selected={active === s.id}
-            onClick={() => go(s.id)}
-            sx={Styles.item}
-          >
-            <ListItemText
-              primary={s.label}
-              slotProps={{ primary: { fontSize: 14, fontWeight: 500 } }}
-            />
-          </ListItemButton>
+          <ListItem key={s.id} disablePadding>
+            <ListItemButton
+              selected={active === s.id}
+              onClick={() => go(s.id)}
+              sx={Styles.item}
+            >
+              <ListItemText
+                primary={s.label}
+                slotProps={{ primary: { fontSize: 14, fontWeight: 500 } }}
+              />
+            </ListItemButton>
+          </ListItem>
         ))}
       </List>
     </Box>

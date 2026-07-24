@@ -1,5 +1,5 @@
 import { useState, type FC, type ReactNode } from "react";
-import { Highlight, themes } from "prism-react-renderer";
+import { Highlight } from "prism-react-renderer";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -8,6 +8,10 @@ import Tooltip from "@mui/material/Tooltip";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import Check from "@mui/icons-material/Check";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
+import {
+  accessibleNightOwl,
+  accessibleNightOwlLight,
+} from "./accessibleCodeTheme";
 import Styles from "./codeBlock.style";
 
 export type CodeBlockProps = {
@@ -36,7 +40,7 @@ const CodeBlock: FC<CodeBlockProps> = ({
   // Follow the page mode — the always-dark block was the one place the
   // light theme broke; tokens.codeBg tracks each theme's plain background.
   const prismTheme =
-    palette.mode === "light" ? themes.nightOwlLight : themes.nightOwl;
+    palette.mode === "light" ? accessibleNightOwlLight : accessibleNightOwl;
 
   const copy = async () => {
     await navigator.clipboard.writeText(code);

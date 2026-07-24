@@ -77,11 +77,12 @@ const MarkerPlayground: FC = () => {
 
       <Map center={[2, 30]} zoom={1.3} sx={{ height: 400, borderRadius: 2 }}>
         <ClickToAdd onAdd={addPin} />
-        {pins.map((p) => (
+        {pins.map((p, i) => (
           <Marker
             key={p.id}
             longitude={p.longitude}
             latitude={p.latitude}
+            label={`Remove marker ${i + 1}`}
             onClick={() => removePin(p.id)}
           />
         ))}

@@ -40,13 +40,16 @@ const deprecatedName: SxProps<Theme> = {
   opacity: 0.6,
 };
 
-const deprecatedTag: SxProps<Theme> = {
+const deprecatedTag: SxProps<Theme> = (theme) => ({
   fontFamily: "monospace",
   fontSize: "0.7rem",
-  color: "warning.main",
+  // MUI's warning.main is ~3.1:1 on a white card at this size — short of WCAG
+  // AA (4.5:1). Darken only in light mode; dark mode's warning.main already
+  // has enough contrast against the dark surface (unflagged by axe).
+  color: theme.palette.mode === "light" ? "#c44500" : "warning.main",
   ml: 0.75,
   whiteSpace: "nowrap",
-};
+});
 
 const propType: SxProps<Theme> = (theme) => ({
   fontFamily: "monospace",

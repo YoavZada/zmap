@@ -15,7 +15,7 @@
     "@mui/material": "^7.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "zmapgl": "^0.6.0"
+    "zmapgl": "^0.8.0"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.16",

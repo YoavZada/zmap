@@ -58,6 +58,29 @@ export async function revealMaps(page: Page, min = 1, timeout = 45_000) {
 }
 
 /**
+ * Scroll the whole page to the bottom, one half-viewport nudge at a time —
+ * useRevealOnScroll is one-shot (a demo never un-mounts once revealed), so
+ * this permanently reveals every below-the-fold demo on the page. Used by
+ * the a11y scan: with a plain revealMaps(page) (min=1), how many demos
+ * happen to be in the DOM — and therefore whether the scan turns up a given
+ * demo's violation — depends on scroll/CPU timing, making the gate flaky.
+ * Scanning the fully-revealed page is deterministic instead.
+ */
+export async function revealAllDemos(page: Page, timeout = 60_000) {
+  const deadline = Date.now() + timeout;
+  let lastY = -1;
+  while (Date.now() < deadline) {
+    const y = await page.evaluate(() => window.scrollY);
+    if (y === lastY) break; // scrollY stopped advancing — reached the bottom
+    lastY = y;
+    await page.evaluate(() => window.scrollBy(0, window.innerHeight / 2));
+    await page.waitForTimeout(300);
+  }
+  // Settle: give the last-revealed demo's map a moment to finish mounting.
+  await page.waitForTimeout(500);
+}
+
+/**
  * Scroll a demo section (by its anchor id, e.g. "interactive-playground")
  * into view and wait for its map to load. Returns the section locator to
  * scope further queries.

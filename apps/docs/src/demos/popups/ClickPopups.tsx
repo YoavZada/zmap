@@ -15,6 +15,7 @@ const ClickPopups: FC = () => {
           key={c.name}
           longitude={c.coordinates[0]}
           latitude={c.coordinates[1]}
+          label={`Open ${c.name} popup`}
           onClick={() => setOpen(c.name)}
         />
       ))}
