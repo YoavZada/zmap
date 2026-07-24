@@ -19,6 +19,8 @@ import MenuBookOutlined from "@mui/icons-material/MenuBookOutlined";
 import HistoryOutlined from "@mui/icons-material/HistoryOutlined";
 import RocketLaunchOutlined from "@mui/icons-material/RocketLaunchOutlined";
 import SwapHorizOutlined from "@mui/icons-material/SwapHorizOutlined";
+import PublicOutlined from "@mui/icons-material/PublicOutlined";
+import GridOnOutlined from "@mui/icons-material/GridOnOutlined";
 
 export interface NavItem {
   path: string;
@@ -149,6 +151,20 @@ export const navItems: NavItem[] = [
       "Animate time-stamped points with a themed transport bar — trails, looping, and scrubbing.",
   },
   {
+    path: "/terrain",
+    label: "Globe & terrain",
+    icon: PublicOutlined,
+    description:
+      "Globe projection and 3D terrain — drape the basemap over real elevation, with an atmospheric sky.",
+  },
+  {
+    path: "/raster",
+    label: "Raster & PMTiles",
+    icon: GridOnOutlined,
+    description:
+      "Add XYZ/WMS raster tile layers and read .pmtiles archives via a lazy protocol registration.",
+  },
+  {
     path: "/extrusion",
     label: "3D Extrusion",
     icon: ViewInArOutlined,
@@ -193,7 +209,7 @@ export interface NavGroup {
 
 /** The component reference, grouped for the sidebar. "Guides" collects
  * standalone walkthroughs (Providers & Theming, framework/migration guides);
- * the remaining 13 pages cluster by what they do. */
+ * the remaining 15 pages cluster by what they do. */
 export const componentGroups: NavGroup[] = [
   {
     label: "Guides",
@@ -226,6 +242,10 @@ export const componentGroups: NavGroup[] = [
       byPath("/interaction"),
       byPath("/time"),
     ],
+  },
+  {
+    label: "Basemap & 3D",
+    items: [byPath("/terrain"), byPath("/raster")],
   },
 ];
 

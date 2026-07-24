@@ -47,4 +47,9 @@ export const ROUTES: DocsRoute[] = [
     hasMap: false,
     hasGlLayers: false,
   },
+  // Terrain only calls addSource + setTerrain/setSky — no zmap-* style layer
+  // and no geojson source, so it can't satisfy hasGlLayers's customGlWork()
+  // check (see terrain.spec.ts for its dedicated structural coverage).
+  { path: "/terrain", name: "terrain", hasMap: true, hasGlLayers: false },
+  { path: "/raster", name: "raster", hasMap: true, hasGlLayers: true },
 ];

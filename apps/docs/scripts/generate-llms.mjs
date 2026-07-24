@@ -93,6 +93,16 @@ const routes = [
     "every exported component, hook, provider, util, and type",
   ],
   ["Changelog", "/changelog", "release history"],
+  [
+    "Globe & terrain",
+    "/terrain",
+    "globe projection and 3D terrain with a free elevation tileset",
+  ],
+  [
+    "Raster & PMTiles",
+    "/raster",
+    "XYZ/WMS raster tile layers and pmtiles archive support",
+  ],
 ];
 
 const index = `# zmapgl
