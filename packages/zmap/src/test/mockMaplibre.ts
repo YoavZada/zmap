@@ -340,7 +340,57 @@ export class FakeMarker {
   }
 }
 
+/** Stand-in for maplibregl.Popup — enough for the Popup component's a11y tests. */
+export class FakePopup {
+  options: Record<string, unknown>;
+  private lngLat: [number, number] = [0, 0];
+  private el: HTMLElement = document.createElement("div");
+  removed = false;
+  private handlers = new Map<string, Set<Handler>>();
+
+  constructor(options: Record<string, unknown> = {}) {
+    this.options = options;
+  }
+  setLngLat(lngLat: [number, number]): this {
+    this.lngLat = lngLat;
+    return this;
+  }
+  getLngLat() {
+    return { lng: this.lngLat[0], lat: this.lngLat[1] };
+  }
+  setDOMContent(node: HTMLElement): this {
+    this.el.appendChild(node);
+    return this;
+  }
+  addTo(_map: unknown): this {
+    document.body.appendChild(this.el);
+    return this;
+  }
+  getElement(): HTMLElement {
+    return this.el;
+  }
+  on(event: string, handler: Handler): this {
+    if (!this.handlers.has(event)) this.handlers.set(event, new Set());
+    this.handlers.get(event)!.add(handler);
+    return this;
+  }
+  off(event: string, handler: Handler): this {
+    this.handlers.get(event)?.delete(handler);
+    return this;
+  }
+  fire(event: string, payload?: unknown): this {
+    for (const h of [...(this.handlers.get(event) ?? [])]) h(payload);
+    return this;
+  }
+  remove(): this {
+    this.removed = true;
+    this.el.remove();
+    this.fire("close");
+    return this;
+  }
+}
+
 // Module shape for vi.mock("maplibre-gl", ...): the library only uses the
-// default export's Map and Marker constructors at runtime (everything else it
-// imports from maplibre-gl is types, which are erased).
-export default { Map: FakeMap, Marker: FakeMarker };
+// default export's Map, Marker, and Popup constructors at runtime (everything
+// else it imports from maplibre-gl is types, which are erased).
+export default { Map: FakeMap, Marker: FakeMarker, Popup: FakePopup };
