@@ -404,6 +404,7 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     <MapContext.Provider value={value}>
       <Box
         ref={containerRef}
+        role="region"
         aria-label="Interactive map"
         sx={[Styles.container, ...(Array.isArray(sx) ? sx : [sx])]}
         {...boxProps}
