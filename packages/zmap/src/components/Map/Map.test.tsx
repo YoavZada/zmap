@@ -95,6 +95,24 @@ describe("Map", () => {
     expect(map.setStyle).toHaveBeenCalledTimes(1);
   });
 
+  it("applies globe projection on load and re-applies after a style swap", () => {
+    render(<Map projection="globe" />);
+    const map = loadMap();
+    expect(map.setProjection).toHaveBeenCalledWith({ type: "globe" });
+
+    map.setProjection.mockClear();
+    act(() => {
+      map.fire("styledata");
+    });
+    expect(map.setProjection).toHaveBeenCalledWith({ type: "globe" });
+  });
+
+  it("defaults to mercator projection", () => {
+    render(<Map />);
+    const map = loadMap();
+    expect(map.setProjection).toHaveBeenCalledWith({ type: "mercator" });
+  });
+
   describe("event props", () => {
     it("forwards mouse events with their payload", () => {
       const onClick = vi.fn();

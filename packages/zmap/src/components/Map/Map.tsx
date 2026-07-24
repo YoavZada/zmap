@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -11,6 +12,7 @@ import maplibregl, {
   type AnimationOptions,
   type FitBoundsOptions,
   type LngLatBoundsLike,
+  type Map as MapLibreMap,
   type MapLibreEvent,
   type MapMouseEvent,
   type MapOptions,
@@ -19,6 +21,7 @@ import Box, { type BoxProps } from "@mui/material/Box";
 import { MapContext } from "../../context/MapContext";
 import { LayerRegistryProvider } from "../../context/LayerRegistryContext";
 import { useColorScheme, type ColorScheme } from "../../hooks/useColorScheme";
+import { useStyleReapply } from "../../hooks/useStyleReapply";
 import { providerKey, resolveStyle, type MapStyleInput } from "../../providers";
 import type { LngLatTuple } from "../../utils/geojson";
 import Styles from "./map.style";
@@ -97,6 +100,12 @@ export interface MapProps
   hideAttribution?: boolean;
   /** Escape hatch for any other MapLibre map option. */
   mapOptions?: Partial<MapOptions>;
+  /**
+   * Map projection. `"globe"` renders the world as a 3D sphere (most visible at
+   * low zoom); `"mercator"` is the flat default. Survives theme swaps.
+   * @default "mercator"
+   */
+  projection?: "mercator" | "globe";
   /** Called once with the map instance after the "load" event. */
   onLoad?: (map: maplibregl.Map) => void;
   /** Click on the map. `e.lngLat` has the clicked coordinate. */
@@ -171,6 +180,7 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     infinite = false,
     hideAttribution = false,
     mapOptions,
+    projection = "mercator",
     onLoad,
     onClick,
     onDblClick,
@@ -288,6 +298,17 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     }
     mapRef.current?.setRenderWorldCopies(infinite);
   }, [infinite]);
+
+  // Apply the projection on load and re-apply after every style swap
+  // (setStyle resets projection to the style's declared default).
+  useStyleReapply(
+    map,
+    loaded,
+    useCallback(
+      (m: MapLibreMap) => m.setProjection({ type: projection }),
+      [projection],
+    ),
+  );
 
   // Map-level event props. Subscribed once per map instance; the handlers stay
   // fresh through handlersRef, so consumers can pass inline closures freely.
