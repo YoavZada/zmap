@@ -77,12 +77,16 @@ export { default as GeocoderControl } from "./components/GeocoderControl";
 export type { GeocoderControlProps } from "./components/GeocoderControl";
 export { default as Terrain, terrariumDem } from "./components/Terrain";
 export type { TerrainProps } from "./components/Terrain";
+export { default as RasterLayer } from "./components/RasterLayer";
+export type { RasterLayerProps } from "./components/RasterLayer";
 
 // Hooks & context
 export { useMap, useMapContext } from "./context/useMap";
 export type { MapContextValue } from "./context/MapContext";
 export { useMapLayer } from "./hooks/useMapLayer";
 export type { MapLayerConfig, LayerInput } from "./hooks/useMapLayer";
+export { useRasterLayer } from "./hooks/useRasterLayer";
+export type { RasterLayerConfig } from "./hooks/useRasterLayer";
 export { useColorScheme } from "./hooks/useColorScheme";
 export type { ColorScheme } from "./hooks/useColorScheme";
 export {
