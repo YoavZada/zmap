@@ -46,6 +46,7 @@ const ROUTES = [
   ["/guides/react-map-gl", "guide-react-map-gl"],
   ["/terrain", "terrain"],
   ["/raster", "raster"],
+  ["/playground", "playground"],
 ];
 
 // Without these, headless Chromium's WebGL silently renders a blank canvas.

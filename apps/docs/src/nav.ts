@@ -21,6 +21,7 @@ import RocketLaunchOutlined from "@mui/icons-material/RocketLaunchOutlined";
 import SwapHorizOutlined from "@mui/icons-material/SwapHorizOutlined";
 import PublicOutlined from "@mui/icons-material/PublicOutlined";
 import GridOnOutlined from "@mui/icons-material/GridOnOutlined";
+import TerminalOutlined from "@mui/icons-material/TerminalOutlined";
 
 export interface NavItem {
   path: string;
@@ -185,6 +186,13 @@ export const navItems: NavItem[] = [
     description:
       "Release history for zmapgl — every version and its changes, newest first.",
   },
+  {
+    path: "/playground",
+    label: "Playground",
+    icon: TerminalOutlined,
+    description:
+      "Edit a live zmapgl app in the browser and see the map update instantly.",
+  },
 ];
 
 /* ------------------------------------------------------------------ *
@@ -271,4 +279,9 @@ export const destinations: Destination[] = [
   { label: "Components", to: "/markers", isActive: isComponentRoute },
   { label: "Blocks", to: "/blocks", isActive: (p) => p === "/blocks" },
   { label: "API", to: "/api", isActive: (p) => p === "/api" },
+  {
+    label: "Playground",
+    to: "/playground",
+    isActive: (p) => p === "/playground",
+  },
 ];

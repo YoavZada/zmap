@@ -23,6 +23,7 @@ import ApiPage from "./pages/ApiPage";
 import ChangelogPage from "./pages/ChangelogPage";
 import NextjsGuidePage from "./pages/NextjsGuidePage";
 import ReactMapGlGuidePage from "./pages/ReactMapGlGuidePage";
+import PlaygroundPage from "./pages/PlaygroundPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 const App: FC = () => {
@@ -51,6 +52,7 @@ const App: FC = () => {
         <Route path="/changelog" element={<ChangelogPage />} />
         <Route path="/guides/nextjs" element={<NextjsGuidePage />} />
         <Route path="/guides/react-map-gl" element={<ReactMapGlGuidePage />} />
+        <Route path="/playground" element={<PlaygroundPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Layout>

@@ -52,4 +52,12 @@ export const ROUTES: DocsRoute[] = [
   // check (see terrain.spec.ts for its dedicated structural coverage).
   { path: "/terrain", name: "terrain", hasMap: true, hasGlLayers: false },
   { path: "/raster", name: "raster", hasMap: true, hasGlLayers: true },
+  // The map lives inside Sandpack's cross-origin iframe — invisible to this
+  // page's own DOM/window, so no map here.
+  {
+    path: "/playground",
+    name: "playground",
+    hasMap: false,
+    hasGlLayers: false,
+  },
 ];
