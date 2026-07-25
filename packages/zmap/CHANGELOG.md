@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.9.0
+
+### Minor Changes
+
+- [#17](https://github.com/YoavZada/zmap/pull/17) [`66cad68`](https://github.com/YoavZada/zmap/commit/66cad68e1e7aaa8dfef032a95bdb1806bcff082e) Thanks [@YoavZada](https://github.com/YoavZada)! - Accessibility, error resilience, and a live playground.
+
+  **Accessibility** — `<Map>` now exposes a `region` role; `<Popup>` is a labeled dialog with focus management and Escape-to-close (new `ariaLabel` prop); `Legend`, `LayerControl` groups, and the `TimePlayback` speed control are properly labeled; `Marker` and `Cluster` markers expose accessible names. Draw/Measure/Select are now keyboard-operable — pan with the arrow keys and press Space to place a vertex (or box-selection corner) at the map center.
+
+  **Error resilience** — `<Map>` gains `onError` and `fallback`: a map that fails to initialize (e.g. no WebGL) renders a themed fallback panel instead of crashing the app, runtime map errors are surfaced through `onError`, and a bad layer/source now fails in isolation rather than tearing down the whole map.
+
+  **Playground** — a new `/playground` docs page with a live, editable Sandpack example.
+
+- [#17](https://github.com/YoavZada/zmap/pull/17) [`6eb6304`](https://github.com/YoavZada/zmap/commit/6eb630495e39392f8d81660a20e855d01ac6267a) Thanks [@YoavZada](https://github.com/YoavZada)! - Optional `<Map loader>`: a themed loading indicator shown while the map initializes, off by default. Pass `loader` to enable the built-in one and shape it with `loaderProps` — `variant` (`"overlay"` frosted screen, `"spinner"`, or `"bar"`), `label`, a controlled `progress` (0–100, else indeterminate), and spinner `size` — or pass a ReactNode to `loader` for a fully custom indicator. The built-in loader cross-fades out as the map paints in (respecting `prefers-reduced-motion`), sets `aria-busy` on the map region while loading, and exposes a `role="status"` live region. All new props/types carry full JSDoc.
+
 ## 0.8.0
 
 ### Minor Changes
