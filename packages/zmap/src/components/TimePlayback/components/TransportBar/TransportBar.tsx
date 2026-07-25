@@ -81,6 +81,7 @@ const TransportBar: FC<TransportBarProps> = ({
             color="inherit"
             onClick={onCycleSpeed}
             sx={Styles.speed}
+            aria-label={`Playback speed: ${speed}×`}
           >
             {speed}×
           </Button>

@@ -1,10 +1,14 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { createRef, type FC } from "react";
 import type maplibregl from "maplibre-gl";
 import { useMapContext } from "../../context/useMap";
-import { lastFakeMap, resetFakeMaps } from "../../test/mockMaplibre";
+import {
+  lastFakeMap,
+  resetFakeMaps,
+  setFakeMapConstructError,
+} from "../../test/mockMaplibre";
 import Map from "./Map";
 
 vi.mock("maplibre-gl", () => import("../../test/mockMaplibre"));
@@ -262,6 +266,90 @@ describe("Map", () => {
         />,
       );
       expect(map.fitBounds).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it("marks the container as a labeled region", () => {
+    const { container } = render(<Map />);
+    const region = container.querySelector('[role="region"]');
+    expect(region).not.toBeNull();
+    expect(region?.getAttribute("aria-label")).toBe("Interactive map");
+  });
+
+  describe("error resilience", () => {
+    it("renders a themed fallback and calls onError when map creation throws", () => {
+      const boom = new Error("WebGL unavailable");
+      setFakeMapConstructError(boom);
+      const onError = vi.fn();
+      const { getByText } = render(<Map onError={onError} />);
+      expect(onError).toHaveBeenCalledWith(boom);
+      expect(getByText(/unable to load the map/i)).toBeTruthy();
+      setFakeMapConstructError(null);
+    });
+
+    it("renders a custom fallback on creation failure", () => {
+      setFakeMapConstructError(new Error("no gl"));
+      const { getByText } = render(
+        <Map fallback={<div>custom fallback</div>} />,
+      );
+      expect(getByText("custom fallback")).toBeTruthy();
+      setFakeMapConstructError(null);
+    });
+
+    it("forwards runtime map error events to onError", () => {
+      const onError = vi.fn();
+      render(<Map onError={onError} />);
+      const map = lastFakeMap();
+      act(() => map.fire("error", { error: new Error("tile 404") }));
+      expect(onError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: "tile 404" }),
+      );
+    });
+  });
+
+  describe("loader", () => {
+    const region = (container: HTMLElement) =>
+      container.querySelector('[role="region"]');
+
+    it("shows no loader and no aria-busy by default", () => {
+      const { container } = render(<Map />);
+      expect(screen.queryByRole("status")).toBeNull();
+      expect(region(container)?.getAttribute("aria-busy")).toBeNull();
+    });
+
+    it("shows the built-in loader until load, then removes it", async () => {
+      const { container } = render(<Map loader />);
+      expect(screen.getByRole("status")).toBeDefined();
+      expect(region(container)?.getAttribute("aria-busy")).toBe("true");
+
+      loadMap();
+      // aria-busy flips synchronously with `loaded`; the loader fades out.
+      expect(region(container)?.getAttribute("aria-busy")).toBe("false");
+      await waitFor(() => expect(screen.queryByRole("status")).toBeNull());
+    });
+
+    it("honors loaderProps.variant with a linear bar", () => {
+      const { container } = render(
+        <Map loader loaderProps={{ variant: "bar" }} />,
+      );
+      expect(screen.getByRole("progressbar")).toBeDefined();
+      expect(container.querySelector(".MuiLinearProgress-root")).not.toBeNull();
+    });
+
+    it("renders a custom loader node and unmounts it on load", () => {
+      render(<Map loader={<div data-testid="my-loader" />} />);
+      expect(screen.getByTestId("my-loader")).toBeDefined();
+
+      loadMap();
+      expect(screen.queryByTestId("my-loader")).toBeNull();
+    });
+
+    it("shows the error panel, not the loader, on creation failure", () => {
+      setFakeMapConstructError(new Error("no gl"));
+      render(<Map loader />);
+      expect(screen.getByText(/unable to load the map/i)).toBeTruthy();
+      expect(screen.queryByRole("status")).toBeNull();
+      setFakeMapConstructError(null);
     });
   });
 });

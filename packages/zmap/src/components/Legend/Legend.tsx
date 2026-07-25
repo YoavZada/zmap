@@ -99,6 +99,10 @@ function stepBands(
   });
 }
 
+function titleText(t: ReactNode): string {
+  return typeof t === "string" ? t : "";
+}
+
 /**
  * A themed map legend. Because it is plain MUI it inherits the app's theme
  * (light/dark, palette, shape) automatically. Pass the same `ChoroplethSpec`
@@ -140,8 +144,22 @@ const Legend: FC<LegendProps> = ({
 
   if (!body) return null;
 
+  const a11yLabel =
+    items && items.length > 0
+      ? `${title ? `${titleText(title)}: ` : ""}legend, ${items.length} categories`
+      : spec && spec.stops.length > 0
+        ? `${title ? `${titleText(title)}: ` : ""}color scale from ${formatValue(
+            spec.stops[0][0],
+          )} to ${formatValue(spec.stops[spec.stops.length - 1][0])}`
+        : "legend";
+
   return (
-    <Paper elevation={3} sx={Styles.panel(position)}>
+    <Paper
+      elevation={3}
+      sx={Styles.panel(position)}
+      role="img"
+      aria-label={a11yLabel}
+    >
       {title != null && (
         <Typography variant="caption" component="div" sx={Styles.title}>
           {title}

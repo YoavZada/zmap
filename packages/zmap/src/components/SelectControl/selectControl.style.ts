@@ -28,11 +28,29 @@ const svg: SxProps<Theme> = {
   display: "block",
 };
 
+// Small themed pill announcing a pending keyboard-box corner.
+const kbHint: SxProps<Theme> = (theme) => ({
+  position: "absolute",
+  bottom: 16,
+  left: "50%",
+  transform: "translateX(-50%)",
+  zIndex: 3,
+  px: 1.5,
+  py: 0.5,
+  borderRadius: 999,
+  bgcolor: theme.palette.background.paper,
+  color: theme.palette.text.primary,
+  boxShadow: theme.shadows[3],
+  fontSize: theme.typography.pxToRem(12),
+  pointerEvents: "none",
+});
+
 const styles: {
   panel: (position: ControlPosition) => SxProps<Theme>;
   toolButton: (active: boolean) => SxProps<Theme>;
   overlay: SxProps<Theme>;
   svg: SxProps<Theme>;
-} = { panel, toolButton, overlay, svg };
+  kbHint: SxProps<Theme>;
+} = { panel, toolButton, overlay, svg, kbHint };
 
 export default styles;

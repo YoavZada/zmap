@@ -2,6 +2,7 @@ import "zmapgl/styles.css";
 import { useState, type FC } from "react";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
@@ -164,13 +165,14 @@ const StoreLocatorBlock: FC = () => {
         </Typography>
         <List dense disablePadding sx={{ pb: 1 }}>
           {stores.map((store) => (
-            <ListItemButton
-              key={store.id}
-              selected={selected?.id === store.id}
-              onClick={() => select(store)}
-            >
-              <ListItemText primary={store.name} secondary={store.address} />
-            </ListItemButton>
+            <ListItem key={store.id} disablePadding>
+              <ListItemButton
+                selected={selected?.id === store.id}
+                onClick={() => select(store)}
+              >
+                <ListItemText primary={store.name} secondary={store.address} />
+              </ListItemButton>
+            </ListItem>
           ))}
         </List>
       </Paper>

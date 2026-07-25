@@ -37,6 +37,7 @@ const ArcDemo: FC = () => {
             Curvature: {curvature.toFixed(2)}
           </Typography>
           <Slider
+            aria-label="Curvature"
             size="small"
             min={0}
             max={0.8}

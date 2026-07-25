@@ -1189,6 +1189,14 @@
           "deprecated": null
         },
         {
+          "name": "fallback",
+          "type": "ReactNode",
+          "required": false,
+          "defaultValue": null,
+          "description": "Rendered in place of the map when it fails to initialize. Defaults to a\nthemed panel with a \"Unable to load the map\" message.",
+          "deprecated": null
+        },
+        {
           "name": "fitBounds",
           "type": "LngLatBoundsLike",
           "required": false,
@@ -1237,6 +1245,22 @@
           "deprecated": null
         },
         {
+          "name": "loader",
+          "type": "ReactNode",
+          "required": false,
+          "defaultValue": null,
+          "description": "Show a loading indicator while the map initializes. Off by default. Pass\n`true` for the built-in themed loader, or a ReactNode to render your own\nindicator instead. Either way it is removed once the map has loaded.",
+          "deprecated": null
+        },
+        {
+          "name": "loaderProps",
+          "type": "MapLoaderProps",
+          "required": false,
+          "defaultValue": null,
+          "description": "Configures the built-in loader — variant (\"overlay\" frosted screen,\n\"spinner\", or \"bar\"), label, controlled `progress` (0–100), and spinner\n`size`. Ignored when `loader` is a custom ReactNode.",
+          "deprecated": null
+        },
+        {
           "name": "mapOptions",
           "type": "Partial<MapOptions>",
           "required": false,
@@ -1282,6 +1306,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Double-click on the map.",
+          "deprecated": null
+        },
+        {
+          "name": "onError",
+          "type": "((error: Error) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Called when the map instance fails to initialize (e.g. WebGL unavailable)\nor emits a runtime error event (e.g. a tile request failing). On\ninitialization failure, a themed fallback replaces the map — see\n`fallback` to customize it.",
           "deprecated": null
         },
         {
@@ -1699,6 +1731,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Edge to pin to the coordinate (e.g. \"bottom\"). Auto-chosen to fit the view when omitted.",
+          "deprecated": null
+        },
+        {
+          "name": "ariaLabel",
+          "type": "string",
+          "required": false,
+          "defaultValue": "Map popup",
+          "description": "Accessible name for the popup dialog. Default \"Map popup\".",
           "deprecated": null
         },
         {
@@ -2253,7 +2293,7 @@
       "props": []
     },
     "Terrain": {
-      "description": "Enables 3D terrain: adds a raster-DEM source and calls `setTerrain`, with an\noptional atmospheric sky. Re-applies itself after theme-driven style swaps,\nand disables terrain on unmount.",
+      "description": "Enables 3D terrain: adds a raster-DEM source and calls `setTerrain`, with an\noptional atmospheric sky. Re-applies itself on mount, whenever a prop\nchanges (e.g. `exaggeration`, `sky`), and after theme-driven style swaps;\ndisables terrain and resets the sky on unmount.",
       "props": [
         {
           "name": "demSource",
@@ -2503,6 +2543,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Edge to pin to the coordinate (e.g. \"bottom\"). Auto-chosen to fit the view when omitted.",
+          "deprecated": null
+        },
+        {
+          "name": "ariaLabel",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Accessible name for the popup dialog. Default \"Map popup\".",
           "deprecated": null
         },
         {
@@ -3040,6 +3088,12 @@
       "description": "The underlying MapLibre GL namespace, re-exported for power users."
     },
     {
+      "name": "MapLoaderProps",
+      "kind": "type",
+      "category": "component",
+      "description": "Configures the built-in `<Map>` loading indicator (see `Map`'s `loaderProps`)."
+    },
+    {
       "name": "MapProps",
       "kind": "type",
       "category": "component",
@@ -3319,7 +3373,7 @@
       "name": "Terrain",
       "kind": "value",
       "category": "component",
-      "description": "Enables 3D terrain: adds a raster-DEM source and calls `setTerrain`, with an optional atmospheric sky. Re-applies itself after theme-driven style swaps, and disables terrain on unmount."
+      "description": "Enables 3D terrain: adds a raster-DEM source and calls `setTerrain`, with an optional atmospheric sky. Re-applies itself on mount, whenever a prop changes (e.g. `exaggeration`, `sky`), and after theme-driven style swaps; disables terrain and resets the sky on unmount."
     },
     {
       "name": "TerrainProps",
@@ -3433,7 +3487,7 @@
       "name": "useRasterLayer",
       "kind": "value",
       "category": "hook",
-      "description": "Adds a raster tile source + layer and keeps them alive across theme-driven style swaps (via `useStyleReapply`). Removes both on unmount."
+      "description": "Adds a raster tile source + layer and keeps them alive across theme-driven style swaps (via `useStyleReapply`). Paint (`opacity`, `paint` overrides) is re-applied in place whenever it changes, so those props are reactive; the source itself (`tiles`, `tileSize`, `beforeId`, …) is mount-oriented and only recreated after a style swap wipes it. Removes both on unmount."
     },
     {
       "name": "versatiles",

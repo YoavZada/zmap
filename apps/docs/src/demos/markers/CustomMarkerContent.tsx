@@ -18,7 +18,12 @@ const CustomMarkerContent: FC = () => {
       <Marker longitude={-0.1276} latitude={51.5072} anchor="center">
         <Avatar
           sx={{
-            bgcolor: "secondary.main",
+            // Fixed (not theme-derived) colors: secondary.main/dark's
+            // auto-picked contrast text falls short of WCAG AA (4.5:1) in one
+            // mode or the other (light: 4.32:1, dark: 3.7:1). This pair holds
+            // ~8.75:1 against white in both themes.
+            bgcolor: "#8a1c5c",
+            color: "#fff",
             border: "2px solid white",
             width: 44,
             height: 44,

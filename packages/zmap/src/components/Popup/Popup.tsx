@@ -32,6 +32,8 @@ export interface PopupProps {
   maxWidth?: string;
   /** Extra class name(s) for the popup container. */
   className?: string;
+  /** Accessible name for the popup dialog. Default "Map popup". */
+  ariaLabel?: string;
   /** Content rendered inside the popup. */
   children?: ReactNode;
 }
@@ -52,6 +54,7 @@ const Popup: FC<PopupProps> = ({
   closeOnMove = false,
   maxWidth = "320px",
   className,
+  ariaLabel = "Map popup",
   children,
 }) => {
   const { map } = useMapContext();
@@ -76,10 +79,22 @@ const Popup: FC<PopupProps> = ({
     const content = contentRef.current;
     if (!map || !content || !open) return;
 
+    // Capture focus before creating the popup: MapLibre's own
+    // `focusAfterOpen` (default true) synchronously auto-focuses the first
+    // focusable descendant of the popup content — e.g. a button in the
+    // consumer's children — as part of `.addTo(map)` below. Left enabled,
+    // that races our own focus management and corrupts `previouslyFocused`
+    // with a node *inside the popup we're opening* instead of whatever was
+    // focused before it opened, so `focus-return` on close lands in the
+    // wrong place. Disabled explicitly; we do our own, more deliberate
+    // version (focus the whole dialog, restore to `previouslyFocused` after).
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+
     const popup = new maplibregl.Popup({
       closeButton,
       closeOnClick,
       closeOnMove,
+      focusAfterOpen: false,
       anchor,
       offset,
       maxWidth,
@@ -91,10 +106,31 @@ const Popup: FC<PopupProps> = ({
     popupRef.current = popup;
     applyOverlayTheme(popup.getElement(), theme);
 
+    // a11y: the portaled content is a non-modal dialog.
+    content.setAttribute("role", "dialog");
+    content.setAttribute("aria-modal", "false");
+    content.setAttribute("aria-label", ariaLabel);
+    content.tabIndex = -1;
+
+    // Move focus into the popup once it's mounted.
+    content.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        popupRef.current?.remove(); // fires "close" → onClose
+      }
+    };
+    content.addEventListener("keydown", onKeyDown);
+
     const handleClose = () => onCloseRef.current?.();
     popup.on("close", handleClose);
 
     return () => {
+      content.removeEventListener("keydown", onKeyDown);
+      if (previouslyFocused && document.contains(previouslyFocused)) {
+        previouslyFocused.focus();
+      }
       popup.off("close", handleClose);
       popup.remove();
       popupRef.current = null;
@@ -109,6 +145,10 @@ const Popup: FC<PopupProps> = ({
     const el = popupRef.current?.getElement();
     if (el) applyOverlayTheme(el, theme);
   }, [theme]);
+
+  useEffect(() => {
+    contentRef.current?.setAttribute("aria-label", ariaLabel);
+  }, [ariaLabel]);
 
   if (!contentRef.current || !open) return null;
   return createPortal(children, contentRef.current);

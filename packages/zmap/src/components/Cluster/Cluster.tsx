@@ -290,6 +290,7 @@ const Cluster: FC<ClusterProps> = ({
             longitude={item.lng}
             latitude={item.lat}
             anchor="center"
+            label={`Map point ${item.idx + 1}`}
             onClick={() => onPointClick?.(points[item.idx], item.idx)}
           >
             {renderPoint ? (

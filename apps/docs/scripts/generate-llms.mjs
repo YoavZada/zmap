@@ -103,6 +103,7 @@ const routes = [
     "/raster",
     "XYZ/WMS raster tile layers and pmtiles archive support",
   ],
+  ["Playground", "/playground", "live in-browser zmapgl editor (Sandpack)"],
 ];
 
 const index = `# zmapgl

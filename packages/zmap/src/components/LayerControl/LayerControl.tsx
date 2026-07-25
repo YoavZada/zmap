@@ -1,4 +1,4 @@
-import { useMemo, useState, type FC, type ReactNode } from "react";
+import { useId, useMemo, useState, type FC, type ReactNode } from "react";
 import { useTheme, type SxProps, type Theme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper, { type PaperProps } from "@mui/material/Paper";
@@ -96,6 +96,7 @@ const LayerControl: FC<LayerControlProps> = ({
   const theme = useTheme();
   const { entries, setVisible } = useLayerRegistry();
   const [open, setOpen] = useState(defaultOpen);
+  const baseId = useId();
 
   const triggerIcon = icon ?? <LayersIcon fontSize="small" />;
   const paperProps = slotProps?.paper;
@@ -207,16 +208,29 @@ const LayerControl: FC<LayerControlProps> = ({
                   No layers
                 </Typography>
               )}
-              {groups.map(([group, list]) => (
-                <Box key={group || "_"}>
-                  {hasGroups && group !== "" && (
-                    <Typography variant="overline" sx={Styles.groupHeading}>
-                      {group}
-                    </Typography>
-                  )}
-                  {list.map(renderRow)}
-                </Box>
-              ))}
+              {groups.map(([group, list], i) => {
+                const groupId = `${baseId}-group-${i}`;
+                return (
+                  <Box
+                    key={group || "_"}
+                    role={hasGroups && group !== "" ? "group" : undefined}
+                    aria-labelledby={
+                      hasGroups && group !== "" ? groupId : undefined
+                    }
+                  >
+                    {hasGroups && group !== "" && (
+                      <Typography
+                        variant="overline"
+                        sx={Styles.groupHeading}
+                        id={groupId}
+                      >
+                        {group}
+                      </Typography>
+                    )}
+                    {list.map(renderRow)}
+                  </Box>
+                );
+              })}
             </Box>
           </Paper>
         ) : renderTrigger ? (

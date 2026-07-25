@@ -100,4 +100,26 @@ describe("Cluster", () => {
 
     expect(onPointClick).toHaveBeenCalledWith(POINTS[1], 1);
   });
+
+  it("gives each unclustered point marker an accessible name", () => {
+    const map = new FakeMap();
+    map.sourceFeatures = [
+      {
+        geometry: { type: "Point", coordinates: [1, 1] },
+        properties: { _idx: 1, sales: 5 },
+      },
+    ];
+    renderCluster(map, { onPointClick: vi.fn() });
+
+    act(() => {
+      map.fire("idle");
+    });
+
+    // The default (DefaultPointDot) point marker is always interactive —
+    // Cluster passes Marker an onClick regardless of whether onPointClick was
+    // given — so it's role="button" and needs a name too (axe:
+    // aria-command-name / has-visible-text). `idx` is POINTS' array index
+    // (1 here), so the default label is 1-based: "Map point 2".
+    expect(screen.getByRole("button", { name: "Map point 2" })).toBeDefined();
+  });
 });

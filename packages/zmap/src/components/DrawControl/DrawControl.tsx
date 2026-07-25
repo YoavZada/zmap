@@ -13,6 +13,7 @@ import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import { useDraw, type DrawFeature, type DrawMode } from "../../hooks/useDraw";
 import type { ControlPosition } from "../MapControls";
 import DrawLayers from "../DrawLayers";
+import KeyboardCrosshair from "../KeyboardCrosshair";
 import Styles from "./drawControl.style";
 
 /** Props for `<DrawControl>`, a drawing palette for point/line/polygon shapes. */
@@ -140,6 +141,8 @@ const DrawControl: FC<DrawControlProps> = ({
         fillOpacity={fillOpacity}
         lineWidth={lineWidth}
       />
+
+      {mode != null && <KeyboardCrosshair />}
     </>
   );
 };

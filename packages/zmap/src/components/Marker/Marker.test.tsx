@@ -91,6 +91,18 @@ describe("Marker accessibility", () => {
     expect(el.getAttribute("tabindex")).toBeNull();
   });
 
+  it("a labeled static marker gets role=img instead of aria-label on a role-less div", () => {
+    const map = new FakeMap();
+    renderMarker(map, { label: "Just a pin" });
+
+    // No onClick => not a button, but aria-label on a plain, role-less <div>
+    // is invalid ARIA (axe: aria-prohibited-attr) — a static-but-labeled
+    // marker gets role="img" instead, the correct role for a static labeled
+    // graphic, so its aria-label stays a valid accessible name.
+    const el = screen.getByRole("img", { name: "Just a pin" });
+    expect(el.getAttribute("tabindex")).toBeNull();
+  });
+
   it("gains and loses button semantics as onClick comes and goes", () => {
     const map = new FakeMap();
     const { rerender } = renderMarker(map);

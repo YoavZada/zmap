@@ -24,6 +24,7 @@ const ClusterDemo: FC = () => {
             Cluster radius: {radius}px
           </Typography>
           <Slider
+            aria-label="Cluster radius"
             size="small"
             min={20}
             max={90}

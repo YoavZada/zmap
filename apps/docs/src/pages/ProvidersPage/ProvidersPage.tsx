@@ -3,6 +3,8 @@ import Box from "@mui/material/Box";
 import DemoSection from "../../components/DemoSection";
 import PageHeader from "../../components/PageHeader";
 import PropsTable from "../../components/PropsTable";
+import LoaderDemo from "../../demos/providers/LoaderDemo";
+import loaderDemoSource from "../../demos/providers/LoaderDemo.tsx?raw";
 import ProviderSwitcher from "../../demos/providers/ProviderSwitcher";
 import providerSwitcherSource from "../../demos/providers/ProviderSwitcher.tsx?raw";
 
@@ -28,6 +30,12 @@ const ProvidersPage: FC = () => {
         description="CARTO and VersaTiles swap light ↔ dark with the theme. OpenStreetMap uses a single raster style."
         code={providerSwitcherSource}
         demo={<ProviderSwitcher />}
+      />
+      <DemoSection
+        title="Loading indicator"
+        description="Opt in with the loader prop (off by default); loaderProps picks the form — a frosted overlay, a bare spinner, or a slim top bar. Hit Replay to watch it again."
+        code={loaderDemoSource}
+        demo={<LoaderDemo />}
       />
       <PropsTable
         component="Map"

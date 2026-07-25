@@ -108,6 +108,7 @@ const DeliveryTrackerBlock: FC = () => {
         <LinearProgress
           variant="determinate"
           value={Math.min(progress, 100)}
+          aria-label="Delivery progress"
           sx={{ borderRadius: 1 }}
         />
       </Paper>
