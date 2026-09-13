@@ -39,7 +39,7 @@ work. It stays close to MapLibre GL, so you can always reach the raw map instanc
 - 🛤️ **Routes & arcs** — draw polylines and curved (bezier or great-circle) connection lines.
 - 🟣 **Clustering** — native MapLibre clustering rendered as themed MUI bubbles, click-to-expand.
 - 🗂️ **Layers** — group overlays into a themed `LayerControl` panel to toggle visibility; bulk-render data with `PointLayer`, `HeatmapLayer` and choropleth `ShapeLayer`.
-- 🔌 **Pluggable providers** — CARTO and OpenStreetMap built in; drop in any MapLibre style URL/spec (MapTiler, Stadia, self-hosted).
+- 🔌 **Pluggable providers** — CARTO, OpenStreetMap, VersaTiles and OpenTopoMap built in; MapTiler and Esri ArcGIS with a key; or drop in any MapLibre style URL/spec.
 - 🟦 **Fully typed** — written in TypeScript, ships its own types.
 
 ## Installation
@@ -133,6 +133,11 @@ Switch basemaps with a single prop:
 <Map provider="carto" />   {/* default — positron / dark-matter, theme-aware */}
 <Map provider="osm" />     {/* OpenStreetMap raster */}
 
+{/* Keyed factories — MapTiler and Esri ArcGIS: */}
+import { maptiler, arcgis } from "zmapgl";
+<Map provider={maptiler(import.meta.env.VITE_MAPTILER_KEY)} />
+<Map provider={arcgis(import.meta.env.VITE_ARCGIS_KEY)} />   {/* light-gray / dark-gray */}
+
 {/* Anything MapLibre-compatible: */}
 <Map provider="https://tiles.example.com/style.json" />
 <Map provider={myStyleSpecification} />
@@ -149,8 +154,9 @@ for development:
 
 - **Commercial use** requires a CARTO Enterprise license — see [CARTO's terms](https://carto.com/legal/).
 - **Non-commercial / evaluation** use is free under CARTO's basemap terms.
-- **Alternatives:** switch `provider` to OpenStreetMap, or any MapLibre-compatible
-  source (MapTiler, Stadia Maps, self-hosted). You're responsible for complying
+- **Alternatives:** switch `provider` to OpenStreetMap, the `maptiler` or
+  `arcgis` factories, or any MapLibre-compatible source (Stadia Maps,
+  self-hosted). You're responsible for complying
   with the chosen provider's usage policy and attribution.
 
 ## Development

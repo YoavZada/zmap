@@ -16,7 +16,7 @@ const mappings: MappingRow[] = [
   {
     rmg: "<Map mapLib={maplibregl} mapStyle={…}>",
     zmap: '<Map provider="carto">',
-    note: "No mapLib prop; providers are built in (carto, osm, …) or pass any style URL/spec.",
+    note: "No mapLib prop; providers are built in (carto, osm, …), keyed factories (maptiler, arcgis), or any style URL/spec.",
   },
   {
     rmg: "viewState + onMove (controlled spreading)",

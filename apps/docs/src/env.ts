@@ -6,3 +6,9 @@
 // deployed build.
 export const PATHFINDER_URL =
   import.meta.env.VITE_PATHFINDER_URL ?? "http://localhost:5174";
+
+// ArcGIS Location Platform API key for the live ArcGIS toggle on /providers.
+// Optional — when unset the toggle is hidden and the page shows a snippet
+// instead. `|| undefined` collapses the empty string a blank .env line yields.
+export const ARCGIS_KEY: string | undefined =
+  import.meta.env.VITE_ARCGIS_KEY || undefined;

@@ -175,8 +175,8 @@ const ApiPage: FC = () => {
         intro={
           <>
             Basemap sources for the <code>provider</code> prop. All are keyless
-            except <code>maptiler</code>, a factory:{" "}
-            <code>maptiler(apiKey, style?)</code>.
+            except the factories <code>maptiler(apiKey, style?)</code> and{" "}
+            <code>arcgis(apiKey, style?, options?)</code>.
           </>
         }
         rows={providerRows}

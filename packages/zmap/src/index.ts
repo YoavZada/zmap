@@ -134,6 +134,12 @@ export { osm } from "./providers/osm";
 export { versatiles } from "./providers/versatiles";
 export { opentopomap } from "./providers/opentopomap";
 export { maptiler } from "./providers/maptiler";
+export { arcgis } from "./providers/arcgis";
+export type {
+  ArcgisStyle,
+  ArcgisStylePair,
+  ArcgisOptions,
+} from "./providers/arcgis";
 export {
   geocoders,
   resolveGeocoder,

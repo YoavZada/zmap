@@ -56,8 +56,10 @@ export interface MapProps
     "onLoad" | "ref" | "onClick" | "onDoubleClick" | "onContextMenu" | "onError"
   > {
   /**
-   * Basemap source: a built-in id ("carto" | "osm"), a custom MapProvider,
-   * a raw style URL, or a full MapLibre StyleSpecification. Defaults to "carto".
+   * Basemap source: a built-in keyless id ("carto" | "osm" | "versatiles" |
+   * "opentopomap"), a keyed factory result (`maptiler(key)`, `arcgis(key)`),
+   * a custom MapProvider, a raw style URL, or a full MapLibre
+   * StyleSpecification. Defaults to "carto".
    */
   provider?: MapStyleInput;
   /** "auto" follows the MUI theme (default); "light"/"dark" force a basemap. */

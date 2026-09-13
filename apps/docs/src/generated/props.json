@@ -1361,7 +1361,7 @@
           "type": "MapStyleInput",
           "required": false,
           "defaultValue": "carto",
-          "description": "Basemap source: a built-in id (\"carto\" | \"osm\"), a custom MapProvider,\na raw style URL, or a full MapLibre StyleSpecification. Defaults to \"carto\".",
+          "description": "Basemap source: a built-in keyless id (\"carto\" | \"osm\" | \"versatiles\" |\n\"opentopomap\"), a keyed factory result (`maptiler(key)`, `arcgis(key)`),\na custom MapProvider, a raw style URL, or a full MapLibre\nStyleSpecification. Defaults to \"carto\".",
           "deprecated": null
         },
         {
@@ -2620,6 +2620,30 @@
       "description": "Draws a curved line between two points (great-circle or bezier)."
     },
     {
+      "name": "arcgis",
+      "kind": "value",
+      "category": "provider",
+      "description": "Esri ArcGIS basemaps via the ArcGIS Basemap Styles service (v2). Requires an ArcGIS Location Platform API key (free tier available) from https://developers.arcgis.com. Like `maptiler`, it's a factory rather than a bare provider const: call it with your key and pass the result to `provider`."
+    },
+    {
+      "name": "ArcgisOptions",
+      "kind": "type",
+      "category": "provider",
+      "description": "Presentation preferences forwarded to the Basemap Styles service as query parameters. See Esri's docs for the accepted values of each."
+    },
+    {
+      "name": "ArcgisStyle",
+      "kind": "type",
+      "category": "provider",
+      "description": "Known style names on Esri's ArcGIS Basemap Styles service (v2). Any other string is accepted too — the service adds styles faster than we can list them."
+    },
+    {
+      "name": "ArcgisStylePair",
+      "kind": "type",
+      "category": "provider",
+      "description": "An explicit light/dark style pair, for when the built-in pairing isn't what you want."
+    },
+    {
       "name": "ArcOptions",
       "kind": "type",
       "category": "util",
@@ -3241,7 +3265,7 @@
       "name": "ProviderId",
       "kind": "type",
       "category": "provider",
-      "description": "One of the built-in basemap provider ids (\"carto\", \"osm\", \"versatiles\", \"opentopomap\")."
+      "description": "One of the built-in, keyless basemap provider ids (\"carto\", \"osm\", \"versatiles\", \"opentopomap\"). Keyed providers (`maptiler(key)`, `arcgis(key)`) are factories, not ids — pass their return value to `provider`."
     },
     {
       "name": "providerKey",

@@ -43,10 +43,13 @@ jobs:
       # sibling's deployed URL; without these it falls back to the dev
       # localhost ports baked into the source. Set these as repo (or
       # production-environment) Actions *variables* — they're public URLs.
+      # ARCGIS_API_KEY is an optional *secret* (referrer-locked to the docs
+      # domains); it enables the live ArcGIS toggle on /providers.
       - name: Build docs
         run: pnpm --filter docs build
         env:
           VITE_PATHFINDER_URL: ${{ vars.PATHFINDER_URL }}
+          VITE_ARCGIS_KEY: ${{ secrets.ARCGIS_API_KEY }}
 
       - name: Build pathfinder
         run: pnpm --filter pathfinder build

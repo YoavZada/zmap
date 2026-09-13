@@ -52,11 +52,14 @@ jobs:
       # asset URLs (and, for docs, the client router's basename) resolve. The
       # cross-link env vars are the SIBLING app's path on this same site —
       # docs links to the pathfinder subpath, pathfinder links back to root.
+      # ARCGIS_API_KEY is an optional repo *secret* (referrer-locked to the
+      # docs domains); it enables the live ArcGIS toggle on /providers.
       - name: Build docs
         run: pnpm --filter docs build
         env:
           BASE_PATH: /zmap/
           VITE_PATHFINDER_URL: /zmap/pathfinder/
+          VITE_ARCGIS_KEY: ${{ secrets.ARCGIS_API_KEY }}
 
       - name: Build pathfinder
         run: pnpm --filter pathfinder build

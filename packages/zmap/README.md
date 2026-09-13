@@ -138,8 +138,8 @@ declaratively whenever its value changes:
 ## Providers & theming
 
 Switch basemaps with the `provider` prop. Built-ins: `"carto"` (default),
-`"osm"`, `"versatiles"`, `"opentopomap"` — all keyless — plus a `maptiler`
-factory for key'd MapTiler styles:
+`"osm"`, `"versatiles"`, `"opentopomap"` — all keyless — plus `maptiler` and
+`arcgis` factories for key'd styles:
 
 ```tsx
 <Map provider="carto" />   {/* default — positron / dark-matter, theme-aware */}
@@ -149,10 +149,26 @@ factory for key'd MapTiler styles:
 import { maptiler } from "zmapgl";
 <Map provider={maptiler(import.meta.env.VITE_MAPTILER_KEY, "dataviz")} />
 
+{/* Esri ArcGIS Basemap Styles (needs a free ArcGIS Location Platform key): */}
+import { arcgis } from "zmapgl";
+<Map provider={arcgis(import.meta.env.VITE_ARCGIS_KEY)} />               {/* light-gray ↔ dark-gray */}
+<Map provider={arcgis(key, "arcgis/streets", { language: "fr" })} />     {/* streets ↔ streets-night */}
+<Map provider={arcgis(key, { light: "arcgis/topographic", dark: "arcgis/nova" })} />
+
 {/* Anything MapLibre-compatible: */}
 <Map provider="https://tiles.example.com/style.json" />
 <Map provider={myStyleSpecification} />
 ```
+
+`arcgis` pairs a style with its dark twin automatically (`light-gray` ↔
+`dark-gray`, `streets` ↔ `streets-night`, `navigation` ↔ `navigation-night`,
+`human-geography` ↔ `human-geography-dark`, and the `open/*` equivalents);
+styles without a twin (imagery, topographic, oceans, …) render the same in
+both modes unless you pass an explicit `{ light, dark }`. `language`,
+`worldview` and `places` preferences go in the third argument. For Esri's
+viewport-aware attribution or basemap *sessions* billing, use their
+[`@esri/maplibre-arcgis`](https://developers.arcgis.com/maplibre-gl-js/) plugin
+directly instead.
 
 Bring your own provider by implementing `MapProvider`:
 
@@ -207,4 +223,6 @@ export default FitBounds;
 ## License
 
 MIT. CARTO's default basemaps require an Enterprise plan for commercial use —
-switch providers before shipping to production.
+switch providers before shipping to production. ArcGIS basemaps are metered
+against your ArcGIS Location Platform account and require Esri attribution
+(set on the provider for you).
