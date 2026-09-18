@@ -85,8 +85,31 @@ export function useLayerHover(options: LayerHoverOptions): void {
       onHoverRef.current?.(feature, e);
     };
 
+    // A layer-scoped "mouseleave" only tells us the pointer left THAT
+    // layer's hit area — with multiple layerIds sharing one source (e.g.
+    // fill + line), the pointer can still be over a different one of our
+    // layers on the same feature (mousemove on it just hasn't fired yet, or
+    // never will if the shapes overlap exactly). Query what's actually under
+    // the pointer across all of our layerIds before clearing, so a stale
+    // sibling-layer mouseleave can't wipe a hover that's still current.
+    const stillHoveringCurrentFeature = (e: MapLayerMouseEvent): boolean => {
+      if (currentId === undefined) return false;
+      if (typeof map.queryRenderedFeatures !== "function") return false;
+      try {
+        const hits = map.queryRenderedFeatures(e?.point, {
+          layers: layerIds,
+        });
+        return hits.some((f) => f.id === currentId);
+      } catch {
+        return false;
+      }
+    };
+
     const onLeave = (e: MapLayerMouseEvent) => {
+      if (stillHoveringCurrentFeature(e)) return;
       clear();
+      // Kept in sync with useLayerClick's cursor restore — see the comment
+      // there for why this reads `zmapCursor` instead of clearing outright.
       if (pointerCursor) {
         const canvas = map.getCanvas();
         canvas.style.cursor = canvas.dataset.zmapCursor ?? "";

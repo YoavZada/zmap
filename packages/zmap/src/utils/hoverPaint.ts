@@ -35,20 +35,27 @@ export interface HoverHighlight {
  * (base fill color unchanged, a stronger opacity, and a `text.primary`
  * outline); an object overrides individual fields. Palette tokens resolve
  * through `resolvePaletteColor`.
+ *
+ * `defaults.fillColor` must be omitted when the base fill is an expression
+ * (a choropleth/ramp) rather than a flat color — there's no meaningful
+ * "unchanged" literal for an expression. In that case the returned
+ * `fillColor` is `undefined` unless the caller's `value` gives an explicit
+ * `fillColor` override; callers must leave the color unwrapped (using the
+ * expression as-is) whenever `fillColor` comes back `undefined`.
  */
 export function resolveHoverHighlight(
   theme: Theme,
   value: boolean | HoverHighlight | undefined,
-  defaults: { fillColor: string; strokeColor?: string; fillOpacity?: number },
-): { fillColor: string; strokeColor?: string; fillOpacity?: number } | null {
+  defaults: { fillColor?: string; strokeColor?: string; fillOpacity?: number },
+): { fillColor?: string; strokeColor?: string; fillOpacity?: number } | null {
   if (!value) return null;
   const opts: HoverHighlight = value === true ? {} : value;
 
   const baseFillOpacity = defaults.fillOpacity ?? 1;
-  const fillColor = resolvePaletteColor(
-    theme,
-    opts.fillColor ?? defaults.fillColor,
-  );
+  const fillColor =
+    opts.fillColor !== undefined
+      ? resolvePaletteColor(theme, opts.fillColor)
+      : defaults.fillColor;
   const fillOpacity = opts.fillOpacity ?? Math.min(1, baseFillOpacity + 0.25);
   const strokeColor = resolvePaletteColor(
     theme,

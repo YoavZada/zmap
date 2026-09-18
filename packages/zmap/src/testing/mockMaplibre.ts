@@ -489,6 +489,12 @@ export class FakeMap {
     return this.sourceFeatures;
   }
 
+  // --- rendered features (stub what queryRenderedFeatures should return) ---
+  renderedFeatures: unknown[] = [];
+  queryRenderedFeatures(_pointOrBox?: unknown, _options?: unknown): unknown[] {
+    return this.renderedFeatures;
+  }
+
   // --- style & lifecycle ---
   isStyleLoaded(): boolean {
     return this.styleLoaded;

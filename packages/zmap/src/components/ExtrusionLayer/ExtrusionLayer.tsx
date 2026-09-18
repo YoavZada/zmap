@@ -147,13 +147,13 @@ const ExtrusionLayer: FC<ExtrusionLayerProps> = ({
   const highlight = useMemo(
     () =>
       resolveHoverHighlight(theme, hoverHighlight, {
-        fillColor: resolvePaletteColor(
-          theme,
-          typeof resolvedColor === "string" ? resolvedColor : "primary.main",
-        ),
+        // `fill` is a choropleth expression, not a flat color, when
+        // `fillColor`/`color` is a spec — omit the default so the color
+        // stays unwrapped unless the caller gives an explicit override.
+        fillColor: typeof fill === "string" ? fill : undefined,
         fillOpacity: resolvedOpacity,
       }),
-    [hoverHighlight, theme, resolvedColor, resolvedOpacity],
+    [hoverHighlight, theme, fill, resolvedOpacity],
   );
 
   const layers = useMemo<LayerInput[]>(
@@ -164,9 +164,10 @@ const ExtrusionLayer: FC<ExtrusionLayerProps> = ({
             id: layerId,
             type: "fill-extrusion",
             paint: {
-              "fill-extrusion-color": highlight
-                ? hoverCase(highlight.fillColor, fill)
-                : fill,
+              "fill-extrusion-color":
+                highlight?.fillColor !== undefined
+                  ? hoverCase(highlight.fillColor, fill)
+                  : fill,
               "fill-extrusion-height": heightExpr,
               "fill-extrusion-base": base,
               // Not data-driven in the style spec — cannot be wrapped in a

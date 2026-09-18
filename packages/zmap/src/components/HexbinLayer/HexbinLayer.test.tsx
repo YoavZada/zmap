@@ -128,25 +128,50 @@ describe("HexbinLayer", () => {
     expect(map.layerOrder).toEqual(["bins-fill", "bins-line", "labels"]);
   });
 
-  it("hoverHighlight wraps fill-color/fill-opacity/line-color in flat mode", () => {
+  it("hoverHighlight: true leaves the ramp fill-color expression unwrapped and wraps fill-opacity/line-color in flat mode", () => {
     const map = new FakeMap();
     renderHexbin(map, { hoverHighlight: true });
 
     const fill = map.getLayer("bins-fill")!.paint as Record<string, unknown>;
-    expect((fill["fill-color"] as unknown[])[0]).toBe("case");
+    expect((fill["fill-color"] as unknown[])[0]).not.toBe("case");
     expect((fill["fill-opacity"] as unknown[])[0]).toBe("case");
 
     const line = map.getLayer("bins-line")!.paint as Record<string, unknown>;
     expect((line["line-color"] as unknown[])[0]).toBe("case");
   });
 
-  it("hoverHighlight only wraps fill-extrusion-color when extruded (opacity stays flat)", () => {
+  it("hoverHighlight: { fillColor } wraps fill-color with the ramp expression as the base branch (flat mode)", () => {
+    const map = new FakeMap();
+    renderHexbin(map, { hoverHighlight: { fillColor: "#ff00ff" } });
+
+    const fill = map.getLayer("bins-fill")!.paint as Record<string, unknown>;
+    const fillColor = fill["fill-color"] as unknown[];
+    expect(fillColor[0]).toBe("case");
+    expect(fillColor[2]).toBe("#ff00ff");
+    expect((fillColor[3] as unknown[])[0]).toBe("interpolate");
+  });
+
+  it("hoverHighlight only wraps fill-extrusion-color when extruded and given an explicit fillColor (opacity stays flat)", () => {
     const map = new FakeMap();
     renderHexbin(map, { extruded: true, hoverHighlight: true });
 
     const paint = map.getLayer("bins-fill")!.paint as Record<string, unknown>;
-    expect((paint["fill-extrusion-color"] as unknown[])[0]).toBe("case");
+    expect((paint["fill-extrusion-color"] as unknown[])[0]).not.toBe("case");
     expect(typeof paint["fill-extrusion-opacity"]).toBe("number");
+  });
+
+  it("hoverHighlight: { fillColor } wraps fill-extrusion-color with the ramp expression as the base branch when extruded", () => {
+    const map = new FakeMap();
+    renderHexbin(map, {
+      extruded: true,
+      hoverHighlight: { fillColor: "#ff00ff" },
+    });
+
+    const paint = map.getLayer("bins-fill")!.paint as Record<string, unknown>;
+    const fillColor = paint["fill-extrusion-color"] as unknown[];
+    expect(fillColor[0]).toBe("case");
+    expect(fillColor[2]).toBe("#ff00ff");
+    expect((fillColor[3] as unknown[])[0]).toBe("interpolate");
   });
 
   it("mirrors hover into feature-state and calls onHover", () => {

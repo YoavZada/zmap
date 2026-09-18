@@ -66,4 +66,19 @@ describe("resolveHoverHighlight", () => {
       strokeColor: theme.palette.text.primary,
     });
   });
+
+  it("leaves fillColor undefined when the base is an expression (no defaults.fillColor) and no explicit override is given", () => {
+    const result = resolveHoverHighlight(theme, true, { fillOpacity: 0.5 });
+    expect(result?.fillColor).toBeUndefined();
+    expect(result?.fillOpacity).toBe(0.75);
+  });
+
+  it("resolves an explicit fillColor override even when defaults.fillColor is omitted", () => {
+    const result = resolveHoverHighlight(
+      theme,
+      { fillColor: "primary.main" },
+      { fillOpacity: 0.5 },
+    );
+    expect(result?.fillColor).toBe(theme.palette.primary.main);
+  });
 });

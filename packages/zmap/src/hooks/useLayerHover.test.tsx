@@ -149,6 +149,67 @@ describe("useLayerHover", () => {
     expect(map.getCanvas().style.cursor).toBe("");
   });
 
+  it("does not clear the new hover when a sibling layer's mouseleave arrives late", () => {
+    const map = new FakeMap();
+    const onHover = vi.fn();
+    renderLayerHover(map, {
+      layerIds: ["fill", "line"],
+      sourceId: "states",
+      featureState: true,
+      onHover,
+    });
+
+    act(() => {
+      map.fireLayer("mousemove", "fill", {
+        features: [{ id: 2, properties: {} }],
+      });
+    });
+    expect(onHover).toHaveBeenLastCalledWith(
+      expect.objectContaining({ id: 2 }),
+      expect.anything(),
+    );
+
+    // The pointer is still over feature 2, just now via the "line"
+    // sub-layer's hit area — mousemove on "line" hasn't fired yet, but its
+    // stale "mouseleave" (from the pointer leaving "line" as it entered
+    // "fill", or vice versa) arrives late. queryRenderedFeatures reports the
+    // pointer is still on feature 2, so the hover must not be cleared.
+    map.renderedFeatures = [{ id: 2, properties: {} }];
+    act(() => {
+      map.fireLayer("mouseleave", "line");
+    });
+
+    expect(onHover).not.toHaveBeenCalledWith(null, expect.anything());
+    expect(map.getFeatureState({ source: "states", id: 2 })).toEqual({
+      hover: true,
+    });
+  });
+
+  it("clears the hover on mouseleave when queryRenderedFeatures is unavailable (fallback)", () => {
+    const map = new FakeMap();
+    // Simulate a map-like object missing queryRenderedFeatures.
+    (
+      map as unknown as { queryRenderedFeatures?: unknown }
+    ).queryRenderedFeatures = undefined;
+    const onHover = vi.fn();
+    renderLayerHover(map, {
+      layerIds: ["fill", "line"],
+      sourceId: "states",
+      featureState: true,
+      onHover,
+    });
+
+    act(() => {
+      move(map, 2);
+    });
+    act(() => {
+      map.fireLayer("mouseleave", "line");
+    });
+
+    expect(onHover).toHaveBeenLastCalledWith(null, undefined);
+    expect(map.getFeatureState({ source: "states", id: 2 })).toEqual({});
+  });
+
   it("cleans up all handlers on unmount", () => {
     const map = new FakeMap();
     const { unmount } = renderLayerHover(map, {

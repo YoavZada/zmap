@@ -188,7 +188,9 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
   const highlight = useMemo(
     () =>
       resolveHoverHighlight(theme, hoverHighlight, {
-        fillColor: resolvePaletteColor(theme, "primary.main"),
+        // `colorExpr` is always a value-driven ramp expression, never a flat
+        // color — omit the default so the color stays unwrapped unless the
+        // caller gives an explicit override.
         strokeColor: resolvedStrokeColor,
         fillOpacity: resolvedFillOpacity,
       }),
@@ -202,9 +204,10 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
             id: fillId,
             type: "fill-extrusion",
             paint: {
-              "fill-extrusion-color": highlight
-                ? hoverCase(highlight.fillColor, colorExpr)
-                : colorExpr,
+              "fill-extrusion-color":
+                highlight?.fillColor !== undefined
+                  ? hoverCase(highlight.fillColor, colorExpr)
+                  : colorExpr,
               "fill-extrusion-height": [
                 "*",
                 ["get", "value"],
@@ -222,9 +225,10 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
             id: fillId,
             type: "fill",
             paint: {
-              "fill-color": highlight
-                ? hoverCase(highlight.fillColor, colorExpr)
-                : colorExpr,
+              "fill-color":
+                highlight?.fillColor !== undefined
+                  ? hoverCase(highlight.fillColor, colorExpr)
+                  : colorExpr,
               "fill-opacity": highlight
                 ? hoverCase(highlight.fillOpacity, resolvedFillOpacity)
                 : resolvedFillOpacity,

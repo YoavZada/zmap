@@ -128,14 +128,14 @@ const ShapeLayer: FC<ShapeLayerProps> = ({
   const highlight = useMemo(
     () =>
       resolveHoverHighlight(theme, hoverHighlight, {
-        fillColor: resolvePaletteColor(
-          theme,
-          typeof fillColor === "string" ? fillColor : "primary.main",
-        ),
+        // `fill` is a choropleth expression, not a flat color, when
+        // `fillColor` is a spec — omit the default so the color stays
+        // unwrapped unless the caller gives an explicit override.
+        fillColor: typeof fill === "string" ? fill : undefined,
         strokeColor: resolvedStrokeColor,
         fillOpacity,
       }),
-    [hoverHighlight, theme, fillColor, resolvedStrokeColor, fillOpacity],
+    [hoverHighlight, theme, fill, resolvedStrokeColor, fillOpacity],
   );
 
   const layers = useMemo<LayerInput[]>(
@@ -146,9 +146,10 @@ const ShapeLayer: FC<ShapeLayerProps> = ({
             id: fillId,
             type: "fill",
             paint: {
-              "fill-color": highlight
-                ? hoverCase(highlight.fillColor, fill)
-                : fill,
+              "fill-color":
+                highlight?.fillColor !== undefined
+                  ? hoverCase(highlight.fillColor, fill)
+                  : fill,
               "fill-opacity": highlight
                 ? hoverCase(highlight.fillOpacity, fillOpacity)
                 : fillOpacity,
