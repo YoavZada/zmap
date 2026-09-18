@@ -220,6 +220,34 @@ const FitBounds: FC = () => {
 export default FitBounds;
 ```
 
+## Testing
+
+zmapgl ships the same `FakeMap` test double the library's own ~50 test files
+use, as the `zmapgl/testing` subpath (requires [vitest](https://vitest.dev/)).
+It's an in-memory stand-in for maplibre-gl's `Map`/`Marker`/`Popup` — real
+MapLibre can't run in jsdom (WebGL, workers):
+
+```ts
+import { render, act } from "@testing-library/react";
+import { vi } from "vitest";
+import { lastFakeMap } from "zmapgl/testing";
+import { Map } from "zmapgl";
+
+vi.mock("maplibre-gl", () => import("zmapgl/testing"));
+
+render(<Map center={[-0.1276, 51.5072]} zoom={11} />);
+act(() => lastFakeMap().fire("load"));
+
+lastFakeMap().fireLayer("click", "my-layer-circle", { features: [] });
+```
+
+`lastFakeMap()` returns the most recently constructed instance; drive it with
+`fire(event, payload)` for map-level events and `fireLayer(event, layerId,
+payload)` for layer-scoped ones. GL layer components (`PointLayer`,
+`ShapeLayer`, …) generate predictable per-role layer ids via `layerIds()` —
+use it to target the right sub-layer (e.g. `-circle`, `-fill`) instead of
+guessing suffixes.
+
 ## License
 
 MIT. CARTO's default basemaps require an Enterprise plan for commercial use —

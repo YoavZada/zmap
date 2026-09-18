@@ -53,6 +53,12 @@ jobs:
         run: |
           node --input-type=module -e "await import('./packages/zmap/dist/index.js'); console.log('esm import OK')"
           node -e "require('./packages/zmap/dist/index.cjs'); console.log('cjs require OK')"
+          # zmapgl/testing is ESM-only by necessity: vitest's own CJS entry
+          # point deliberately throws on require() ("Vitest cannot be
+          # imported in a CommonJS module using require()"), and mockMaplibre
+          # uses `vi` at module scope. package.json's "./testing" export has
+          # no "require" condition, so there is no CJS one-liner to check here.
+          node --input-type=module -e "const m = await import('./packages/zmap/dist/testing/index.js'); if (typeof m.FakeMap !== 'function') throw new Error('testing entry broken'); console.log('testing esm OK')"
 
       - name: 'Directive check ("use client" in dist)'
         run: |
