@@ -146,4 +146,55 @@ describe("ShapeLayer", () => {
     expect(map.getSource("shape")!.options.promoteId).toBe("value");
     expect(map.getSource("shape")!.options.generateId).toBeUndefined();
   });
+
+  it("hoverHighlight wraps fill-color/fill-opacity/line-color in a feature-state case", () => {
+    const map = new FakeMap();
+    renderShape(map, { hoverHighlight: true });
+
+    const fill = map.getLayer("shape-fill")!.paint as Record<string, unknown>;
+    expect(fill["fill-color"]).toEqual([
+      "case",
+      ["boolean", ["feature-state", "hover"], false],
+      expect.anything(),
+      expect.anything(),
+    ]);
+    expect(fill["fill-opacity"]).toEqual([
+      "case",
+      ["boolean", ["feature-state", "hover"], false],
+      expect.anything(),
+      0.4,
+    ]);
+
+    const line = map.getLayer("shape-line")!.paint as Record<string, unknown>;
+    expect(line["line-color"]).toEqual([
+      "case",
+      ["boolean", ["feature-state", "hover"], false],
+      expect.anything(),
+      expect.anything(),
+    ]);
+  });
+
+  it("calls onHover with the hovered feature and mirrors it into feature-state when hoverHighlight is set", () => {
+    const map = new FakeMap();
+    const onHover = vi.fn();
+    renderShape(map, { onHover, hoverHighlight: true });
+
+    const feature = { id: 5, properties: { value: 10 } };
+    map.fireLayer("mousemove", "shape-fill", { features: [feature] });
+    expect(onHover).toHaveBeenCalledWith(feature, expect.anything());
+    expect(map.getFeatureState({ source: "shape", id: 5 })).toEqual({
+      hover: true,
+    });
+
+    map.fireLayer("mouseleave", "shape-fill");
+    expect(onHover).toHaveBeenLastCalledWith(null, undefined);
+  });
+
+  it("does not wrap paint when hoverHighlight is unset", () => {
+    const map = new FakeMap();
+    renderShape(map);
+
+    const fill = map.getLayer("shape-fill")!.paint as Record<string, unknown>;
+    expect(fill["fill-color"]).not.toEqual(expect.arrayContaining(["case"]));
+  });
 });

@@ -3,6 +3,7 @@ import { useTheme } from "@mui/material/styles";
 import type { MapLayerMouseEvent } from "maplibre-gl";
 import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
 import { useLayerClick } from "../../hooks/useLayerClick";
+import { useLayerHover } from "../../hooks/useLayerHover";
 import { resolvePaletteColor } from "../../utils/color";
 import { warnDeprecatedProp } from "../../utils/deprecation";
 import { featureCollection, pointFeature } from "../../utils/geojson";
@@ -11,6 +12,11 @@ import {
   applyLayerOverrides,
   type LayerOverride,
 } from "../../utils/layerOverrides";
+import {
+  hoverCase,
+  resolveHoverHighlight,
+  type HoverHighlight,
+} from "../../utils/hoverPaint";
 
 /** A point rendered by PointLayer. */
 export type LayerPoint = BasePoint;
@@ -63,6 +69,14 @@ export type PointLayerProps = {
     index: number,
     event: MapLayerMouseEvent,
   ) => void;
+  /** Fired with the hovered point, its index in `points` (-1 on leave), and the raw event. */
+  onHover?: (
+    point: LayerPoint | null,
+    index: number,
+    event: MapLayerMouseEvent,
+  ) => void;
+  /** Highlight the hovered point: `true` for theme defaults (stronger fill, `text.primary` outline), or explicit colors/opacity. Uses feature-state, so it works with the default generated ids. */
+  hoverHighlight?: boolean | HoverHighlight;
 };
 
 /**
@@ -84,6 +98,8 @@ const PointLayer: FC<PointLayerProps> = ({
   featureId,
   layerOverrides,
   onClick,
+  onHover,
+  hoverHighlight,
 }) => {
   const theme = useTheme();
   const reactId = useId();
@@ -109,6 +125,25 @@ const PointLayer: FC<PointLayerProps> = ({
     [points],
   );
 
+  const resolvedFillColor = resolvePaletteColor(theme, resolvedFill);
+  const resolvedStrokeColor = resolvePaletteColor(theme, strokeColor);
+
+  const highlight = useMemo(
+    () =>
+      resolveHoverHighlight(theme, hoverHighlight, {
+        fillColor: resolvedFillColor,
+        strokeColor: resolvedStrokeColor,
+        fillOpacity: resolvedFillOpacity,
+      }),
+    [
+      hoverHighlight,
+      theme,
+      resolvedFillColor,
+      resolvedStrokeColor,
+      resolvedFillOpacity,
+    ],
+  );
+
   const layers = useMemo<LayerInput[]>(
     () =>
       applyLayerOverrides(
@@ -118,9 +153,15 @@ const PointLayer: FC<PointLayerProps> = ({
             type: "circle",
             paint: {
               "circle-radius": radius,
-              "circle-color": resolvePaletteColor(theme, resolvedFill),
-              "circle-opacity": resolvedFillOpacity,
-              "circle-stroke-color": resolvePaletteColor(theme, strokeColor),
+              "circle-color": highlight
+                ? hoverCase(highlight.fillColor, resolvedFillColor)
+                : resolvedFillColor,
+              "circle-opacity": highlight
+                ? hoverCase(highlight.fillOpacity, resolvedFillOpacity)
+                : resolvedFillOpacity,
+              "circle-stroke-color": highlight
+                ? hoverCase(highlight.strokeColor, resolvedStrokeColor)
+                : resolvedStrokeColor,
               "circle-stroke-width": strokeWidth,
               "circle-stroke-opacity": strokeOpacity,
             },
@@ -131,13 +172,13 @@ const PointLayer: FC<PointLayerProps> = ({
     [
       layerId,
       radius,
-      resolvedFill,
+      resolvedFillColor,
       resolvedFillOpacity,
-      strokeColor,
+      resolvedStrokeColor,
       strokeWidth,
       strokeOpacity,
+      highlight,
       layerOverrides,
-      theme,
     ],
   );
 
@@ -158,6 +199,22 @@ const PointLayer: FC<PointLayerProps> = ({
         }
       : undefined,
   );
+
+  useLayerHover({
+    layerIds: [layerId],
+    sourceId: baseId,
+    featureState: Boolean(hoverHighlight),
+    onHover: onHover
+      ? (feature, event) => {
+          const idx = feature?.properties?._idx as number | undefined;
+          if (feature && idx != null && points[idx]) {
+            onHover(points[idx], idx, event);
+          } else {
+            onHover(null, -1, event);
+          }
+        }
+      : undefined,
+  });
 
   return null;
 };

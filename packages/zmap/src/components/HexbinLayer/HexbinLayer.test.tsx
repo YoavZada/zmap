@@ -127,4 +127,38 @@ describe("HexbinLayer", () => {
 
     expect(map.layerOrder).toEqual(["bins-fill", "bins-line", "labels"]);
   });
+
+  it("hoverHighlight wraps fill-color/fill-opacity/line-color in flat mode", () => {
+    const map = new FakeMap();
+    renderHexbin(map, { hoverHighlight: true });
+
+    const fill = map.getLayer("bins-fill")!.paint as Record<string, unknown>;
+    expect((fill["fill-color"] as unknown[])[0]).toBe("case");
+    expect((fill["fill-opacity"] as unknown[])[0]).toBe("case");
+
+    const line = map.getLayer("bins-line")!.paint as Record<string, unknown>;
+    expect((line["line-color"] as unknown[])[0]).toBe("case");
+  });
+
+  it("hoverHighlight only wraps fill-extrusion-color when extruded (opacity stays flat)", () => {
+    const map = new FakeMap();
+    renderHexbin(map, { extruded: true, hoverHighlight: true });
+
+    const paint = map.getLayer("bins-fill")!.paint as Record<string, unknown>;
+    expect((paint["fill-extrusion-color"] as unknown[])[0]).toBe("case");
+    expect(typeof paint["fill-extrusion-opacity"]).toBe("number");
+  });
+
+  it("mirrors hover into feature-state and calls onHover", () => {
+    const map = new FakeMap();
+    const onHover = vi.fn();
+    renderHexbin(map, { onHover, hoverHighlight: true });
+
+    const feature = { id: 7, properties: { value: 3, count: 3 } };
+    map.fireLayer("mousemove", "bins-fill", { features: [feature] });
+    expect(onHover).toHaveBeenCalledWith(feature, expect.anything());
+    expect(map.getFeatureState({ source: "bins", id: 7 })).toEqual({
+      hover: true,
+    });
+  });
 });

@@ -4,6 +4,7 @@ import type { MapLayerMouseEvent } from "maplibre-gl";
 import { useMapContext } from "../../context/useMap";
 import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
 import { useLayerClick } from "../../hooks/useLayerClick";
+import { useLayerHover } from "../../hooks/useLayerHover";
 import { resolvePaletteColor } from "../../utils/color";
 import { featureCollection, pointFeature } from "../../utils/geojson";
 import type { BasePoint } from "../../utils/geojson";
@@ -11,6 +12,11 @@ import {
   applyLayerOverrides,
   type LayerOverride,
 } from "../../utils/layerOverrides";
+import {
+  hoverCase,
+  resolveHoverHighlight,
+  type HoverHighlight,
+} from "../../utils/hoverPaint";
 
 /** A labeled point rendered by `<SymbolLayer>`. */
 export type SymbolPoint = BasePoint & {
@@ -78,6 +84,14 @@ export type SymbolLayerProps = {
     index: number,
     event: MapLayerMouseEvent,
   ) => void;
+  /** Fired with the hovered point, its index in `points` (-1 on leave), and the raw event. */
+  onHover?: (
+    point: SymbolPoint | null,
+    index: number,
+    event: MapLayerMouseEvent,
+  ) => void;
+  /** Highlight the hovered feature: `true` for theme defaults (stronger fill, `text.primary` outline), or explicit colors/opacity. Uses feature-state, so it works with the default generated ids. */
+  hoverHighlight?: boolean | HoverHighlight;
 };
 
 /**
@@ -101,6 +115,8 @@ const SymbolLayer: FC<SymbolLayerProps> = ({
   featureId,
   layerOverrides,
   onClick,
+  onHover,
+  hoverHighlight,
 }) => {
   const theme = useTheme();
   const { map } = useMapContext();
@@ -155,6 +171,18 @@ const SymbolLayer: FC<SymbolLayerProps> = ({
     };
   }, [map, iconSrc, imageId]);
 
+  const resolvedTextColor = resolvePaletteColor(theme, color);
+  const resolvedHaloColor = resolvePaletteColor(theme, haloColor);
+
+  const highlight = useMemo(
+    () =>
+      resolveHoverHighlight(theme, hoverHighlight, {
+        fillColor: resolvedTextColor,
+        strokeColor: resolvedHaloColor,
+      }),
+    [hoverHighlight, theme, resolvedTextColor, resolvedHaloColor],
+  );
+
   const layers = useMemo<LayerInput[]>(
     () =>
       applyLayerOverrides(
@@ -176,8 +204,12 @@ const SymbolLayer: FC<SymbolLayerProps> = ({
                 : undefined),
             },
             paint: {
-              "text-color": resolvePaletteColor(theme, color),
-              "text-halo-color": resolvePaletteColor(theme, haloColor),
+              "text-color": highlight
+                ? hoverCase(highlight.fillColor, resolvedTextColor)
+                : resolvedTextColor,
+              "text-halo-color": highlight
+                ? hoverCase(highlight.strokeColor, resolvedHaloColor)
+                : resolvedHaloColor,
               "text-halo-width": haloWidth,
             },
           } as LayerInput,
@@ -193,11 +225,11 @@ const SymbolLayer: FC<SymbolLayerProps> = ({
       font,
       allowOverlap,
       icon,
-      color,
-      haloColor,
+      resolvedTextColor,
+      resolvedHaloColor,
       haloWidth,
+      highlight,
       layerOverrides,
-      theme,
     ],
   );
 
@@ -217,6 +249,22 @@ const SymbolLayer: FC<SymbolLayerProps> = ({
         }
       : undefined,
   );
+
+  useLayerHover({
+    layerIds: [layerId],
+    sourceId: baseId,
+    featureState: Boolean(hoverHighlight),
+    onHover: onHover
+      ? (feature, event) => {
+          const idx = feature?.properties?._idx as number | undefined;
+          if (feature && idx != null && points[idx]) {
+            onHover(points[idx], idx, event);
+          } else {
+            onHover(null, -1, event);
+          }
+        }
+      : undefined,
+  });
 
   return null;
 };

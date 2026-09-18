@@ -187,6 +187,8 @@ export type { LayerOverride } from "./utils/layerOverrides";
 export { resolvePaletteColor } from "./utils/color";
 export { buildColorExpression, isChoroplethSpec } from "./utils/choropleth";
 export type { ChoroplethSpec } from "./utils/choropleth";
+export { hoverCase } from "./utils/hoverPaint";
+export type { HoverHighlight } from "./utils/hoverPaint";
 export { binPoints } from "./utils/bin";
 export type {
   BinPoint,

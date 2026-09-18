@@ -6,6 +6,7 @@ import Legend from "../Legend";
 import type { ChoroplethSpec } from "../../utils/choropleth";
 import { warnDeprecatedProp } from "../../utils/deprecation";
 import type { LayerOverride } from "../../utils/layerOverrides";
+import type { HoverHighlight } from "../../utils/hoverPaint";
 import type { ControlPosition } from "../MapControls";
 
 /** Configures the optional `<Legend>` a `<ChoroplethLayer>` can render from its own stops. */
@@ -69,6 +70,13 @@ export type ChoroplethLayerProps = {
   layerOverrides?: { fill?: LayerOverride; line?: LayerOverride };
   /** Fired with the clicked feature and the raw map event. */
   onClick?: (feature: MapGeoJSONFeature, event: MapLayerMouseEvent) => void;
+  /** Fired with the hovered feature (null when the pointer leaves) and the raw map event. */
+  onHover?: (
+    feature: MapGeoJSONFeature | null,
+    event: MapLayerMouseEvent,
+  ) => void;
+  /** Highlight the hovered feature: `true` for theme defaults (stronger fill, `text.primary` outline), or explicit colors/opacity. Uses feature-state, so it works with the default generated ids. */
+  hoverHighlight?: boolean | HoverHighlight;
   /**
    * Render a matching <Legend> from the same stops — pass `true` for defaults,
    * or a config object to set its title, corner, and number format. The legend
@@ -99,6 +107,8 @@ const ChoroplethLayer: FC<ChoroplethLayerProps> = ({
   featureId,
   layerOverrides,
   onClick,
+  onHover,
+  hoverHighlight,
   legend,
 }) => {
   if (lineColor !== undefined) {
@@ -132,6 +142,8 @@ const ChoroplethLayer: FC<ChoroplethLayerProps> = ({
         featureId={featureId}
         layerOverrides={layerOverrides}
         onClick={onClick}
+        onHover={onHover}
+        hoverHighlight={hoverHighlight}
       />
       {legendConfig && (
         <Legend

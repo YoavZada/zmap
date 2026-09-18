@@ -153,4 +153,33 @@ describe("ExtrusionLayer", () => {
     >;
     expect(paint["fill-extrusion-vertical-gradient"]).toBe(false);
   });
+
+  it("hoverHighlight only touches fill-extrusion-color", () => {
+    const map = new FakeMap();
+    renderExtrusion(map, { hoverHighlight: true, fillOpacity: 0.9 });
+
+    const paint = map.getLayer("ext-extrusion")!.paint as Record<
+      string,
+      unknown
+    >;
+    expect((paint["fill-extrusion-color"] as unknown[])[0]).toBe("case");
+    expect(paint["fill-extrusion-opacity"]).toBe(0.9); // untouched
+    expect(paint["fill-extrusion-height"]).toBe(0); // untouched
+  });
+
+  it("mirrors hover into feature-state and calls onHover", () => {
+    const map = new FakeMap();
+    const onHover = vi.fn();
+    renderExtrusion(map, { onHover, hoverHighlight: true });
+
+    const feature = { id: 9, properties: { height: 120 } };
+    map.fireLayer("mousemove", "ext-extrusion", { features: [feature] });
+    expect(onHover).toHaveBeenCalledWith(feature, expect.anything());
+    expect(map.getFeatureState({ source: "ext", id: 9 })).toEqual({
+      hover: true,
+    });
+
+    map.fireLayer("mouseleave", "ext-extrusion");
+    expect(onHover).toHaveBeenLastCalledWith(null, undefined);
+  });
 });

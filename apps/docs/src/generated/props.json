@@ -185,6 +185,14 @@
           "deprecated": null
         },
         {
+          "name": "hoverHighlight",
+          "type": "boolean | HoverHighlight",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highlight the hovered feature: `true` for theme defaults (stronger fill, `text.primary` outline), or explicit colors/opacity. Uses feature-state, so it works with the default generated ids.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
@@ -214,6 +222,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Fired with the clicked feature and the raw map event.",
+          "deprecated": null
+        },
+        {
+          "name": "onHover",
+          "type": "((feature: MapGeoJSONFeature | null, event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the hovered feature (null when the pointer leaves) and the raw map event.",
           "deprecated": null
         },
         {
@@ -541,6 +557,14 @@
           "deprecated": null
         },
         {
+          "name": "hoverHighlight",
+          "type": "boolean | HoverHighlight",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highlight the hovered feature: `true` for theme defaults (stronger fill,\n`text.primary` outline), or explicit colors/opacity. Uses feature-state,\nso it works with the default generated ids. Only `fill-extrusion-color`\nis wrapped — `fill-extrusion-opacity` isn't a data-driven property in\nthe style spec.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
@@ -562,6 +586,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Fired with the clicked feature and the raw map event.",
+          "deprecated": null
+        },
+        {
+          "name": "onHover",
+          "type": "((feature: MapGeoJSONFeature | null, event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the hovered feature (null when the pointer leaves) and the raw map event.",
           "deprecated": null
         },
         {
@@ -881,6 +913,14 @@
           "deprecated": null
         },
         {
+          "name": "hoverHighlight",
+          "type": "boolean | HoverHighlight",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highlight the hovered feature: `true` for theme defaults (stronger fill,\n`text.primary` outline), or explicit colors/opacity. Uses feature-state,\nso it works with the default generated ids. When extruded, only the\n`fill-extrusion-color` is wrapped — `fill-extrusion-opacity` isn't a\ndata-driven property in the style spec.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
@@ -902,6 +942,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Fired with the clicked cell's aggregates and the raw map event.",
+          "deprecated": null
+        },
+        {
+          "name": "onHover",
+          "type": "((feature: MapGeoJSONFeature | null, event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the hovered feature (null when the pointer leaves) and the raw map event.",
           "deprecated": null
         },
         {
@@ -1821,6 +1869,14 @@
           "deprecated": null
         },
         {
+          "name": "hoverHighlight",
+          "type": "boolean | HoverHighlight",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highlight the hovered point: `true` for theme defaults (stronger fill, `text.primary` outline), or explicit colors/opacity. Uses feature-state, so it works with the default generated ids.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
@@ -1842,6 +1898,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Fired with the clicked point, its index in `points`, and the raw event.",
+          "deprecated": null
+        },
+        {
+          "name": "onHover",
+          "type": "((point: BasePoint | null, index: number, event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the hovered point, its index in `points` (-1 on leave), and the raw event.",
           "deprecated": null
         },
         {
@@ -2310,6 +2374,14 @@
           "deprecated": null
         },
         {
+          "name": "hoverHighlight",
+          "type": "boolean | HoverHighlight",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highlight the hovered feature: `true` for theme defaults (stronger fill, `text.primary` outline), or explicit colors/opacity. Uses feature-state, so it works with the default generated ids.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
@@ -2331,6 +2403,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Fired with the clicked feature and the raw map event.",
+          "deprecated": null
+        },
+        {
+          "name": "onHover",
+          "type": "((feature: MapGeoJSONFeature | null, event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the hovered feature (null when the pointer leaves) and the raw map event.",
           "deprecated": null
         },
         {
@@ -2459,6 +2539,14 @@
           "deprecated": null
         },
         {
+          "name": "hoverHighlight",
+          "type": "boolean | HoverHighlight",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highlight the hovered feature: `true` for theme defaults (stronger fill, `text.primary` outline), or explicit colors/opacity. Uses feature-state, so it works with the default generated ids.",
+          "deprecated": null
+        },
+        {
           "name": "icon",
           "type": "{ src: string; size?: number; }",
           "required": false,
@@ -2496,6 +2584,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Fired with the clicked point, its index in `points`, and the raw event.",
+          "deprecated": null
+        },
+        {
+          "name": "onHover",
+          "type": "((point: SymbolPoint | null, index: number, event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the hovered point, its index in `points` (-1 on leave), and the raw event.",
           "deprecated": null
         },
         {
@@ -3220,6 +3316,18 @@
       "kind": "type",
       "category": "component",
       "description": "Props for `<HexbinLayer>`, which aggregates points into hexagonal or square cells colored by count."
+    },
+    {
+      "name": "hoverCase",
+      "kind": "value",
+      "category": "util",
+      "description": "Wraps a paint value in a feature-state \"hover\" case: `[\"case\", [\"boolean\", [\"feature-state\", key], false], hovered, base]`."
+    },
+    {
+      "name": "HoverHighlight",
+      "kind": "type",
+      "category": "util",
+      "description": "Explicit hover-highlight colors/opacity — see `resolveHoverHighlight`."
     },
     {
       "name": "isChoroplethSpec",

@@ -43,17 +43,16 @@ const ChoroplethPage: FC = () => {
       />
 
       <DemoSection
-        title="Hover highlighting — useFeatureState"
+        title="Hover highlighting — hoverHighlight + onHover"
         description={
           <>
-            The <code>useFeatureState</code> hook mirrors pointer hover into
-            MapLibre feature-state, so paint expressions can react per feature
-            without re-uploading data — here the hovered state brightens and a
-            readout tracks it. Features need ids: pass{" "}
-            <code>
-              sourceOptions=&#123;&#123; generateId: true &#125;&#125;
-            </code>
-            . Hover a state.
+            <code>hoverHighlight</code> and <code>onHover</code> turn hovering a
+            feature into a one-prop affair — no manual feature-state or layer
+            ids needed. Under the hood it still mirrors pointer hover into
+            MapLibre feature-state (the low-level route is the{" "}
+            <code>useFeatureState</code> hook, for when you need the hovered
+            feature in your own render tree without a paint change). Hover a
+            state.
           </>
         }
         code={hoverFeatureStateDemoSource}

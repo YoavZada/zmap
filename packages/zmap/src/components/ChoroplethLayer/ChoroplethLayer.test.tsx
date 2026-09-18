@@ -123,4 +123,32 @@ describe("ChoroplethLayer", () => {
 
     expect(map.layerOrder).toEqual(["choro-fill", "choro-line", "labels"]);
   });
+
+  it("hoverHighlight keeps the choropleth expression as the base", () => {
+    const map = new FakeMap();
+    renderChoropleth(map, { hoverHighlight: true });
+
+    const paint = map.getLayer("choro-fill")!.paint as Record<string, unknown>;
+    const fillColor = paint["fill-color"] as unknown[];
+    expect(fillColor[0]).toBe("case");
+    expect(fillColor[3]).toEqual([
+      "interpolate",
+      ["linear"],
+      ["get", "density"],
+      0,
+      "#000000",
+      100,
+      "#ffffff",
+    ]);
+  });
+
+  it("forwards onHover to the underlying ShapeLayer", () => {
+    const map = new FakeMap();
+    const onHover = vi.fn();
+    renderChoropleth(map, { onHover });
+
+    const feature = { id: 1, properties: { density: 42 } };
+    map.fireLayer("mousemove", "choro-fill", { features: [feature] });
+    expect(onHover).toHaveBeenCalledWith(feature, expect.anything());
+  });
 });
