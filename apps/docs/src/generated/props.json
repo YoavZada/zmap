@@ -1194,7 +1194,7 @@
       ]
     },
     "Map": {
-      "description": "The map container. Creates a MapLibre GL instance, exposes it via context to\nchildren (markers, controls, layers…), and swaps the basemap style when the\nMUI theme mode changes.",
+      "description": "The map container. Creates a MapLibre GL instance, exposes it via context to\nchildren (markers, controls, layers…), and swaps the basemap style when the\nMUI theme mode changes.\n\n`ref` receives the raw MapLibre instance once created (`null` before).",
       "props": [
         {
           "name": "animate",
@@ -1229,6 +1229,22 @@
           "deprecated": null
         },
         {
+          "name": "cooperativeGestures",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Require Ctrl/Cmd + scroll (and two fingers on touch) to zoom — polite for\nmaps embedded in scrolling pages. Creation-time only.",
+          "deprecated": null
+        },
+        {
+          "name": "cursor",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "CSS cursor over the map canvas. Layer hover cursors (pointer) still take\nprecedence while hovering. Reactive.",
+          "deprecated": null
+        },
+        {
           "name": "fallback",
           "type": "ReactNode",
           "required": false,
@@ -1250,6 +1266,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Options for `fitBounds` (padding, maxZoom…).",
+          "deprecated": null
+        },
+        {
+          "name": "hash",
+          "type": "string | boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Sync the camera to the URL hash (`#zoom/lat/lng/bearing/pitch`); a string\nuses that query-param name instead. Creation-time only.",
           "deprecated": null
         },
         {
@@ -1281,7 +1305,7 @@
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Allow user pan/zoom/rotate. Default true.",
+          "description": "Allow user pan/zoom/rotate. Default true. Reactive.",
           "deprecated": null
         },
         {
@@ -1301,6 +1325,14 @@
           "deprecated": null
         },
         {
+          "name": "locale",
+          "type": "Record<string, string>",
+          "required": false,
+          "defaultValue": null,
+          "description": "Override MapLibre's built-in UI strings (attribution toggle,\ncooperative-gesture hints, ...). Creation-time only.",
+          "deprecated": null
+        },
+        {
           "name": "mapOptions",
           "type": "Partial<MapOptions>",
           "required": false,
@@ -1309,11 +1341,35 @@
           "deprecated": null
         },
         {
+          "name": "maxBounds",
+          "type": "LngLatBoundsLike",
+          "required": false,
+          "defaultValue": null,
+          "description": "Constrain panning so the viewport stays within these bounds. Reactive.",
+          "deprecated": null
+        },
+        {
+          "name": "maxPitch",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highest allowed camera tilt in degrees (0-85). Reactive.",
+          "deprecated": null
+        },
+        {
           "name": "maxZoom",
           "type": "number",
           "required": false,
           "defaultValue": null,
           "description": "Highest zoom level the camera allows.",
+          "deprecated": null
+        },
+        {
+          "name": "minPitch",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Lowest allowed camera tilt in degrees (0-85). Reactive.",
           "deprecated": null
         },
         {
@@ -1389,6 +1445,14 @@
           "deprecated": null
         },
         {
+          "name": "preserveDrawingBuffer",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Keep the WebGL drawing buffer so `map.getCanvas().toDataURL()` works\n(screenshots/export). Costs some GPU memory. Creation-time only. (Passed\nto MapLibre as `canvasContextAttributes.preserveDrawingBuffer`.)",
+          "deprecated": null
+        },
+        {
           "name": "projection",
           "type": "enum",
           "required": false,
@@ -1402,6 +1466,14 @@
           "required": false,
           "defaultValue": "carto",
           "description": "Basemap source: a built-in keyless id (\"carto\" | \"osm\" | \"versatiles\" |\n\"opentopomap\"), a keyed factory result (`maptiler(key)`, `arcgis(key)`),\na custom MapProvider, a raw style URL, or a full MapLibre\nStyleSpecification. Defaults to \"carto\".",
+          "deprecated": null
+        },
+        {
+          "name": "transformRequest",
+          "type": "RequestTransformFunction",
+          "required": false,
+          "defaultValue": null,
+          "description": "Rewrite tile, style, glyph and sprite requests — add auth headers, sign\nURLs, proxy hosts. Creation-time only.",
           "deprecated": null
         },
         {
@@ -3236,6 +3308,12 @@
       "kind": "type",
       "category": "provider",
       "description": "A pluggable basemap source. Implement this to add any MapLibre-compatible provider (MapTiler, Stadia, self-hosted, …) beyond the built-ins."
+    },
+    {
+      "name": "MapRef",
+      "kind": "type",
+      "category": "component",
+      "description": "The value a `<Map ref>` receives: the raw MapLibre instance, or `null` before it's created."
     },
     {
       "name": "MapStyleInput",

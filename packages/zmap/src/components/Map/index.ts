@@ -4,4 +4,5 @@ export type {
   MapViewState,
   MapViewEventHandler,
   MapErrorKind,
+  MapRef,
 } from "./Map";

@@ -5,11 +5,13 @@ import { createRef, type FC } from "react";
 import type maplibregl from "maplibre-gl";
 import { useMapContext } from "../../context/useMap";
 import {
+  fakeMaps,
   lastFakeMap,
   resetFakeMaps,
   setFakeMapConstructError,
 } from "../../test/mockMaplibre";
-import Map from "./Map";
+import PointLayer from "../PointLayer";
+import Map, { type MapRef } from "./Map";
 
 vi.mock("maplibre-gl", () => import("../../test/mockMaplibre"));
 
@@ -267,6 +269,116 @@ describe("Map", () => {
       );
       expect(map.fitBounds).toHaveBeenCalledTimes(2);
     });
+  });
+
+  it("passes transformRequest, preserveDrawingBuffer, cooperativeGestures, hash, locale, minPitch/maxPitch and maxBounds to the constructor", () => {
+    const transformRequest = vi.fn();
+    const bounds: [[number, number], [number, number]] = [
+      [-10, -10],
+      [10, 10],
+    ];
+    render(
+      <Map
+        transformRequest={transformRequest}
+        preserveDrawingBuffer
+        cooperativeGestures
+        hash="map"
+        locale={{ "AttributionControl.ToggleAttribution": "Toggle" }}
+        minPitch={5}
+        maxPitch={70}
+        maxBounds={bounds}
+      />,
+    );
+    const map = lastFakeMap();
+    expect(map.options).toMatchObject({
+      transformRequest,
+      canvasContextAttributes: { preserveDrawingBuffer: true },
+      cooperativeGestures: true,
+      hash: "map",
+      locale: { "AttributionControl.ToggleAttribution": "Toggle" },
+      minPitch: 5,
+      maxPitch: 70,
+      maxBounds: bounds,
+    });
+  });
+
+  it("updates min/max zoom, min/max pitch and maxBounds after mount without recreating the map", () => {
+    const { rerender } = render(<Map minZoom={1} maxZoom={10} />);
+    loadMap();
+    expect(fakeMaps.length).toBe(1);
+
+    const bounds: [[number, number], [number, number]] = [
+      [-5, -5],
+      [5, 5],
+    ];
+    rerender(
+      <Map
+        minZoom={2}
+        maxZoom={12}
+        minPitch={5}
+        maxPitch={60}
+        maxBounds={bounds}
+      />,
+    );
+
+    const map = lastFakeMap();
+    expect(map.constraints).toMatchObject({
+      minZoom: 2,
+      maxZoom: 12,
+      minPitch: 5,
+      maxPitch: 60,
+      maxBounds: bounds,
+    });
+    expect(fakeMaps.length).toBe(1);
+  });
+
+  it("toggling interactive disables and re-enables every gesture handler", () => {
+    const { rerender } = render(<Map />);
+    const map = loadMap();
+    const handlers = [
+      "dragPan",
+      "scrollZoom",
+      "boxZoom",
+      "dragRotate",
+      "keyboard",
+      "doubleClickZoom",
+      "touchZoomRotate",
+      "touchPitch",
+    ] as const;
+
+    rerender(<Map interactive={false} />);
+    for (const h of handlers) expect(map[h].isEnabled()).toBe(false);
+
+    rerender(<Map interactive />);
+    for (const h of handlers) expect(map[h].isEnabled()).toBe(true);
+  });
+
+  it("applies cursor to the canvas and useLayerClick restores it on leave", () => {
+    const onClick = vi.fn();
+    render(
+      <Map cursor="crosshair">
+        <PointLayer
+          id="pts"
+          points={[{ longitude: 0, latitude: 0 }]}
+          onClick={onClick}
+        />
+      </Map>,
+    );
+    const map = loadMap();
+    expect(map.getCanvas().style.cursor).toBe("crosshair");
+
+    act(() => map.fireLayer("mouseenter", "pts-circle"));
+    expect(map.getCanvas().style.cursor).toBe("pointer");
+
+    act(() => map.fireLayer("mouseleave", "pts-circle"));
+    expect(map.getCanvas().style.cursor).toBe("crosshair");
+  });
+
+  it("exposes the map instance through ref", () => {
+    const ref = createRef<MapRef>();
+    render(<Map ref={ref} />);
+    const map = loadMap();
+    expect(ref.current).toBe(map as never);
   });
 
   it("marks the container as a labeled region", () => {

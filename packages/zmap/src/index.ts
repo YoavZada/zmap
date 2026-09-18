@@ -14,6 +14,7 @@ export type {
   MapViewState,
   MapViewEventHandler,
   MapErrorKind,
+  MapRef,
 } from "./components/Map";
 // The built-in loader component is private; only its props type is public,
 // for typing `<Map loaderProps={…}>`.

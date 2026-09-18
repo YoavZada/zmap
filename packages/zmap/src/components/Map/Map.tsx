@@ -11,11 +11,13 @@ import {
 import maplibregl, {
   type AnimationOptions,
   type FitBoundsOptions,
+  type GestureOptions,
   type LngLatBoundsLike,
   type Map as MapLibreMap,
   type MapLibreEvent,
   type MapMouseEvent,
   type MapOptions,
+  type RequestTransformFunction,
 } from "maplibre-gl";
 import Box, { type BoxProps } from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
@@ -24,6 +26,7 @@ import { MapContext, type MapErrorKind } from "../../context/MapContext";
 import { LayerRegistryProvider } from "../../context/LayerRegistryContext";
 import { useColorScheme, type ColorScheme } from "../../hooks/useColorScheme";
 import { useStyleReapply } from "../../hooks/useStyleReapply";
+import { useUpdateEffect } from "../../hooks/useUpdateEffect";
 import { providerKey, resolveStyle, type MapStyleInput } from "../../providers";
 import { registerPmtilesProtocol, usesPmtiles } from "../../providers/pmtiles";
 import { toError } from "../../utils/errors";
@@ -96,7 +99,7 @@ export interface MapProps
   minZoom?: number;
   /** Highest zoom level the camera allows. */
   maxZoom?: number;
-  /** Allow user pan/zoom/rotate. Default true. */
+  /** Allow user pan/zoom/rotate. Default true. Reactive. */
   interactive?: boolean;
   /**
    * Let the map wrap/repeat horizontally and scroll forever. Default false —
@@ -106,6 +109,43 @@ export interface MapProps
   infinite?: boolean;
   /** Hide MapLibre's built-in attribution control (attribute elsewhere). */
   hideAttribution?: boolean;
+  /**
+   * Rewrite tile, style, glyph and sprite requests — add auth headers, sign
+   * URLs, proxy hosts. Creation-time only.
+   */
+  transformRequest?: RequestTransformFunction;
+  /**
+   * Keep the WebGL drawing buffer so `map.getCanvas().toDataURL()` works
+   * (screenshots/export). Costs some GPU memory. Creation-time only. (Passed
+   * to MapLibre as `canvasContextAttributes.preserveDrawingBuffer`.)
+   */
+  preserveDrawingBuffer?: boolean;
+  /** Constrain panning so the viewport stays within these bounds. Reactive. */
+  maxBounds?: LngLatBoundsLike;
+  /** Lowest allowed camera tilt in degrees (0-85). Reactive. */
+  minPitch?: number;
+  /** Highest allowed camera tilt in degrees (0-85). Reactive. */
+  maxPitch?: number;
+  /**
+   * Require Ctrl/Cmd + scroll (and two fingers on touch) to zoom — polite for
+   * maps embedded in scrolling pages. Creation-time only.
+   */
+  cooperativeGestures?: boolean | GestureOptions;
+  /**
+   * Sync the camera to the URL hash (`#zoom/lat/lng/bearing/pitch`); a string
+   * uses that query-param name instead. Creation-time only.
+   */
+  hash?: boolean | string;
+  /**
+   * Override MapLibre's built-in UI strings (attribution toggle,
+   * cooperative-gesture hints, ...). Creation-time only.
+   */
+  locale?: Record<string, string>;
+  /**
+   * CSS cursor over the map canvas. Layer hover cursors (pointer) still take
+   * precedence while hovering. Reactive.
+   */
+  cursor?: string;
   /** Escape hatch for any other MapLibre map option. */
   mapOptions?: Partial<MapOptions>;
   /**
@@ -169,6 +209,20 @@ const toViewState = (m: maplibregl.Map): Required<MapViewState> => {
   };
 };
 
+// Gesture handlers toggled by the `interactive` prop — every MapLibre handler
+// with an enable()/disable() pair. cooperativeGestures is a separate,
+// creation-time-only constructor option and is deliberately not in this list.
+const GESTURE_HANDLERS = [
+  "dragPan",
+  "scrollZoom",
+  "boxZoom",
+  "dragRotate",
+  "keyboard",
+  "doubleClickZoom",
+  "touchZoomRotate",
+  "touchPitch",
+] as const;
+
 // Camera deltas below these are treated as "already there" — they're well under
 // anything visible, and they break the onMoveEnd → setState → view feedback loop.
 const EPS_DEG = 1e-6;
@@ -192,12 +246,17 @@ const matchesCamera = (m: maplibregl.Map, view: MapViewState): boolean => {
   return true;
 };
 
+/** The value a `<Map ref>` receives: the raw MapLibre instance, or `null` before it's created. */
+export type MapRef = maplibregl.Map | null;
+
 /**
  * The map container. Creates a MapLibre GL instance, exposes it via context to
  * children (markers, controls, layers…), and swaps the basemap style when the
  * MUI theme mode changes.
+ *
+ * `ref` receives the raw MapLibre instance once created (`null` before).
  */
-const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
+const Map = forwardRef<MapRef, MapProps>(function Map(
   {
     provider = "carto",
     colorScheme = "auto",
@@ -213,6 +272,15 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     interactive = true,
     infinite = false,
     hideAttribution = false,
+    transformRequest,
+    preserveDrawingBuffer,
+    maxBounds,
+    minPitch,
+    maxPitch,
+    cooperativeGestures,
+    hash,
+    locale,
+    cursor,
     mapOptions,
     projection = "mercator",
     onLoad,
@@ -299,9 +367,22 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
           pitch: initialView?.pitch ?? 0,
           minZoom,
           maxZoom,
+          minPitch,
+          maxPitch,
+          maxBounds,
           interactive,
           renderWorldCopies: infinite,
           attributionControl: hideAttribution ? false : undefined,
+          transformRequest,
+          // preserveDrawingBuffer lives under canvasContextAttributes in the
+          // installed maplibre-gl's MapOptions, not as a top-level option.
+          canvasContextAttributes:
+            preserveDrawingBuffer !== undefined
+              ? { preserveDrawingBuffer }
+              : undefined,
+          cooperativeGestures,
+          hash,
+          locale,
           ...mapOptions,
         });
       } catch (err) {
@@ -411,6 +492,49 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     mapRef.current?.setRenderWorldCopies(infinite);
   }, [infinite]);
 
+  // Reactive camera constraints — already applied at creation (see the create
+  // effect above); these let them change afterwards without recreating the
+  // map. Each skips the mount run via useUpdateEffect.
+  useUpdateEffect(() => {
+    map?.setMinZoom(minZoom ?? null);
+  }, [map, minZoom]);
+  useUpdateEffect(() => {
+    map?.setMaxZoom(maxZoom ?? null);
+  }, [map, maxZoom]);
+  useUpdateEffect(() => {
+    map?.setMinPitch(minPitch ?? null);
+  }, [map, minPitch]);
+  useUpdateEffect(() => {
+    map?.setMaxPitch(maxPitch ?? null);
+  }, [map, maxPitch]);
+
+  // Reactive maxBounds, keyed by value (not identity) so an inline bounds
+  // literal doesn't reapply on every render.
+  const maxBoundsKey = JSON.stringify(maxBounds ?? null);
+  useUpdateEffect(() => {
+    map?.setMaxBounds(maxBounds ?? null);
+  }, [map, maxBoundsKey]);
+
+  // Reactive `interactive` toggle: enable/disable every gesture handler.
+  useUpdateEffect(() => {
+    if (!map) return;
+    for (const h of GESTURE_HANDLERS) {
+      if (interactive) map[h].enable();
+      else map[h].disable();
+    }
+  }, [map, interactive]);
+
+  // CSS cursor over the canvas. Unlike the constraints/interactive effects
+  // above, this must also apply on mount (there's no constructor option for
+  // it), so it's a plain useEffect rather than useUpdateEffect.
+  useEffect(() => {
+    if (!map) return;
+    const c = map.getCanvas();
+    c.style.cursor = cursor ?? "";
+    if (cursor) c.dataset.zmapCursor = cursor;
+    else delete c.dataset.zmapCursor;
+  }, [map, cursor]);
+
   // Apply the projection on load and re-apply after every style swap
   // (setStyle resets projection to the style's declared default).
   useStyleReapply(
@@ -490,7 +614,11 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     map.fitBounds(fitBounds, fitBoundsOptionsRef.current);
   }, [map, fitBoundsKey]);
 
-  useImperativeHandle(ref, () => map as maplibregl.Map, [map]);
+  // Explicit type arguments (rather than a cast on the returned value)
+  // sidestep a TS inference quirk: matching the ref parameter's `T | null`
+  // shape against `map`'s own `Map | null` type would otherwise infer T as
+  // the non-null `Map`, which then rejects `map` (typed `Map | null`) as R.
+  useImperativeHandle<MapRef, MapRef>(ref, () => map, [map]);
 
   const value = useMemo(
     () => ({ map, loaded, reportError }),

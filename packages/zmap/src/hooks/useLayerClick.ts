@@ -23,7 +23,8 @@ export function useLayerClick(
       map.getCanvas().style.cursor = "pointer";
     };
     const leave = () => {
-      map.getCanvas().style.cursor = "";
+      const canvas = map.getCanvas();
+      canvas.style.cursor = canvas.dataset.zmapCursor ?? "";
     };
     map.on("click", layerId, click);
     map.on("mouseenter", layerId, enter);
