@@ -1946,6 +1946,14 @@
           "deprecated": null
         },
         {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Initial visibility when uncontrolled. Default true. Once an uncontrolled\npopup closes (X button, click, move, or Escape) it stays closed — there's\nno prop change that reopens it. To reopen, remount the component by\nchanging its React `key`.",
+          "deprecated": null
+        },
+        {
           "name": "maxWidth",
           "type": "string",
           "required": false,
@@ -1966,15 +1974,15 @@
           "type": "(() => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired when MapLibre closes the popup (X button, click, or move).",
+          "description": "Fired when MapLibre closes the popup (X button, map click/move, or\nEscape). In uncontrolled mode the popup also closes itself; in\ncontrolled mode, flip `open` to `false` in response.",
           "deprecated": null
         },
         {
           "name": "open",
           "type": "boolean",
           "required": false,
-          "defaultValue": "true",
-          "description": "Controlled visibility. Default true.",
+          "defaultValue": null,
+          "description": "Controlled visibility. Omit to let the popup manage its own open state (see `defaultOpen`).",
           "deprecated": null
         }
       ]
@@ -2774,6 +2782,14 @@
           "deprecated": null
         },
         {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Initial visibility when uncontrolled. Default true. Once an uncontrolled\npopup closes (X button, click, move, or Escape) it stays closed — there's\nno prop change that reopens it. To reopen, remount the component by\nchanging its React `key`.",
+          "deprecated": null
+        },
+        {
           "name": "maxWidth",
           "type": "string",
           "required": false,
@@ -2794,7 +2810,7 @@
           "type": "(() => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired when MapLibre closes the popup (X button, click, or move).",
+          "description": "Fired when MapLibre closes the popup (X button, map click/move, or\nEscape). In uncontrolled mode the popup also closes itself; in\ncontrolled mode, flip `open` to `false` in response.",
           "deprecated": null
         },
         {
@@ -2802,7 +2818,7 @@
           "type": "boolean",
           "required": false,
           "defaultValue": null,
-          "description": "Controlled visibility. Default true.",
+          "description": "Controlled visibility. Omit to let the popup manage its own open state (see `defaultOpen`).",
           "deprecated": null
         }
       ]

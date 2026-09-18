@@ -47,6 +47,20 @@ export function resetFakeMarkers(): void {
   fakeMarkers.length = 0;
 }
 
+/** Every FakePopup constructed since the last reset (newest last). */
+export const fakePopups: FakePopup[] = [];
+
+/** The most recently constructed FakePopup. */
+export function lastFakePopup(): FakePopup {
+  const popup = fakePopups[fakePopups.length - 1];
+  if (!popup) throw new Error("no FakePopup constructed yet");
+  return popup;
+}
+
+export function resetFakePopups(): void {
+  fakePopups.length = 0;
+}
+
 /** Earth radius (metres) used by FakeLngLat#distanceTo's haversine formula. */
 const EARTH_RADIUS_M = 6371008.8;
 
@@ -564,6 +578,7 @@ export class FakePopup {
 
   constructor(options: Record<string, unknown> = {}) {
     this.options = options;
+    fakePopups.push(this);
   }
   setLngLat(lngLat: [number, number]): this {
     this.lngLat = lngLat;
