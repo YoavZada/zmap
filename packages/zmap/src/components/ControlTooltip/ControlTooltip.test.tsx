@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { PortalContainerContext } from "../../context/PortalContainerContext";
 import ControlTooltip from "./ControlTooltip";
@@ -29,6 +29,29 @@ describe("ControlTooltip", () => {
         el.matches('[role="tooltip"]') || el.querySelector('[role="tooltip"]'),
     );
     expect(directBodyChildrenWithTooltip).toEqual([mapContainer]);
+  });
+
+  it("positions the popper with the fixed strategy so the map's overflow: hidden cannot clip it", async () => {
+    const mapContainer = document.createElement("div");
+    document.body.appendChild(mapContainer);
+
+    render(
+      <PortalContainerContext.Provider value={mapContainer}>
+        <ControlTooltip title="Zoom in" open placement="left">
+          <button type="button">Zoom in</button>
+        </ControlTooltip>
+      </PortalContainerContext.Provider>,
+    );
+
+    // Popper.js writes its positioning styles asynchronously; the tooltip
+    // element is the Popper root in MUI, so check it (and its parent, in
+    // case the slot structure ever nests it).
+    await waitFor(() => {
+      const el = mapContainer.querySelector<HTMLElement>('[role="tooltip"]');
+      const position =
+        el?.style.position || el?.parentElement?.style.position || "";
+      expect(position).toBe("fixed");
+    });
   });
 
   it("still renders with no container (outside <Map>)", () => {

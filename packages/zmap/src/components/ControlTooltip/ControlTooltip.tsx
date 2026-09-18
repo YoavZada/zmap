@@ -10,9 +10,11 @@ export type ControlTooltipProps = TooltipProps;
  * MUI portals its Popper into `document.body` by default, which lies outside
  * the map's fullscreen element — so a tooltip would vanish while a control is
  * shown fullscreen. This wires the Popper's `container` to the map's root
- * element (via `usePortalContainer`) so it stays visible, without changing
- * any other Tooltip behavior. Private to the built-in controls — not part of
- * the public API.
+ * element (via `usePortalContainer`) so it stays visible. The map root has
+ * `overflow: hidden`, so the Popper also switches to the `fixed` strategy —
+ * fixed-position boxes escape ancestor overflow clipping while staying DOM
+ * children of the fullscreen element. Private to the built-in controls — not
+ * part of the public API.
  */
 const ControlTooltip: FC<ControlTooltipProps> = ({ slotProps, ...props }) => {
   const container = usePortalContainer();
@@ -23,12 +25,20 @@ const ControlTooltip: FC<ControlTooltipProps> = ({ slotProps, ...props }) => {
       {...props}
       slotProps={{
         ...slotProps,
-        popper: (ownerState) => ({
-          ...(typeof popperSlotProps === "function"
-            ? popperSlotProps(ownerState)
-            : popperSlotProps),
-          container,
-        }),
+        popper: (ownerState) => {
+          const resolved =
+            typeof popperSlotProps === "function"
+              ? popperSlotProps(ownerState)
+              : popperSlotProps;
+          return {
+            ...resolved,
+            container,
+            popperOptions: {
+              ...resolved?.popperOptions,
+              strategy: "fixed",
+            },
+          };
+        },
       }}
     />
   );
