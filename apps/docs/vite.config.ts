@@ -20,9 +20,9 @@ const { version } = JSON.parse(
 ) as { version: string };
 
 export default defineConfig({
-  // Served from the domain root in dev and on Netlify. The GitHub Pages build
-  // sets BASE_PATH=/zmap/ (the project-site subpath) so emitted asset URLs —
-  // and import.meta.env.BASE_URL, which the router's basename derives from —
+  // Served from the domain root in dev. The GitHub Pages build sets
+  // BASE_PATH=/zmap/ (the project-site subpath) so emitted asset URLs — and
+  // import.meta.env.BASE_URL, which the router's basename derives from —
   // resolve correctly under https://<user>.github.io/zmap/.
   base: process.env.BASE_PATH ?? "/",
   // svgr() enables `import Icon from "./foo.svg?react"` — SVGs as React

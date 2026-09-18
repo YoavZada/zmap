@@ -5,8 +5,7 @@ name: Deploy to GitHub Pages
 #   docs       → https://<owner>.github.io/zmap/
 #   pathfinder → https://<owner>.github.io/zmap/pathfinder/
 # Each app's cross-link points at the other's path, so you can navigate
-# between them. Runs alongside the Netlify deploy (deploy.yml) — an additional
-# public mirror, not a replacement.
+# between them. This is the single deploy target for both apps.
 #
 # One-time setup: repo Settings → Pages → "Build and deployment" → Source:
 # "GitHub Actions".
@@ -69,9 +68,9 @@ jobs:
 
       # Assemble one site: docs at the root, pathfinder nested under it. Then
       # serve docs' index.html as 404.html — GitHub Pages has no SPA rewrite
-      # rule (unlike Netlify's _redirects), so a deep link like /zmap/markers
-      # falls through to it and boots the app for react-router (basename=/zmap)
-      # to resolve client-side. pathfinder has no client routing, so its real
+      # rule, so a deep link like /zmap/markers falls through to it and boots
+      # the app for react-router (basename=/zmap) to resolve client-side.
+      # pathfinder has no client routing, so its real
       # /zmap/pathfinder/index.html is served directly and needs no fallback.
       - name: Assemble site
         run: |

@@ -1,9 +1,7 @@
 name: CI
 
 # The PR gate: lint + typecheck + unit tests + Playwright e2e against the
-# built docs bundle. The e2e job runs the handwritten suite as blocking and
-# bot-generated specs (tagged @generated) as advisory — a generated spec
-# becomes blocking once a reviewer removes its tag.
+# built docs bundle.
 on:
   pull_request:
     branches: [main]
@@ -101,21 +99,12 @@ jobs:
       # Playwright's webServer builds the docs and serves the production
       # bundle (vite preview) because CI is set — PRs validate the real
       # artifact, not the dev server.
-      - name: E2E (core suite, blocking)
-        id: core
-        run: pnpm --filter @zmap/e2e exec playwright test --grep-invert "@generated"
-
-      - name: E2E (generated specs, advisory)
-        id: generated
-        continue-on-error: true
-        run: pnpm --filter @zmap/e2e exec playwright test --grep "@generated" --pass-with-no-tests
-
-      - name: Flag advisory failures
-        if: steps.generated.outcome == 'failure'
-        run: echo "::warning::Bot-generated e2e specs failed (advisory, not blocking). See the playwright-report artifact."
+      - name: E2E
+        id: e2e
+        run: pnpm --filter @zmap/e2e exec playwright test
 
       - name: Upload Playwright report
-        if: always() && (steps.core.outcome == 'failure' || steps.generated.outcome == 'failure')
+        if: always() && steps.e2e.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
