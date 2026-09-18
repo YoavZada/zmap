@@ -66,9 +66,9 @@ export type HexbinLayerProps = {
   /**
    * Feature property to use as the stable feature id (MapLibre `promoteId`).
    * When omitted, ids are generated per feature (`generateId`), which is
-   * enough for hover / feature-state highlighting. The bins here are
-   * computed features, so this usually stays unset; if set, it should name a
-   * bin property (e.g. "count").
+   * enough for hover / feature-state highlighting. Bins are computed
+   * features, so this usually stays unset — their `value` / `count`
+   * properties are rarely unique per cell and would collide as ids.
    */
   featureId?: string;
   /**
