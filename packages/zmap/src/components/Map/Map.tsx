@@ -159,6 +159,9 @@ export interface MapProps
   /**
    * Override any built-in zmap UI string (tooltips, aria-labels, menu
    * items). Partial; merged over `enUS`. Ship-ready locales: `enUS`, `heIL`.
+   * Pass a stable reference (a module constant or `useMemo`) — the merged
+   * strings are keyed on this object's identity, so a fresh inline literal on
+   * every render re-renders every localized control.
    */
   localeText?: Partial<ZmapLocaleText>;
   /**

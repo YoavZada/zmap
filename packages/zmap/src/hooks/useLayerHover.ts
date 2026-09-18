@@ -137,5 +137,13 @@ export function useLayerHover(options: LayerHoverOptions): void {
       }
       map.off("styledata", onStyleData);
     };
-  }, [map, enabled, layerIds.join("|"), sourceId, stateKey, pointerCursor]);
+  }, [
+    map,
+    enabled,
+    featureState,
+    layerIds.join("|"),
+    sourceId,
+    stateKey,
+    pointerCursor,
+  ]);
 }

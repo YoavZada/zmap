@@ -203,7 +203,8 @@ jobs:
 
   e2e-report:
     needs: e2e
-    if: always()
+    # Merge whatever shards ran; skip when e2e itself never ran (docs-build failed).
+    if: always() && needs.e2e.result != 'skipped' && needs.e2e.result != 'cancelled'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -15,7 +15,8 @@ Production-hardening release: reliability (errors, WebGL loss), interaction (hov
 - `onError(error, kind)` — one prop for every failure kind (`"init" | "runtime" | "tile" | "layer" | "style" | "webgl"`); tile errors dedupe per source for 5 seconds. `fallback` now also covers WebGL context loss (children remount once the context is restored), not just init failures.
 - New constructor/reactive props: `transformRequest`, `preserveDrawingBuffer`, `maxBounds` (reactive), `minPitch`/`maxPitch` (reactive), `cooperativeGestures`, `hash`, `cursor` (reactive), plus a typed `mapOptions` escape hatch. `interactive` is now reactive.
 - A forwarded ref now exposes the raw `maplibregl.Map` instance (`MapRef`).
-- New event props: `onIdle`, `onZoom`, `onStyleLoad`, `onMouseMove`, `onResize`.
+- New event props: `onIdle`, `onZoom`, `onStyleLoad`, `onMouseMove`, `onResize`. Note: `onMouseMove` now receives the MapLibre `MapMouseEvent` (with `lngLat`) instead of the DOM event — it is omitted from the pass-through Box props like `onClick` already was.
+- `locale` passes MapLibre's own UI-string overrides (attribution toggle, cooperative-gesture hint) to the constructor — distinct from `localeText`, which covers zmap's strings.
 
 **Popup**
 
@@ -23,7 +24,7 @@ Production-hardening release: reliability (errors, WebGL loss), interaction (hov
 
 **Controls**
 
-- Fullscreen-safe overlays: control tooltips, `ContextMenu`, and the geocoder result list now portal into the map's own root node instead of `document.body`, so they stay visible when the map enters the Fullscreen API. Build your own overlay on the same primitive via the newly-exported `usePortalContainer()`.
+- Fullscreen-safe overlays: control tooltips, `ContextMenu`, and the geocoder result list now portal into the map's own root node instead of `document.body`, so they stay visible when the map enters the Fullscreen API. Their poppers use the `fixed` positioning strategy so the map's `overflow: hidden` cannot clip them. Build your own overlay on the same primitive via the newly-exported `usePortalContainer()`.
 
 **Localization & RTL**
 
