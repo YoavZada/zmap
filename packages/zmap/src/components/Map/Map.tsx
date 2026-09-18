@@ -171,7 +171,10 @@ export interface MapProps
    * Load MapLibre's RTL text plugin so Hebrew/Arabic basemap labels render
    * correctly. `true` uses the default CDN URL, a string is a custom URL, or
    * `false` never loads it. Default: enabled when the MUI theme `direction`
-   * is "rtl". Loaded lazily, once per page.
+   * is "rtl". Loaded lazily, once per page. Evaluated when the map is
+   * created — the plugin is page-global, so an app that mounts LTR and later
+   * switches its theme to RTL should pass `rtlTextPlugin` explicitly (or call
+   * `registerRtlTextPlugin()` itself).
    */
   rtlTextPlugin?: boolean | string;
   /**

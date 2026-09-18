@@ -23,7 +23,11 @@ describe("rtlTextPlugin", () => {
   it("registers the plugin once even when called concurrently", async () => {
     const mod = await import("./rtlTextPlugin");
     expect(mod.isRtlTextPluginRegistered()).toBe(false);
-    // Concurrent: both fire before the first resolves — exercises the in-flight guard.
+    // Both calls start before the first resolves. MapLibre flips the plugin
+    // status synchronously inside setRTLTextPlugin, so the second call is
+    // normally short-circuited by the status check; the in-flight promise is
+    // the fallback for implementations that flip it later. Either way: one
+    // real registration.
     const [p1, p2] = [mod.registerRtlTextPlugin(), mod.registerRtlTextPlugin()];
     await Promise.all([p1, p2]);
     expect(setRTLTextPlugin).toHaveBeenCalledTimes(1);

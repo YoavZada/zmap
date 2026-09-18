@@ -6,7 +6,10 @@ import type { ControlPosition } from "../components/MapControls";
  * `insetInlineStart`/`insetInlineEnd` (not physical `left`/`right`), so in an
  * LTR document `top-left` renders top-left as usual, but under `dir="rtl"`
  * (what MUI RTL apps set on an ancestor) the corners mirror — `top-left`
- * renders on the visual right — matching what an RTL layout expects.
+ * renders on the visual right — matching what an RTL layout expects. Note
+ * that mirroring follows the element's computed CSS `direction` (the `dir`
+ * attribute), not `theme.direction` alone — MUI RTL setups must still set
+ * `dir="rtl"` on `<html>` or an ancestor.
  */
 export const CONTROL_OFFSETS: Record<
   ControlPosition,
