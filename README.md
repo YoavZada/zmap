@@ -41,6 +41,9 @@ work. It stays close to MapLibre GL, so you can always reach the raw map instanc
 - 🟣 **Clustering** — native MapLibre clustering rendered as themed MUI bubbles, click-to-expand.
 - 🗂️ **Layers** — group overlays into a themed `LayerControl` panel to toggle visibility; bulk-render data with `PointLayer`, `HeatmapLayer` and choropleth `ShapeLayer`.
 - 🔌 **Pluggable providers** — CARTO, OpenStreetMap, VersaTiles and OpenTopoMap built in; MapTiler and Esri ArcGIS with a key; or drop in any MapLibre style URL/spec.
+- 🖱️ **Hover** — `onHover` + `hoverHighlight` on every GL layer component, backed by a stable per-feature id.
+- 🌍 **Localization & RTL** — translate every built-in string (`localeText`, ship-ready `enUS`/`heIL`), locale-aware number formatting, and controls that mirror under `dir="rtl"`.
+- 🧪 **Testing kit** — `zmapgl/testing` ships the library's own `FakeMap` double for Vitest, no hand-rolled maplibre-gl mock needed.
 - 🟦 **Fully typed** — written in TypeScript, ships its own types.
 
 ## Installation
@@ -159,6 +162,15 @@ for development:
   `arcgis` factories, or any MapLibre-compatible source (Stadia Maps,
   self-hosted). You're responsible for complying
   with the chosen provider's usage policy and attribution.
+
+## Guides
+
+Beyond the component reference, the docs site has four standalone guides:
+
+- [Troubleshooting](https://yoavzada.github.io/zmap/guides/troubleshooting) — symptom, cause, and fix for blank maps, layers that vanish on theme toggle, hover that does nothing, and packaging gotchas.
+- [Testing](https://yoavzada.github.io/zmap/guides/testing) — unit testing with `zmapgl/testing` (Vitest), and the structure-only philosophy behind the e2e suite.
+- [Accessibility](https://yoavzada.github.io/zmap/guides/accessibility) — what ships out of the box, translating every aria-label, and what's left for you to get right.
+- [Localization & RTL](https://yoavzada.github.io/zmap/guides/i18n) — `localeText`, number formatting, the RTL text plugin, and control mirroring under `dir="rtl"`.
 
 ## Development
 
