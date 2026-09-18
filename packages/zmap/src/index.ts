@@ -168,6 +168,11 @@ export {
   registerPmtilesProtocol,
   isPmtilesRegistered,
 } from "./providers/pmtiles";
+export {
+  registerRtlTextPlugin,
+  isRtlTextPluginRegistered,
+  DEFAULT_RTL_TEXT_PLUGIN_URL,
+} from "./providers/rtlTextPlugin";
 
 // Locales
 export { enUS, heIL } from "./locales";

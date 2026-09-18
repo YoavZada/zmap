@@ -22,6 +22,7 @@ import maplibregl, {
 import Box, { type BoxProps } from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 import { MapContext, type MapErrorKind } from "../../context/MapContext";
 import { LayerRegistryProvider } from "../../context/LayerRegistryContext";
 import { PortalContainerContext } from "../../context/PortalContainerContext";
@@ -36,6 +37,7 @@ import { enUS } from "../../locales";
 import type { ZmapLocaleText } from "../../locales";
 import { providerKey, resolveStyle, type MapStyleInput } from "../../providers";
 import { registerPmtilesProtocol, usesPmtiles } from "../../providers/pmtiles";
+import { registerRtlTextPlugin } from "../../providers/rtlTextPlugin";
 import { toError } from "../../utils/errors";
 import type { LngLatTuple } from "../../utils/geojson";
 import MapErrorPanel from "./components/MapErrorPanel";
@@ -165,6 +167,13 @@ export interface MapProps
    * which overrides MapLibre's own UI strings.
    */
   numberLocale?: string;
+  /**
+   * Load MapLibre's RTL text plugin so Hebrew/Arabic basemap labels render
+   * correctly. `true` uses the default CDN URL, a string is a custom URL, or
+   * `false` never loads it. Default: enabled when the MUI theme `direction`
+   * is "rtl". Loaded lazily, once per page.
+   */
+  rtlTextPlugin?: boolean | string;
   /**
    * CSS cursor over the map canvas. Layer hover cursors (pointer) still take
    * precedence while hovering. Reactive.
@@ -316,6 +325,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     locale,
     localeText,
     numberLocale,
+    rtlTextPlugin,
     cursor,
     mapOptions,
     projection = "mercator",
@@ -357,6 +367,8 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
 
   const mode = useColorScheme(colorScheme);
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+  const theme = useTheme();
+  const wantsRtl = rtlTextPlugin ?? theme.direction === "rtl";
 
   // Keep latest handlers without re-creating the map or re-subscribing.
   const onLoadRef = useRef(onLoad);
@@ -409,6 +421,15 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     if (!containerRef.current) return;
     const container = containerRef.current;
     const resolvedStyle = resolveStyle(provider, mode);
+
+    if (wantsRtl) {
+      // Fire-and-forget: setRTLTextPlugin(url, true) is lazy, so this never
+      // blocks map creation — it only defers the plugin script fetch until
+      // MapLibre first needs to shape RTL text.
+      void registerRtlTextPlugin(
+        typeof rtlTextPlugin === "string" ? rtlTextPlugin : undefined,
+      ).catch((err) => reportError(toError(err), "runtime"));
+    }
 
     let cancelled = false;
     let instance: maplibregl.Map | null = null;

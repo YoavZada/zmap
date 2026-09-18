@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { createRef, type FC } from "react";
 import type maplibregl from "maplibre-gl";
+import maplibreglRuntime from "maplibre-gl";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useMapContext } from "../../context/useMap";
 import { usePortalContainer } from "../../context/usePortalContainer";
 import {
@@ -12,9 +14,13 @@ import {
   setFakeMapConstructError,
 } from "../../test/mockMaplibre";
 import PointLayer from "../PointLayer";
+import { DEFAULT_RTL_TEXT_PLUGIN_URL } from "../../providers/rtlTextPlugin";
 import Map, { type MapRef } from "./Map";
 
 vi.mock("maplibre-gl", () => import("../../test/mockMaplibre"));
+
+const setRTLTextPluginMock =
+  maplibreglRuntime.setRTLTextPlugin as unknown as ReturnType<typeof vi.fn>;
 
 const loadMap = () => {
   const map = lastFakeMap();
@@ -616,5 +622,50 @@ describe("Map", () => {
       expect(screen.queryByRole("status")).toBeNull();
       setFakeMapConstructError(null);
     });
+  });
+});
+
+describe("Map RTL text plugin", () => {
+  beforeEach(() => {
+    setRTLTextPluginMock.mockClear();
+  });
+
+  it("registers the RTL plugin when theme.direction is rtl", () => {
+    const theme = createTheme({ direction: "rtl" });
+    render(
+      <ThemeProvider theme={theme}>
+        <Map />
+      </ThemeProvider>,
+    );
+    expect(setRTLTextPluginMock).toHaveBeenCalledTimes(1);
+    expect(setRTLTextPluginMock).toHaveBeenCalledWith(
+      DEFAULT_RTL_TEXT_PLUGIN_URL,
+      true,
+    );
+  });
+
+  it("skips it for ltr themes", () => {
+    const theme = createTheme({ direction: "ltr" });
+    render(
+      <ThemeProvider theme={theme}>
+        <Map />
+      </ThemeProvider>,
+    );
+    expect(setRTLTextPluginMock).not.toHaveBeenCalled();
+  });
+
+  it("rtlTextPlugin={false} never registers even under rtl", () => {
+    const theme = createTheme({ direction: "rtl" });
+    render(
+      <ThemeProvider theme={theme}>
+        <Map rtlTextPlugin={false} />
+      </ThemeProvider>,
+    );
+    expect(setRTLTextPluginMock).not.toHaveBeenCalled();
+  });
+
+  it('rtlTextPlugin="https://x" passes the URL', () => {
+    render(<Map rtlTextPlugin="https://x" />);
+    expect(setRTLTextPluginMock).toHaveBeenCalledWith("https://x", true);
   });
 });

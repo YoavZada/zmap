@@ -1,19 +1,13 @@
 import type { SxProps, Theme } from "@mui/material/styles";
 import type { ControlPosition } from "../MapControls";
-
-const OFFSETS: Record<ControlPosition, Record<string, number>> = {
-  "top-left": { top: 8, left: 8 },
-  "top-right": { top: 8, right: 8 },
-  "bottom-left": { bottom: 8, left: 8 },
-  "bottom-right": { bottom: 8, right: 8 },
-};
+import { CONTROL_OFFSETS } from "../../utils/controlPosition";
 
 const root = (position: ControlPosition): SxProps<Theme> => ({
   position: "absolute",
   zIndex: 2,
   width: 280,
   maxWidth: "calc(100% - 16px)",
-  ...OFFSETS[position],
+  ...CONTROL_OFFSETS[position],
 });
 
 const styles: {
