@@ -23,6 +23,10 @@ import ApiPage from "./pages/ApiPage";
 import ChangelogPage from "./pages/ChangelogPage";
 import NextjsGuidePage from "./pages/NextjsGuidePage";
 import ReactMapGlGuidePage from "./pages/ReactMapGlGuidePage";
+import TroubleshootingGuidePage from "./pages/TroubleshootingGuidePage";
+import TestingGuidePage from "./pages/TestingGuidePage";
+import AccessibilityGuidePage from "./pages/AccessibilityGuidePage";
+import LocalizationGuidePage from "./pages/LocalizationGuidePage";
 import PlaygroundPage from "./pages/PlaygroundPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
@@ -52,6 +56,16 @@ const App: FC = () => {
         <Route path="/changelog" element={<ChangelogPage />} />
         <Route path="/guides/nextjs" element={<NextjsGuidePage />} />
         <Route path="/guides/react-map-gl" element={<ReactMapGlGuidePage />} />
+        <Route
+          path="/guides/troubleshooting"
+          element={<TroubleshootingGuidePage />}
+        />
+        <Route path="/guides/testing" element={<TestingGuidePage />} />
+        <Route
+          path="/guides/accessibility"
+          element={<AccessibilityGuidePage />}
+        />
+        <Route path="/guides/i18n" element={<LocalizationGuidePage />} />
         <Route path="/playground" element={<PlaygroundPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

@@ -47,6 +47,32 @@ export const ROUTES: DocsRoute[] = [
     hasMap: false,
     hasGlLayers: false,
   },
+  {
+    path: "/guides/troubleshooting",
+    name: "guide-troubleshooting",
+    hasMap: false,
+    hasGlLayers: false,
+  },
+  {
+    path: "/guides/testing",
+    name: "guide-testing",
+    hasMap: false,
+    hasGlLayers: false,
+  },
+  {
+    path: "/guides/accessibility",
+    name: "guide-accessibility",
+    hasMap: false,
+    hasGlLayers: false,
+  },
+  // The Hebrew RTL demo mounts a small live map, but it's a themed basemap
+  // with no custom GL layers/sources.
+  {
+    path: "/guides/i18n",
+    name: "guide-i18n",
+    hasMap: true,
+    hasGlLayers: false,
+  },
   // Terrain only calls addSource + setTerrain/setSky — no zmap-* style layer
   // and no geojson source, so it can't satisfy hasGlLayers's customGlWork()
   // check (see terrain.spec.ts for its dedicated structural coverage).

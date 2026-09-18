@@ -8,6 +8,7 @@ import type {
 import type { GeoJSON } from "geojson";
 import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
 import { useLayerClick } from "../../hooks/useLayerClick";
+import { useLayerHover } from "../../hooks/useLayerHover";
 import { resolvePaletteColor } from "../../utils/color";
 import { warnDeprecatedProp } from "../../utils/deprecation";
 import {
@@ -19,10 +20,19 @@ import {
   isChoroplethSpec,
   type ChoroplethSpec,
 } from "../../utils/choropleth";
+import {
+  hoverCase,
+  resolveHoverHighlight,
+  type HoverHighlight,
+} from "../../utils/hoverPaint";
 
 /** Props for `<ExtrusionLayer>`, which extrudes GeoJSON polygons into 3D prisms. */
 export type ExtrusionLayerProps = {
-  /** Unique source/layer id. Auto-generated when omitted. */
+  /**
+   * Unique source/layer id. Auto-generated when omitted. Sub-layers are
+   * `${id}-<role>`; see `layerIds()`. Auto-generated ids are not
+   * predictable — pass `id` when you need to reference the layers.
+   */
   id?: string;
   /** GeoJSON polygons to extrude. */
   data: GeoJSON;
@@ -50,10 +60,29 @@ export type ExtrusionLayerProps = {
   opacity?: number;
   /** Insert the layer before this existing layer id (e.g. a label layer). */
   beforeId?: string;
+  /**
+   * Feature property to use as the stable feature id (MapLibre `promoteId`).
+   * When omitted, ids are generated per feature (`generateId`), which is
+   * enough for hover / feature-state highlighting.
+   */
+  featureId?: string;
   /** Paint/layout patches merged into the generated fill-extrusion layer. */
   layerOverrides?: { extrusion?: LayerOverride };
   /** Fired with the clicked feature and the raw map event. */
   onClick?: (feature: MapGeoJSONFeature, event: MapLayerMouseEvent) => void;
+  /** Fired with the hovered feature (null when the pointer leaves) and the raw map event. */
+  onHover?: (
+    feature: MapGeoJSONFeature | null,
+    event: MapLayerMouseEvent,
+  ) => void;
+  /**
+   * Highlight the hovered feature: `true` for theme defaults (stronger fill,
+   * `text.primary` outline), or explicit colors/opacity. Uses feature-state,
+   * so it works with the default generated ids. Only `fill-extrusion-color`
+   * is wrapped — `fill-extrusion-opacity` isn't a data-driven property in
+   * the style spec.
+   */
+  hoverHighlight?: boolean | HoverHighlight;
 };
 
 /**
@@ -74,8 +103,11 @@ const ExtrusionLayer: FC<ExtrusionLayerProps> = ({
   fillOpacity,
   opacity,
   beforeId,
+  featureId,
   layerOverrides,
   onClick,
+  onHover,
+  hoverHighlight,
 }) => {
   const theme = useTheme();
   const reactId = useId();
@@ -112,6 +144,18 @@ const ExtrusionLayer: FC<ExtrusionLayerProps> = ({
     [heightProperty, heightScale, height],
   );
 
+  const highlight = useMemo(
+    () =>
+      resolveHoverHighlight(theme, hoverHighlight, {
+        // `fill` is a choropleth expression, not a flat color, when
+        // `fillColor`/`color` is a spec — omit the default so the color
+        // stays unwrapped unless the caller gives an explicit override.
+        fillColor: typeof fill === "string" ? fill : undefined,
+        fillOpacity: resolvedOpacity,
+      }),
+    [hoverHighlight, theme, fill, resolvedOpacity],
+  );
+
   const layers = useMemo<LayerInput[]>(
     () =>
       applyLayerOverrides(
@@ -120,19 +164,37 @@ const ExtrusionLayer: FC<ExtrusionLayerProps> = ({
             id: layerId,
             type: "fill-extrusion",
             paint: {
-              "fill-extrusion-color": fill,
+              "fill-extrusion-color":
+                highlight?.fillColor !== undefined
+                  ? hoverCase(highlight.fillColor, fill)
+                  : fill,
               "fill-extrusion-height": heightExpr,
               "fill-extrusion-base": base,
+              // Not data-driven in the style spec — cannot be wrapped in a
+              // feature-state case, so it stays flat even when highlighted.
               "fill-extrusion-opacity": resolvedOpacity,
             },
           },
         ],
         layerOverrides,
       ),
-    [layerId, fill, heightExpr, base, resolvedOpacity, layerOverrides],
+    [
+      layerId,
+      fill,
+      heightExpr,
+      base,
+      resolvedOpacity,
+      highlight,
+      layerOverrides,
+    ],
   );
 
-  useMapLayer({ id: baseId, data, layers, beforeId });
+  const sourceOptions = useMemo(
+    () => (featureId ? { promoteId: featureId } : { generateId: true }),
+    [featureId],
+  );
+
+  useMapLayer({ id: baseId, data, layers, beforeId, sourceOptions });
 
   useLayerClick(
     layerId,
@@ -143,6 +205,13 @@ const ExtrusionLayer: FC<ExtrusionLayerProps> = ({
         }
       : undefined,
   );
+
+  useLayerHover({
+    layerIds: [layerId],
+    sourceId: baseId,
+    featureState: Boolean(hoverHighlight),
+    onHover,
+  });
 
   return null;
 };

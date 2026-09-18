@@ -4,7 +4,9 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { resolvePaletteColor } from "../../utils/color";
+import { useLocaleText } from "../../context/useLocaleText";
 import type { ChoroplethSpec } from "../../utils/choropleth";
+import type { ZmapLocaleText } from "../../locales";
 import type { ControlPosition } from "../MapControls";
 import Styles from "./legend.style";
 
@@ -89,12 +91,13 @@ function GradientRamp({
 function stepBands(
   stops: ResolvedStop[],
   format: (value: number) => string,
+  t: ZmapLocaleText,
 ): LegendItem[] {
   return stops.map((s, i) => {
     let label: string;
-    if (i === 0) label = `< ${format(stops[1]?.value ?? s.value)}`;
-    else if (i === stops.length - 1) label = `≥ ${format(s.value)}`;
-    else label = `${format(s.value)} – ${format(stops[i + 1].value)}`;
+    if (i === 0) label = t.legendBelow(format(stops[1]?.value ?? s.value));
+    else if (i === stops.length - 1) label = t.legendAtLeast(format(s.value));
+    else label = t.legendRange(format(s.value), format(stops[i + 1].value));
     return { color: s.color, label };
   });
 }
@@ -117,6 +120,7 @@ const Legend: FC<LegendProps> = ({
   formatValue = (value) => String(value),
 }) => {
   const theme = useTheme();
+  const t = useLocaleText();
 
   let body: ReactNode = null;
 
@@ -136,7 +140,7 @@ const Legend: FC<LegendProps> = ({
     }));
     body =
       spec.type === "step" ? (
-        <SwatchList items={stepBands(stops, formatValue)} />
+        <SwatchList items={stepBands(stops, formatValue, t)} />
       ) : (
         <GradientRamp stops={stops} format={formatValue} />
       );
@@ -144,14 +148,16 @@ const Legend: FC<LegendProps> = ({
 
   if (!body) return null;
 
+  const prefix = title ? `${titleText(title)}: ` : "";
   const a11yLabel =
     items && items.length > 0
-      ? `${title ? `${titleText(title)}: ` : ""}legend, ${items.length} categories`
+      ? `${prefix}${t.legendCategories(items.length)}`
       : spec && spec.stops.length > 0
-        ? `${title ? `${titleText(title)}: ` : ""}color scale from ${formatValue(
-            spec.stops[0][0],
-          )} to ${formatValue(spec.stops[spec.stops.length - 1][0])}`
-        : "legend";
+        ? `${prefix}${t.legendColorScale(
+            formatValue(spec.stops[0][0]),
+            formatValue(spec.stops[spec.stops.length - 1][0]),
+          )}`
+        : t.legendLabel;
 
   return (
     <Paper

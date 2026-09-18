@@ -2,6 +2,11 @@ import { fileURLToPath } from "node:url";
 import { defineConfig, devices } from "@playwright/test";
 
 const CI = !!process.env.CI;
+// Set by the sharded `e2e` job once `docs-build` has already produced
+// apps/docs/dist and uploaded it as an artifact — the shard downloads it and
+// only needs to serve it, not rebuild it (rebuilding per-shard would waste
+// CI minutes and risk each shard building a slightly different bundle).
+const PREBUILT = !!process.env.E2E_PREBUILT;
 const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
 
 // Hybrid server strategy: locally the suite drives the Vite dev server
@@ -30,7 +35,11 @@ export default defineConfig({
   // Map pages hold several software-rendered WebGL contexts each — more
   // workers than this just thrash CPU and produce timeout flakes.
   workers: CI ? 2 : 4,
-  reporter: CI ? [["list"], ["html", { open: "never" }]] : [["list"]],
+  // CI shards each run into a separate process (see the e2e job's matrix) —
+  // "blob" is Playwright's intermediate format, merged into one HTML report
+  // by the e2e-report job. Locally there's only one run, so plain "list" is
+  // enough.
+  reporter: CI ? [["list"], ["blob"]] : [["list"]],
   use: {
     baseURL,
     trace: "on-first-retry",
@@ -40,9 +49,11 @@ export default defineConfig({
   webServer: process.env.E2E_BASE_URL
     ? undefined
     : {
-        command: CI
-          ? "pnpm --filter docs build && pnpm --filter docs preview --port 4173 --strictPort"
-          : "pnpm --filter docs dev --port 5173 --strictPort",
+        command: PREBUILT
+          ? "pnpm --filter docs preview --port 4173 --strictPort"
+          : CI
+            ? "pnpm --filter docs build && pnpm --filter docs preview --port 4173 --strictPort"
+            : "pnpm --filter docs dev --port 5173 --strictPort",
         url: baseURL,
         reuseExistingServer: !CI,
         timeout: 300_000,

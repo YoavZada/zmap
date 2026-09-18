@@ -1,0 +1,68 @@
+name: Bug report
+description: Report a problem with zmapgl
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened? What did you expect instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: >
+        A minimal repro — a code snippet, a StackBlitz/CodeSandbox link, or
+        steps to reproduce.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: input
+    id: zmapgl-version
+    attributes:
+      label: zmapgl version
+      placeholder: "0.9.0"
+    validations:
+      required: true
+
+  - type: input
+    id: react-version
+    attributes:
+      label: react version
+      placeholder: "19.2.0"
+    validations:
+      required: true
+
+  - type: input
+    id: mui-version
+    attributes:
+      label: "@mui/material version"
+      placeholder: "7.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: maplibre-version
+    attributes:
+      label: maplibre-gl version
+      placeholder: "5.15.0"
+    validations:
+      required: true
+
+  - type: input
+    id: browser-os
+    attributes:
+      label: Browser / OS
+      placeholder: "Chrome 129 / macOS 15"
+    validations:
+      required: true

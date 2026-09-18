@@ -3,21 +3,23 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
 import StraightenOutlined from "@mui/icons-material/StraightenOutlined";
 import SquareFootOutlined from "@mui/icons-material/SquareFootOutlined";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import { useDraw } from "../../hooks/useDraw";
+import { useLocale, useLocaleText } from "../../context/useLocaleText";
 import {
   formatArea,
   formatDistance,
   lineDistance,
+  localeUnitLabels,
   polygonArea,
   type MeasureUnit,
 } from "../../utils/measure";
 import type { LngLatTuple } from "../../utils/geojson";
+import ControlTooltip from "../ControlTooltip";
 import type { ControlPosition } from "../MapControls";
 import DrawLayers from "../DrawLayers";
 import KeyboardCrosshair from "../KeyboardCrosshair";
@@ -40,9 +42,9 @@ export type MeasureControlProps = {
   color?: string;
 };
 
-const MODE_META: Record<MeasureMode, { icon: ElementType; label: string }> = {
-  line: { icon: StraightenOutlined, label: "Measure distance" },
-  polygon: { icon: SquareFootOutlined, label: "Measure area" },
+const MODE_ICONS: Record<MeasureMode, ElementType> = {
+  line: StraightenOutlined,
+  polygon: SquareFootOutlined,
 };
 
 type Readout = { icon: ElementType; text: string };
@@ -59,6 +61,13 @@ const MeasureControl: FC<MeasureControlProps> = ({
   unit = "metric",
   color = "secondary.main",
 }) => {
+  const t = useLocaleText();
+  const locale = useLocale();
+  const units = useMemo(() => localeUnitLabels(t), [t]);
+  const modeLabel: Record<MeasureMode, string> = {
+    line: t.measureDistance,
+    polygon: t.measureArea,
+  };
   const reactId = useId();
   const idPrefix = `zmap-measure-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const { mode, setMode, features, draft, cursor, isDrawing, clear, remove } =
@@ -73,7 +82,7 @@ const MeasureControl: FC<MeasureControlProps> = ({
             {
               id: f.properties.id,
               icon: StraightenOutlined,
-              text: formatDistance(meters, unit),
+              text: formatDistance(meters, unit, { locale, units }),
             },
           ];
         }
@@ -86,13 +95,13 @@ const MeasureControl: FC<MeasureControlProps> = ({
             {
               id: f.properties.id,
               icon: SquareFootOutlined,
-              text: formatArea(polygonArea(ring), unit),
+              text: formatArea(polygonArea(ring), unit, { locale, units }),
             },
           ];
         }
         return [];
       }),
-    [features, unit],
+    [features, unit, locale, units],
   );
 
   const live = useMemo<Readout | null>(() => {
@@ -101,17 +110,17 @@ const MeasureControl: FC<MeasureControlProps> = ({
     if (mode === "line") {
       return {
         icon: StraightenOutlined,
-        text: formatDistance(lineDistance(path), unit),
+        text: formatDistance(lineDistance(path), unit, { locale, units }),
       };
     }
     if (mode === "polygon" && path.length >= 3) {
       return {
         icon: SquareFootOutlined,
-        text: formatArea(polygonArea(path), unit),
+        text: formatArea(polygonArea(path), unit, { locale, units }),
       };
     }
     return null;
-  }, [isDrawing, cursor, draft, mode, unit]);
+  }, [isDrawing, cursor, draft, mode, unit, locale, units]);
 
   const hasContent = features.length > 0 || draft.length > 0;
 
@@ -121,10 +130,11 @@ const MeasureControl: FC<MeasureControlProps> = ({
         <Stack direction="column" divider={<Divider flexItem />}>
           <Stack direction="column" divider={<Divider flexItem />}>
             {modes.map((m) => {
-              const { icon: Icon, label } = MODE_META[m];
+              const Icon = MODE_ICONS[m];
+              const label = modeLabel[m];
               const active = mode === m;
               return (
-                <Tooltip key={m} title={label} placement="right">
+                <ControlTooltip key={m} title={label} placement="right">
                   <IconButton
                     size="small"
                     onClick={() => setMode(active ? null : m)}
@@ -134,21 +144,21 @@ const MeasureControl: FC<MeasureControlProps> = ({
                   >
                     <Icon fontSize="small" />
                   </IconButton>
-                </Tooltip>
+                </ControlTooltip>
               );
             })}
           </Stack>
 
           {hasContent && (
-            <Tooltip title="Clear measurements" placement="right">
+            <ControlTooltip title={t.clearMeasurements} placement="right">
               <IconButton
                 size="small"
                 onClick={clear}
-                aria-label="Clear measurements"
+                aria-label={t.clearMeasurements}
               >
                 <DeleteOutline fontSize="small" />
               </IconButton>
-            </Tooltip>
+            </ControlTooltip>
           )}
         </Stack>
       </Paper>

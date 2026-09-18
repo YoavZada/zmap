@@ -1,0 +1,14 @@
+# Normalize line endings: LF in the repo and in the working tree on every OS.
+# Biome formats to LF; without this, Windows checkouts with core.autocrlf=true
+# drift to CRLF and repo-wide formatting rewrites hundreds of files.
+* text=auto eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary

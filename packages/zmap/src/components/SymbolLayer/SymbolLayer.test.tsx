@@ -120,4 +120,30 @@ describe("SymbolLayer", () => {
     expect(layout["symbol-sort-key"]).toBe(1);
     expect(layout["text-field"]).toEqual(["get", "label"]); // generated kept
   });
+
+  it("hoverHighlight wraps text-color and text-halo-color", () => {
+    const map = new FakeMap();
+    renderSymbols(map, { hoverHighlight: true });
+
+    const paint = map.getLayer("cities-symbol")!.paint as Record<
+      string,
+      unknown
+    >;
+    expect((paint["text-color"] as unknown[])[0]).toBe("case");
+    expect((paint["text-halo-color"] as unknown[])[0]).toBe("case");
+  });
+
+  it("reports hovers with the original point, index, then null/-1 on leave", () => {
+    const map = new FakeMap();
+    const onHover = vi.fn();
+    renderSymbols(map, { onHover });
+
+    map.fireLayer("mousemove", "cities-symbol", {
+      features: [{ id: 0, properties: { _idx: 1 } }],
+    });
+    expect(onHover).toHaveBeenCalledWith(POINTS[1], 1, expect.anything());
+
+    map.fireLayer("mouseleave", "cities-symbol");
+    expect(onHover).toHaveBeenLastCalledWith(null, -1, undefined);
+  });
 });

@@ -11,21 +11,34 @@ import {
 import maplibregl, {
   type AnimationOptions,
   type FitBoundsOptions,
+  type GestureOptions,
   type LngLatBoundsLike,
   type Map as MapLibreMap,
   type MapLibreEvent,
   type MapMouseEvent,
   type MapOptions,
+  type RequestTransformFunction,
 } from "maplibre-gl";
 import Box, { type BoxProps } from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { MapContext } from "../../context/MapContext";
+import { useTheme } from "@mui/material/styles";
+import { MapContext, type MapErrorKind } from "../../context/MapContext";
 import { LayerRegistryProvider } from "../../context/LayerRegistryContext";
+import { PortalContainerContext } from "../../context/PortalContainerContext";
+import {
+  LocaleContext,
+  type LocaleContextValue,
+} from "../../context/LocaleContext";
 import { useColorScheme, type ColorScheme } from "../../hooks/useColorScheme";
 import { useStyleReapply } from "../../hooks/useStyleReapply";
+import { useUpdateEffect } from "../../hooks/useUpdateEffect";
+import { enUS } from "../../locales";
+import type { ZmapLocaleText } from "../../locales";
 import { providerKey, resolveStyle, type MapStyleInput } from "../../providers";
 import { registerPmtilesProtocol, usesPmtiles } from "../../providers/pmtiles";
+import { registerRtlTextPlugin } from "../../providers/rtlTextPlugin";
+import { toError } from "../../utils/errors";
 import type { LngLatTuple } from "../../utils/geojson";
 import MapErrorPanel from "./components/MapErrorPanel";
 import MapLoader, { type MapLoaderProps } from "./components/MapLoader";
@@ -53,7 +66,13 @@ export type MapViewEventHandler = (
 export interface MapProps
   extends Omit<
     BoxProps,
-    "onLoad" | "ref" | "onClick" | "onDoubleClick" | "onContextMenu" | "onError"
+    | "onLoad"
+    | "ref"
+    | "onClick"
+    | "onDoubleClick"
+    | "onContextMenu"
+    | "onError"
+    | "onMouseMove"
   > {
   /**
    * Basemap source: a built-in keyless id ("carto" | "osm" | "versatiles" |
@@ -95,7 +114,7 @@ export interface MapProps
   minZoom?: number;
   /** Highest zoom level the camera allows. */
   maxZoom?: number;
-  /** Allow user pan/zoom/rotate. Default true. */
+  /** Allow user pan/zoom/rotate. Default true. Reactive. */
   interactive?: boolean;
   /**
    * Let the map wrap/repeat horizontally and scroll forever. Default false —
@@ -105,6 +124,67 @@ export interface MapProps
   infinite?: boolean;
   /** Hide MapLibre's built-in attribution control (attribute elsewhere). */
   hideAttribution?: boolean;
+  /**
+   * Rewrite tile, style, glyph and sprite requests — add auth headers, sign
+   * URLs, proxy hosts. Creation-time only.
+   */
+  transformRequest?: RequestTransformFunction;
+  /**
+   * Keep the WebGL drawing buffer so `map.getCanvas().toDataURL()` works
+   * (screenshots/export). Costs some GPU memory. Creation-time only. (Passed
+   * to MapLibre as `canvasContextAttributes.preserveDrawingBuffer`.)
+   */
+  preserveDrawingBuffer?: boolean;
+  /** Constrain panning so the viewport stays within these bounds. Reactive. */
+  maxBounds?: LngLatBoundsLike;
+  /** Lowest allowed camera tilt in degrees (0-85). Reactive. */
+  minPitch?: number;
+  /** Highest allowed camera tilt in degrees (0-85). Reactive. */
+  maxPitch?: number;
+  /**
+   * Require Ctrl/Cmd + scroll (and two fingers on touch) to zoom — polite for
+   * maps embedded in scrolling pages. Creation-time only.
+   */
+  cooperativeGestures?: boolean | GestureOptions;
+  /**
+   * Sync the camera to the URL hash (`#zoom/lat/lng/bearing/pitch`); a string
+   * uses that query-param name instead. Creation-time only.
+   */
+  hash?: boolean | string;
+  /**
+   * Override MapLibre's built-in UI strings (attribution toggle,
+   * cooperative-gesture hints, ...). Creation-time only.
+   */
+  locale?: Record<string, string>;
+  /**
+   * Override any built-in zmap UI string (tooltips, aria-labels, menu
+   * items). Partial; merged over `enUS`. Ship-ready locales: `enUS`, `heIL`.
+   * Pass a stable reference (a module constant or `useMemo`) — the merged
+   * strings are keyed on this object's identity, so a fresh inline literal on
+   * every render re-renders every localized control.
+   */
+  localeText?: Partial<ZmapLocaleText>;
+  /**
+   * BCP-47 tag (e.g. "he-IL") for number formatting in the scale bar and
+   * measurements. Defaults to the browser locale. Distinct from `locale`,
+   * which overrides MapLibre's own UI strings.
+   */
+  numberLocale?: string;
+  /**
+   * Load MapLibre's RTL text plugin so Hebrew/Arabic basemap labels render
+   * correctly. `true` uses the default CDN URL, a string is a custom URL, or
+   * `false` never loads it. Default: enabled when the MUI theme `direction`
+   * is "rtl". Loaded lazily, once per page. Evaluated when the map is
+   * created — the plugin is page-global, so an app that mounts LTR and later
+   * switches its theme to RTL should pass `rtlTextPlugin` explicitly (or call
+   * `registerRtlTextPlugin()` itself).
+   */
+  rtlTextPlugin?: boolean | string;
+  /**
+   * CSS cursor over the map canvas. Layer hover cursors (pointer) still take
+   * precedence while hovering. Reactive.
+   */
+  cursor?: string;
   /** Escape hatch for any other MapLibre map option. */
   mapOptions?: Partial<MapOptions>;
   /**
@@ -116,15 +196,17 @@ export interface MapProps
   /** Called once with the map instance after the "load" event. */
   onLoad?: (map: maplibregl.Map) => void;
   /**
-   * Called when the map instance fails to initialize (e.g. WebGL unavailable)
-   * or emits a runtime error event (e.g. a tile request failing). On
-   * initialization failure, a themed fallback replaces the map — see
-   * `fallback` to customize it.
+   * Fired for initialization failures (`"init"`), MapLibre runtime errors
+   * (`"runtime"`), failed tile/source requests (`"tile"`, deduped),
+   * layer/source spec failures (`"layer"`), style failures (`"style"`), and
+   * WebGL context loss (`"webgl"`).
    */
-  onError?: (error: Error) => void;
+  onError?: (error: Error, kind: MapErrorKind) => void;
   /**
    * Rendered in place of the map when it fails to initialize. Defaults to a
-   * themed panel with a "Unable to load the map" message.
+   * themed panel with a "Unable to load the map" message. Also shown while
+   * the WebGL context is lost (e.g. a GPU reset or the laptop waking from
+   * sleep) — children remount once the context is restored.
    */
   fallback?: ReactNode;
   /**
@@ -151,6 +233,16 @@ export interface MapProps
   onMoveEnd?: MapViewEventHandler;
   /** Fires once when a zoom gesture/animation settles. */
   onZoomEnd?: MapViewEventHandler;
+  /** Fires when the map has finished rendering and no camera transition or tile load is pending — the "settled" signal for screenshots, analytics, or tests. */
+  onIdle?: (event: MapLibreEvent) => void;
+  /** Fires continuously while zooming (wheel, pinch, buttons). Receives the camera state like `onMove`. */
+  onZoom?: MapViewEventHandler;
+  /** Fires when a basemap style finishes loading — on first load and after every theme swap. */
+  onStyleLoad?: (event: MapLibreEvent) => void;
+  /** Pointer movement over the map; `event.lngLat` is the coordinate under the cursor. */
+  onMouseMove?: (event: MapMouseEvent) => void;
+  /** Fires after the map resized to fit its container (MapLibre already observes the container for you). */
+  onResize?: (event: MapLibreEvent) => void;
   /** Map content — rendered once the map has loaded. Typically markers, popups, controls, and layers. */
   children?: ReactNode;
 }
@@ -165,6 +257,20 @@ const toViewState = (m: maplibregl.Map): Required<MapViewState> => {
     pitch: m.getPitch(),
   };
 };
+
+// Gesture handlers toggled by the `interactive` prop — every MapLibre handler
+// with an enable()/disable() pair. cooperativeGestures is a separate,
+// creation-time-only constructor option and is deliberately not in this list.
+const GESTURE_HANDLERS = [
+  "dragPan",
+  "scrollZoom",
+  "boxZoom",
+  "dragRotate",
+  "keyboard",
+  "doubleClickZoom",
+  "touchZoomRotate",
+  "touchPitch",
+] as const;
 
 // Camera deltas below these are treated as "already there" — they're well under
 // anything visible, and they break the onMoveEnd → setState → view feedback loop.
@@ -189,12 +295,17 @@ const matchesCamera = (m: maplibregl.Map, view: MapViewState): boolean => {
   return true;
 };
 
+/** The value a `<Map ref>` receives: the raw MapLibre instance, or `null` before it's created. */
+export type MapRef = maplibregl.Map | null;
+
 /**
  * The map container. Creates a MapLibre GL instance, exposes it via context to
  * children (markers, controls, layers…), and swaps the basemap style when the
  * MUI theme mode changes.
+ *
+ * `ref` receives the raw MapLibre instance once created (`null` before).
  */
-const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
+const Map = forwardRef<MapRef, MapProps>(function Map(
   {
     provider = "carto",
     colorScheme = "auto",
@@ -210,6 +321,18 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     interactive = true,
     infinite = false,
     hideAttribution = false,
+    transformRequest,
+    preserveDrawingBuffer,
+    maxBounds,
+    minPitch,
+    maxPitch,
+    cooperativeGestures,
+    hash,
+    locale,
+    localeText,
+    numberLocale,
+    rtlTextPlugin,
+    cursor,
     mapOptions,
     projection = "mercator",
     onLoad,
@@ -223,6 +346,11 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     onMove,
     onMoveEnd,
     onZoomEnd,
+    onIdle,
+    onZoom,
+    onStyleLoad,
+    onMouseMove,
+    onResize,
     children,
     sx,
     ...boxProps
@@ -234,15 +362,38 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
   const [map, setMap] = useState<maplibregl.Map | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [mapError, setMapError] = useState<Error | null>(null);
+  // The map's root element, shared through PortalContainerContext so MUI
+  // overlays (tooltips, menus, the geocoder listbox) can portal into it
+  // instead of document.body — which fullscreen leaves them stranded outside.
+  const [containerEl, setContainerEl] = useState<HTMLElement | null>(null);
+  const setContainerRef = useCallback((el: HTMLDivElement | null) => {
+    containerRef.current = el;
+    setContainerEl(el);
+  }, []);
 
   const mode = useColorScheme(colorScheme);
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+  const theme = useTheme();
+  const wantsRtl = rtlTextPlugin ?? theme.direction === "rtl";
 
   // Keep latest handlers without re-creating the map or re-subscribing.
   const onLoadRef = useRef(onLoad);
   onLoadRef.current = onLoad;
   const onErrorRef = useRef(onError);
   onErrorRef.current = onError;
+  // Stable identity: read the latest onError via the ref above so this never
+  // needs to be re-created, and can be included in the memoized context value
+  // without ever busting it.
+  const reportError = useCallback(
+    (error: Error, kind: MapErrorKind) => onErrorRef.current?.(error, kind),
+    [],
+  );
+  // Last-reported timestamp per deduped tile-error key
+  // (`${sourceId}|${status}|${message}`) — see the "error" listener below. A
+  // plain object (not `Map`): inside this component's own named function
+  // expression, the identifier `Map` self-references the component, shadowing
+  // the global collection class.
+  const tileErrorsRef = useRef<Record<string, number>>({});
   const handlersRef = useRef({
     onClick,
     onDblClick,
@@ -250,6 +401,11 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     onMove,
     onMoveEnd,
     onZoomEnd,
+    onIdle,
+    onZoom,
+    onStyleLoad,
+    onMouseMove,
+    onResize,
   });
   handlersRef.current = {
     onClick,
@@ -258,6 +414,11 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     onMove,
     onMoveEnd,
     onZoomEnd,
+    onIdle,
+    onZoom,
+    onStyleLoad,
+    onMouseMove,
+    onResize,
   };
 
   // Create the map exactly once.
@@ -266,6 +427,15 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     if (!containerRef.current) return;
     const container = containerRef.current;
     const resolvedStyle = resolveStyle(provider, mode);
+
+    if (wantsRtl) {
+      // Fire-and-forget: setRTLTextPlugin(url, true) is lazy, so this never
+      // blocks map creation — it only defers the plugin script fetch until
+      // MapLibre first needs to shape RTL text.
+      void registerRtlTextPlugin(
+        typeof rtlTextPlugin === "string" ? rtlTextPlugin : undefined,
+      ).catch((err) => reportError(toError(err), "runtime"));
+    }
 
     let cancelled = false;
     let instance: maplibregl.Map | null = null;
@@ -283,22 +453,63 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
           pitch: initialView?.pitch ?? 0,
           minZoom,
           maxZoom,
+          minPitch,
+          maxPitch,
+          maxBounds,
           interactive,
           renderWorldCopies: infinite,
           attributionControl: hideAttribution ? false : undefined,
+          transformRequest,
+          // preserveDrawingBuffer lives under canvasContextAttributes in the
+          // installed maplibre-gl's MapOptions, not as a top-level option.
+          canvasContextAttributes:
+            preserveDrawingBuffer !== undefined
+              ? { preserveDrawingBuffer }
+              : undefined,
+          cooperativeGestures,
+          hash,
+          locale,
           ...mapOptions,
         });
       } catch (err) {
-        const e = err instanceof Error ? err : new Error(String(err));
-        onErrorRef.current?.(e);
+        const e = toError(err);
+        reportError(e, "init");
         setMapError(e);
         return;
       }
       mapRef.current = instance;
       setMap(instance);
-      instance.on("error", (ev: { error?: Error }) =>
-        onErrorRef.current?.(ev?.error ?? new Error("map error")),
-      );
+      instance.on("error", (ev: { error?: unknown; sourceId?: string }) => {
+        const error = toError(ev?.error ?? new Error("map error"));
+        const status = (ev?.error as { status?: unknown })?.status;
+        const isTile = ev?.sourceId !== undefined || typeof status === "number";
+        if (isTile) {
+          const key = `${ev?.sourceId ?? ""}|${status ?? ""}|${error.message}`;
+          const now = Date.now();
+          const tileErrors = tileErrorsRef.current;
+          const last = tileErrors[key];
+          if (last !== undefined && now - last < 5000) return;
+          tileErrors[key] = now;
+          if (Object.keys(tileErrors).length > 200) {
+            for (const [k, t] of Object.entries(tileErrors)) {
+              if (now - t > 60000) delete tileErrors[k];
+            }
+          }
+          reportError(error, "tile");
+          return;
+        }
+        const kind: MapErrorKind = error.message.toLowerCase().includes("style")
+          ? "style"
+          : "runtime";
+        reportError(error, kind);
+      });
+      instance.on("webglcontextlost", () => {
+        const e = new Error("WebGL context lost");
+        e.name = "WebGLContextLost";
+        reportError(e, "webgl");
+        setMapError(e);
+      });
+      instance.on("webglcontextrestored", () => setMapError(null));
       handleLoad = () => {
         setLoaded(true);
         // Tooling affordance (e2e, console debugging): mark the container ready
@@ -367,6 +578,49 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     mapRef.current?.setRenderWorldCopies(infinite);
   }, [infinite]);
 
+  // Reactive camera constraints — already applied at creation (see the create
+  // effect above); these let them change afterwards without recreating the
+  // map. Each skips the mount run via useUpdateEffect.
+  useUpdateEffect(() => {
+    map?.setMinZoom(minZoom ?? null);
+  }, [map, minZoom]);
+  useUpdateEffect(() => {
+    map?.setMaxZoom(maxZoom ?? null);
+  }, [map, maxZoom]);
+  useUpdateEffect(() => {
+    map?.setMinPitch(minPitch ?? null);
+  }, [map, minPitch]);
+  useUpdateEffect(() => {
+    map?.setMaxPitch(maxPitch ?? null);
+  }, [map, maxPitch]);
+
+  // Reactive maxBounds, keyed by value (not identity) so an inline bounds
+  // literal doesn't reapply on every render.
+  const maxBoundsKey = JSON.stringify(maxBounds ?? null);
+  useUpdateEffect(() => {
+    map?.setMaxBounds(maxBounds ?? null);
+  }, [map, maxBoundsKey]);
+
+  // Reactive `interactive` toggle: enable/disable every gesture handler.
+  useUpdateEffect(() => {
+    if (!map) return;
+    for (const h of GESTURE_HANDLERS) {
+      if (interactive) map[h].enable();
+      else map[h].disable();
+    }
+  }, [map, interactive]);
+
+  // CSS cursor over the canvas. Unlike the constraints/interactive effects
+  // above, this must also apply on mount (there's no constructor option for
+  // it), so it's a plain useEffect rather than useUpdateEffect.
+  useEffect(() => {
+    if (!map) return;
+    const c = map.getCanvas();
+    c.style.cursor = cursor ?? "";
+    if (cursor) c.dataset.zmapCursor = cursor;
+    else delete c.dataset.zmapCursor;
+  }, [map, cursor]);
+
   // Apply the projection on load and re-apply after every style swap
   // (setStyle resets projection to the style's declared default).
   useStyleReapply(
@@ -376,6 +630,8 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
       (m: MapLibreMap) => m.setProjection({ type: projection }),
       [projection],
     ),
+    undefined,
+    useCallback((e: Error) => reportError(e, "style"), [reportError]),
   );
 
   // Map-level event props. Subscribed once per map instance; the handlers stay
@@ -392,6 +648,12 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
       h.current.onMoveEnd?.(toViewState(map), e);
     const onZoomEndEv = (e: MapLibreEvent) =>
       h.current.onZoomEnd?.(toViewState(map), e);
+    const onIdleEv = (e: MapLibreEvent) => h.current.onIdle?.(e);
+    const onZoomEv = (e: MapLibreEvent) =>
+      h.current.onZoom?.(toViewState(map), e);
+    const onStyleLoadEv = (e: MapLibreEvent) => h.current.onStyleLoad?.(e);
+    const onMouseMoveEv = (e: MapMouseEvent) => h.current.onMouseMove?.(e);
+    const onResizeEv = (e: MapLibreEvent) => h.current.onResize?.(e);
 
     map.on("click", onClickEv);
     map.on("dblclick", onDblClickEv);
@@ -399,6 +661,11 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     map.on("move", onMoveEv);
     map.on("moveend", onMoveEndEv);
     map.on("zoomend", onZoomEndEv);
+    map.on("idle", onIdleEv);
+    map.on("zoom", onZoomEv);
+    map.on("style.load", onStyleLoadEv);
+    map.on("mousemove", onMouseMoveEv);
+    map.on("resize", onResizeEv);
     return () => {
       map.off("click", onClickEv);
       map.off("dblclick", onDblClickEv);
@@ -406,6 +673,11 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
       map.off("move", onMoveEv);
       map.off("moveend", onMoveEndEv);
       map.off("zoomend", onZoomEndEv);
+      map.off("idle", onIdleEv);
+      map.off("zoom", onZoomEv);
+      map.off("style.load", onStyleLoadEv);
+      map.off("mousemove", onMouseMoveEv);
+      map.off("resize", onResizeEv);
     };
   }, [map]);
 
@@ -444,9 +716,24 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
     map.fitBounds(fitBounds, fitBoundsOptionsRef.current);
   }, [map, fitBoundsKey]);
 
-  useImperativeHandle(ref, () => map as maplibregl.Map, [map]);
+  // Explicit type arguments (rather than a cast on the returned value)
+  // sidestep a TS inference quirk: matching the ref parameter's `T | null`
+  // shape against `map`'s own `Map | null` type would otherwise infer T as
+  // the non-null `Map`, which then rejects `map` (typed `Map | null`) as R.
+  useImperativeHandle<MapRef, MapRef>(ref, () => map, [map]);
 
-  const value = useMemo(() => ({ map, loaded }), [map, loaded]);
+  const value = useMemo(
+    () => ({ map, loaded, reportError }),
+    [map, loaded, reportError],
+  );
+
+  // Merged UI strings + number-formatting locale, provided outside the Box
+  // below so the loader, error panel, and the Box's own aria-label all see
+  // it.
+  const localeValue = useMemo<LocaleContextValue>(
+    () => ({ text: { ...enUS, ...localeText }, locale: numberLocale }),
+    [localeText, numberLocale],
+  );
 
   // Loading indicator (opt-in via `loader`, off by default), shown until the
   // map loads. The built-in loader cross-fades out via `Fade` (disabled under
@@ -466,26 +753,31 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
   }
 
   return (
-    <MapContext.Provider value={value}>
-      <Box
-        ref={containerRef}
-        role="region"
-        aria-label="Interactive map"
-        aria-busy={loader ? !loaded : undefined}
-        sx={[Styles.container, ...(Array.isArray(sx) ? sx : [sx])]}
-        {...boxProps}
-      >
-        {mapError ? (
-          (fallback ?? <MapErrorPanel error={mapError} />)
-        ) : (
-          <LayerRegistryProvider>
-            {loaded ? children : null}
-          </LayerRegistryProvider>
-        )}
-        {loaderElement}
-      </Box>
-    </MapContext.Provider>
+    <LocaleContext.Provider value={localeValue}>
+      <MapContext.Provider value={value}>
+        <Box
+          ref={setContainerRef}
+          role="region"
+          aria-label={localeValue.text.mapLabel}
+          aria-busy={loader ? !loaded : undefined}
+          sx={[Styles.container, ...(Array.isArray(sx) ? sx : [sx])]}
+          {...boxProps}
+        >
+          <PortalContainerContext.Provider value={containerEl}>
+            {mapError ? (
+              (fallback ?? <MapErrorPanel error={mapError} />)
+            ) : (
+              <LayerRegistryProvider>
+                {loaded ? children : null}
+              </LayerRegistryProvider>
+            )}
+            {loaderElement}
+          </PortalContainerContext.Provider>
+        </Box>
+      </MapContext.Provider>
+    </LocaleContext.Provider>
   );
 });
 
 export default Map;
+export type { MapErrorKind } from "../../context/MapContext";

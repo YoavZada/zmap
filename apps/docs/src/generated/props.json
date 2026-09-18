@@ -52,11 +52,19 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Explicit source/layer id. Auto-generated when omitted.",
+          "description": "Explicit source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -161,6 +169,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "fillOpacity",
           "type": "number",
           "required": false,
@@ -169,11 +185,19 @@
           "deprecated": null
         },
         {
+          "name": "hoverHighlight",
+          "type": "boolean | HoverHighlight",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highlight the hovered feature: `true` for theme defaults (stronger fill, `text.primary` outline), or explicit colors/opacity. Uses feature-state, so it works with the default generated ids.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -198,6 +222,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Fired with the clicked feature and the raw map event.",
+          "deprecated": null
+        },
+        {
+          "name": "onHover",
+          "type": "((feature: MapGeoJSONFeature | null, event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the hovered feature (null when the pointer leaves) and the raw map event.",
           "deprecated": null
         },
         {
@@ -477,6 +509,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "fillColor",
           "type": "string | ChoroplethSpec",
           "required": false,
@@ -517,11 +557,19 @@
           "deprecated": null
         },
         {
+          "name": "hoverHighlight",
+          "type": "boolean | HoverHighlight",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highlight the hovered feature: `true` for theme defaults (stronger fill,\n`text.primary` outline), or explicit colors/opacity. Uses feature-state,\nso it works with the default generated ids. Only `fill-extrusion-color`\nis wrapped — `fill-extrusion-opacity` isn't a data-driven property in\nthe style spec.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -538,6 +586,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Fired with the clicked feature and the raw map event.",
+          "deprecated": null
+        },
+        {
+          "name": "onHover",
+          "type": "((feature: MapGeoJSONFeature | null, event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the hovered feature (null when the pointer leaves) and the raw map event.",
           "deprecated": null
         },
         {
@@ -597,8 +653,8 @@
           "name": "noOptionsText",
           "type": "string",
           "required": false,
-          "defaultValue": "No places found",
-          "description": "Empty-state text, also shown when the provider errors. Default \"No places found\".",
+          "defaultValue": null,
+          "description": "Empty-state text, also shown when the provider errors. Defaults to the locale's \"No places found\".",
           "deprecated": null
         },
         {
@@ -621,8 +677,8 @@
           "name": "placeholder",
           "type": "string",
           "required": false,
-          "defaultValue": "Search places…",
-          "description": "Input placeholder, also used as the accessible label. Default \"Search places…\".",
+          "defaultValue": null,
+          "description": "Input placeholder, also used as the accessible label. Defaults to the locale's \"Search places…\".",
           "deprecated": null
         },
         {
@@ -683,7 +739,7 @@
           "type": "LayerInput[]",
           "required": true,
           "defaultValue": null,
-          "description": "One or more layers to render. Memoize this array to avoid churn.",
+          "description": "One or more layers to render. Memoize this array to avoid churn.\n`paint`, `layout`, `filter`, `minzoom`/`maxzoom` update in place;\nchanging a layer's `type`, the set of layer ids, or `sourceOptions`\nremoves and re-adds the source and layers.",
           "deprecated": null
         },
         {
@@ -732,11 +788,19 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -825,6 +889,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting. Bins are computed\nfeatures, so this usually stays unset — their `value` / `count`\nproperties are rarely unique per cell and would collide as ids.",
+          "deprecated": null
+        },
+        {
           "name": "fillOpacity",
           "type": "number",
           "required": false,
@@ -841,11 +913,19 @@
           "deprecated": null
         },
         {
+          "name": "hoverHighlight",
+          "type": "boolean | HoverHighlight",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highlight the hovered feature: `true` for theme defaults (stronger fill,\n`text.primary` outline), or explicit colors/opacity. Uses feature-state,\nso it works with the default generated ids. When extruded, only the\n`fill-extrusion-color` is wrapped — `fill-extrusion-opacity` isn't a\ndata-driven property in the style spec.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -862,6 +942,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Fired with the clicked cell's aggregates and the raw map event.",
+          "deprecated": null
+        },
+        {
+          "name": "onHover",
+          "type": "((feature: MapGeoJSONFeature | null, event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the hovered feature (null when the pointer leaves) and the raw map event.",
           "deprecated": null
         },
         {
@@ -1094,8 +1182,8 @@
           "name": "title",
           "type": "string",
           "required": false,
-          "defaultValue": "Layers",
-          "description": "Heading for the panel (and the trigger's tooltip). Default \"Layers\".",
+          "defaultValue": null,
+          "description": "Heading for the panel (and the trigger's tooltip). Defaults to the locale's \"Layers\".",
           "deprecated": null
         },
         {
@@ -1154,7 +1242,7 @@
       ]
     },
     "Map": {
-      "description": "The map container. Creates a MapLibre GL instance, exposes it via context to\nchildren (markers, controls, layers…), and swaps the basemap style when the\nMUI theme mode changes.",
+      "description": "The map container. Creates a MapLibre GL instance, exposes it via context to\nchildren (markers, controls, layers…), and swaps the basemap style when the\nMUI theme mode changes.\n\n`ref` receives the raw MapLibre instance once created (`null` before).",
       "props": [
         {
           "name": "animate",
@@ -1189,11 +1277,27 @@
           "deprecated": null
         },
         {
+          "name": "cooperativeGestures",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Require Ctrl/Cmd + scroll (and two fingers on touch) to zoom — polite for\nmaps embedded in scrolling pages. Creation-time only.",
+          "deprecated": null
+        },
+        {
+          "name": "cursor",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "CSS cursor over the map canvas. Layer hover cursors (pointer) still take\nprecedence while hovering. Reactive.",
+          "deprecated": null
+        },
+        {
           "name": "fallback",
           "type": "ReactNode",
           "required": false,
           "defaultValue": null,
-          "description": "Rendered in place of the map when it fails to initialize. Defaults to a\nthemed panel with a \"Unable to load the map\" message.",
+          "description": "Rendered in place of the map when it fails to initialize. Defaults to a\nthemed panel with a \"Unable to load the map\" message. Also shown while\nthe WebGL context is lost (e.g. a GPU reset or the laptop waking from\nsleep) — children remount once the context is restored.",
           "deprecated": null
         },
         {
@@ -1210,6 +1314,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Options for `fitBounds` (padding, maxZoom…).",
+          "deprecated": null
+        },
+        {
+          "name": "hash",
+          "type": "string | boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Sync the camera to the URL hash (`#zoom/lat/lng/bearing/pitch`); a string\nuses that query-param name instead. Creation-time only.",
           "deprecated": null
         },
         {
@@ -1241,7 +1353,7 @@
           "type": "boolean",
           "required": false,
           "defaultValue": "true",
-          "description": "Allow user pan/zoom/rotate. Default true.",
+          "description": "Allow user pan/zoom/rotate. Default true. Reactive.",
           "deprecated": null
         },
         {
@@ -1261,11 +1373,43 @@
           "deprecated": null
         },
         {
+          "name": "locale",
+          "type": "Record<string, string>",
+          "required": false,
+          "defaultValue": null,
+          "description": "Override MapLibre's built-in UI strings (attribution toggle,\ncooperative-gesture hints, ...). Creation-time only.",
+          "deprecated": null
+        },
+        {
+          "name": "localeText",
+          "type": "Partial<ZmapLocaleText>",
+          "required": false,
+          "defaultValue": null,
+          "description": "Override any built-in zmap UI string (tooltips, aria-labels, menu\nitems). Partial; merged over `enUS`. Ship-ready locales: `enUS`, `heIL`.",
+          "deprecated": null
+        },
+        {
           "name": "mapOptions",
           "type": "Partial<MapOptions>",
           "required": false,
           "defaultValue": null,
           "description": "Escape hatch for any other MapLibre map option.",
+          "deprecated": null
+        },
+        {
+          "name": "maxBounds",
+          "type": "LngLatBoundsLike",
+          "required": false,
+          "defaultValue": null,
+          "description": "Constrain panning so the viewport stays within these bounds. Reactive.",
+          "deprecated": null
+        },
+        {
+          "name": "maxPitch",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highest allowed camera tilt in degrees (0-85). Reactive.",
           "deprecated": null
         },
         {
@@ -1277,11 +1421,27 @@
           "deprecated": null
         },
         {
+          "name": "minPitch",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Lowest allowed camera tilt in degrees (0-85). Reactive.",
+          "deprecated": null
+        },
+        {
           "name": "minZoom",
           "type": "number",
           "required": false,
           "defaultValue": null,
           "description": "Lowest zoom level the camera allows.",
+          "deprecated": null
+        },
+        {
+          "name": "numberLocale",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "BCP-47 tag (e.g. \"he-IL\") for number formatting in the scale bar and\nmeasurements. Defaults to the browser locale. Distinct from `locale`,\nwhich overrides MapLibre's own UI strings.",
           "deprecated": null
         },
         {
@@ -1310,10 +1470,18 @@
         },
         {
           "name": "onError",
-          "type": "((error: Error) => void)",
+          "type": "((error: Error, kind: MapErrorKind) => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Called when the map instance fails to initialize (e.g. WebGL unavailable)\nor emits a runtime error event (e.g. a tile request failing). On\ninitialization failure, a themed fallback replaces the map — see\n`fallback` to customize it.",
+          "description": "Fired for initialization failures (`\"init\"`), MapLibre runtime errors\n(`\"runtime\"`), failed tile/source requests (`\"tile\"`, deduped),\nlayer/source spec failures (`\"layer\"`), style failures (`\"style\"`), and\nWebGL context loss (`\"webgl\"`).",
+          "deprecated": null
+        },
+        {
+          "name": "onIdle",
+          "type": "((event: MapLibreEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fires when the map has finished rendering and no camera transition or tile load is pending — the \"settled\" signal for screenshots, analytics, or tests.",
           "deprecated": null
         },
         {
@@ -1322,6 +1490,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Called once with the map instance after the \"load\" event.",
+          "deprecated": null
+        },
+        {
+          "name": "onMouseMove",
+          "type": "((event: MapMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Pointer movement over the map; `event.lngLat` is the coordinate under the cursor.",
           "deprecated": null
         },
         {
@@ -1341,11 +1517,43 @@
           "deprecated": null
         },
         {
+          "name": "onResize",
+          "type": "((event: MapLibreEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fires after the map resized to fit its container (MapLibre already observes the container for you).",
+          "deprecated": null
+        },
+        {
+          "name": "onStyleLoad",
+          "type": "((event: MapLibreEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fires when a basemap style finishes loading — on first load and after every theme swap.",
+          "deprecated": null
+        },
+        {
+          "name": "onZoom",
+          "type": "MapViewEventHandler",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fires continuously while zooming (wheel, pinch, buttons). Receives the camera state like `onMove`.",
+          "deprecated": null
+        },
+        {
           "name": "onZoomEnd",
           "type": "MapViewEventHandler",
           "required": false,
           "defaultValue": null,
           "description": "Fires once when a zoom gesture/animation settles.",
+          "deprecated": null
+        },
+        {
+          "name": "preserveDrawingBuffer",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Keep the WebGL drawing buffer so `map.getCanvas().toDataURL()` works\n(screenshots/export). Costs some GPU memory. Creation-time only. (Passed\nto MapLibre as `canvasContextAttributes.preserveDrawingBuffer`.)",
           "deprecated": null
         },
         {
@@ -1365,6 +1573,22 @@
           "deprecated": null
         },
         {
+          "name": "rtlTextPlugin",
+          "type": "string | boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Load MapLibre's RTL text plugin so Hebrew/Arabic basemap labels render\ncorrectly. `true` uses the default CDN URL, a string is a custom URL, or\n`false` never loads it. Default: enabled when the MUI theme `direction`\nis \"rtl\". Loaded lazily, once per page. Evaluated when the map is\ncreated — the plugin is page-global, so an app that mounts LTR and later\nswitches its theme to RTL should pass `rtlTextPlugin` explicitly (or call\n`registerRtlTextPlugin()` itself).",
+          "deprecated": null
+        },
+        {
+          "name": "transformRequest",
+          "type": "RequestTransformFunction",
+          "required": false,
+          "defaultValue": null,
+          "description": "Rewrite tile, style, glyph and sprite requests — add auth headers, sign\nURLs, proxy hosts. Creation-time only.",
+          "deprecated": null
+        },
+        {
           "name": "view",
           "type": "MapViewState",
           "required": false,
@@ -1381,6 +1605,10 @@
           "deprecated": null
         }
       ]
+    },
+    "MapErrorKind": {
+      "description": "Where a map error came from.",
+      "props": []
     },
     "MapControls": {
       "description": "A cluster of MUI-styled map controls. Because it is plain MUI, it inherits the\napp's theme automatically (light/dark, colors, shape).",
@@ -1617,6 +1845,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "fillColor",
           "type": "string",
           "required": false,
@@ -1633,11 +1869,19 @@
           "deprecated": null
         },
         {
+          "name": "hoverHighlight",
+          "type": "boolean | HoverHighlight",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highlight the hovered point: `true` for theme defaults (stronger fill, `text.primary` outline), or explicit colors/opacity. Uses feature-state, so it works with the default generated ids.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -1654,6 +1898,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Fired with the clicked point, its index in `points`, and the raw event.",
+          "deprecated": null
+        },
+        {
+          "name": "onHover",
+          "type": "((point: BasePoint | null, index: number, event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the hovered point, its index in `points` (-1 on leave), and the raw event.",
           "deprecated": null
         },
         {
@@ -1737,8 +1989,8 @@
           "name": "ariaLabel",
           "type": "string",
           "required": false,
-          "defaultValue": "Map popup",
-          "description": "Accessible name for the popup dialog. Default \"Map popup\".",
+          "defaultValue": null,
+          "description": "Accessible name for the popup dialog. Defaults to the locale's \"Map popup\".",
           "deprecated": null
         },
         {
@@ -1782,6 +2034,14 @@
           "deprecated": null
         },
         {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Initial visibility when uncontrolled. Default true. Once an uncontrolled\npopup closes (X button, click, move, or Escape) it stays closed — there's\nno prop change that reopens it. To reopen, remount the component by\nchanging its React `key`.",
+          "deprecated": null
+        },
+        {
           "name": "maxWidth",
           "type": "string",
           "required": false,
@@ -1802,15 +2062,15 @@
           "type": "(() => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired when MapLibre closes the popup (X button, click, or move).",
+          "description": "Fired when MapLibre closes the popup (X button, map click/move, or\nEscape). In uncontrolled mode the popup also closes itself; in\ncontrolled mode, flip `open` to `false` in response.",
           "deprecated": null
         },
         {
           "name": "open",
           "type": "boolean",
           "required": false,
-          "defaultValue": "true",
-          "description": "Controlled visibility. Default true.",
+          "defaultValue": null,
+          "description": "Controlled visibility. Omit to let the popup manage its own open state (see `defaultOpen`).",
           "deprecated": null
         }
       ]
@@ -1928,11 +2188,19 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Explicit source/layer id. Auto-generated when omitted.",
+          "description": "Explicit source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -2082,6 +2350,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "fillColor",
           "type": "string | ChoroplethSpec",
           "required": false,
@@ -2098,11 +2374,19 @@
           "deprecated": null
         },
         {
+          "name": "hoverHighlight",
+          "type": "boolean | HoverHighlight",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highlight the hovered feature: `true` for theme defaults (stronger fill, `text.primary` outline), or explicit colors/opacity. Uses feature-state, so it works with the default generated ids.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -2119,6 +2403,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Fired with the clicked feature and the raw map event.",
+          "deprecated": null
+        },
+        {
+          "name": "onHover",
+          "type": "((feature: MapGeoJSONFeature | null, event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the hovered feature (null when the pointer leaves) and the raw map event.",
           "deprecated": null
         },
         {
@@ -2215,6 +2507,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "font",
           "type": "string[]",
           "required": false,
@@ -2239,6 +2539,14 @@
           "deprecated": null
         },
         {
+          "name": "hoverHighlight",
+          "type": "boolean | HoverHighlight",
+          "required": false,
+          "defaultValue": null,
+          "description": "Highlight the hovered feature: `true` for theme defaults (stronger fill, `text.primary` outline), or explicit colors/opacity. Uses feature-state, so it works with the default generated ids.",
+          "deprecated": null
+        },
+        {
           "name": "icon",
           "type": "{ src: string; size?: number; }",
           "required": false,
@@ -2251,7 +2559,7 @@
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -2276,6 +2584,14 @@
           "required": false,
           "defaultValue": null,
           "description": "Fired with the clicked point, its index in `points`, and the raw event.",
+          "deprecated": null
+        },
+        {
+          "name": "onHover",
+          "type": "((point: SymbolPoint | null, index: number, event: MapLayerMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fired with the hovered point, its index in `points` (-1 on leave), and the raw event.",
           "deprecated": null
         },
         {
@@ -2405,6 +2721,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "formatTime",
           "type": "((value: number) => string)",
           "required": false,
@@ -2417,7 +2741,7 @@
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -2550,7 +2874,7 @@
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Accessible name for the popup dialog. Default \"Map popup\".",
+          "description": "Accessible name for the popup dialog. Defaults to the locale's \"Map popup\".",
           "deprecated": null
         },
         {
@@ -2578,6 +2902,14 @@
           "deprecated": null
         },
         {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": null,
+          "description": "Initial visibility when uncontrolled. Default true. Once an uncontrolled\npopup closes (X button, click, move, or Escape) it stays closed — there's\nno prop change that reopens it. To reopen, remount the component by\nchanging its React `key`.",
+          "deprecated": null
+        },
+        {
           "name": "maxWidth",
           "type": "string",
           "required": false,
@@ -2598,7 +2930,7 @@
           "type": "(() => void)",
           "required": false,
           "defaultValue": null,
-          "description": "Fired when MapLibre closes the popup (X button, click, or move).",
+          "description": "Fired when MapLibre closes the popup (X button, map click/move, or\nEscape). In uncontrolled mode the popup also closes itself; in\ncontrolled mode, flip `open` to `false` in response.",
           "deprecated": null
         },
         {
@@ -2606,7 +2938,7 @@
           "type": "boolean",
           "required": false,
           "defaultValue": null,
-          "description": "Controlled visibility. Default true.",
+          "description": "Controlled visibility. Omit to let the popup manage its own open state (see `defaultOpen`).",
           "deprecated": null
         }
       ]
@@ -2794,6 +3126,12 @@
       "description": "Which corner of the map a control is anchored to."
     },
     {
+      "name": "DEFAULT_RTL_TEXT_PLUGIN_URL",
+      "kind": "value",
+      "category": "provider",
+      "description": "The build MapLibre's docs recommend; override via `<Map rtlTextPlugin=\"https://…\">`."
+    },
+    {
       "name": "DrawControl",
       "kind": "value",
       "category": "component",
@@ -2830,6 +3168,12 @@
       "description": "Which drawing tool is active: point, line, or polygon."
     },
     {
+      "name": "enUS",
+      "kind": "value",
+      "category": "other",
+      "description": "English (US) UI strings — the library's built-in default."
+    },
+    {
       "name": "ExtrusionLayer",
       "kind": "value",
       "category": "component",
@@ -2864,6 +3208,12 @@
       "kind": "value",
       "category": "util",
       "description": "Formats a distance in metres as a human label (\"850 m\", \"1.20 km\", \"2.4 mi\")."
+    },
+    {
+      "name": "FormatOptions",
+      "kind": "type",
+      "category": "util",
+      "description": "Options for the measurement formatters."
     },
     {
       "name": "generateArc",
@@ -2950,6 +3300,12 @@
       "description": "Props for `<HeatmapLayer>`, which renders points as a density heatmap."
     },
     {
+      "name": "heIL",
+      "kind": "value",
+      "category": "other",
+      "description": "Hebrew (Israel) UI strings. Pass to `<Map localeText={heIL}>`."
+    },
+    {
       "name": "HexbinLayer",
       "kind": "value",
       "category": "component",
@@ -2960,6 +3316,18 @@
       "kind": "type",
       "category": "component",
       "description": "Props for `<HexbinLayer>`, which aggregates points into hexagonal or square cells colored by count."
+    },
+    {
+      "name": "hoverCase",
+      "kind": "value",
+      "category": "util",
+      "description": "Wraps a paint value in a feature-state \"hover\" case: `[\"case\", [\"boolean\", [\"feature-state\", key], false], hovered, base]`."
+    },
+    {
+      "name": "HoverHighlight",
+      "kind": "type",
+      "category": "util",
+      "description": "Explicit hover-highlight colors/opacity — see `resolveHoverHighlight`."
     },
     {
       "name": "isChoroplethSpec",
@@ -2974,10 +3342,28 @@
       "description": "True once the `pmtiles://` protocol has been registered on maplibre-gl."
     },
     {
+      "name": "isRtlTextPluginRegistered",
+      "kind": "value",
+      "category": "provider",
+      "description": "True once `setRTLTextPlugin` has been called on this page (by us or by the consumer)."
+    },
+    {
       "name": "Layer",
       "kind": "value",
       "category": "component",
       "description": "Registers a named, toggleable overlay with the map's layer registry and shows or hides its children based on visibility. Pair with <LayerControl>."
+    },
+    {
+      "name": "LAYER_ROLES",
+      "kind": "value",
+      "category": "util",
+      "description": "Sub-layer roles each layer component generates, in render order. The MapLibre layer id is `${id}-${role}`; `role` is also the key for `layerOverrides`. HexbinLayer's `extruded` mode emits only `-fill` (a `fill-extrusion` layer, not the flat `fill` + `line` pair)."
+    },
+    {
+      "name": "LayerComponentName",
+      "kind": "type",
+      "category": "util",
+      "description": "A zmap layer component name with a documented `LAYER_ROLES` entry."
     },
     {
       "name": "LayerConfig",
@@ -3002,6 +3388,12 @@
       "kind": "type",
       "category": "hook",
       "description": "A registered overlay layer, as shown in the LayerControl panel."
+    },
+    {
+      "name": "layerIds",
+      "kind": "value",
+      "category": "util",
+      "description": "MapLibre layer ids a zmap layer component generates for an explicit `id`, e.g. `layerIds(\"ShapeLayer\", \"zones\")` → `[\"zones-fill\", \"zones-line\"]`."
     },
     {
       "name": "LayerInput",
@@ -3076,6 +3468,12 @@
       "description": "A [longitude, latitude] pair."
     },
     {
+      "name": "localeUnitLabels",
+      "kind": "value",
+      "category": "util",
+      "description": "Maps the `unit*` keys off a `ZmapLocaleText` onto `MeasureUnitLabels`, for passing `useLocaleText()`'s value straight into `formatDistance`/`formatArea`."
+    },
+    {
       "name": "Map",
       "kind": "value",
       "category": "component",
@@ -3098,6 +3496,12 @@
       "kind": "type",
       "category": "component",
       "description": "Props for `<MapControls>`, a cluster of MUI-styled map controls (zoom, compass, geolocate, fullscreen, scale)."
+    },
+    {
+      "name": "MapErrorKind",
+      "kind": "type",
+      "category": "hook",
+      "description": "Where a map error came from."
     },
     {
       "name": "MapLayerConfig",
@@ -3128,6 +3532,12 @@
       "kind": "type",
       "category": "provider",
       "description": "A pluggable basemap source. Implement this to add any MapLibre-compatible provider (MapTiler, Stadia, self-hosted, …) beyond the built-ins."
+    },
+    {
+      "name": "MapRef",
+      "kind": "type",
+      "category": "component",
+      "description": "The value a `<Map ref>` receives: the raw MapLibre instance, or `null` before it's created."
     },
     {
       "name": "MapStyleInput",
@@ -3188,6 +3598,12 @@
       "kind": "type",
       "category": "util",
       "description": "Unit system for measurement readouts: metric (meters/km) or imperial (feet/miles)."
+    },
+    {
+      "name": "MeasureUnitLabels",
+      "kind": "type",
+      "category": "util",
+      "description": "Unit labels used by `formatDistance` / `formatArea`. Defaults are English abbreviations."
     },
     {
       "name": "nominatim",
@@ -3302,6 +3718,12 @@
       "kind": "value",
       "category": "provider",
       "description": "Register the `pmtiles://` protocol handler on maplibre-gl so styles and sources can reference `.pmtiles` archives. Idempotent and safe to call concurrently; the `pmtiles` package is dynamically imported, so it stays out of the base bundle and never runs at module load (SSR-safe)."
+    },
+    {
+      "name": "registerRtlTextPlugin",
+      "kind": "value",
+      "category": "provider",
+      "description": "Load MapLibre's RTL text plugin once per page so Hebrew/Arabic labels shape and order correctly. Idempotent: a second call (any URL) is a no-op; a failed load resets so it can be retried. SSR-safe: this module never touches `window`/`document` itself (only `<Map>`'s client-side create effect calls it), and `setRTLTextPlugin(url, true)` registers the URL without fetching the plugin script — the fetch is deferred until MapLibre first needs to shape RTL text."
     },
     {
       "name": "resolveAttribution",
@@ -3490,6 +3912,18 @@
       "description": "Returns whether a layer id is currently visible, falling back to `defaultVisible` until the layer has registered."
     },
     {
+      "name": "useLocale",
+      "kind": "value",
+      "category": "hook",
+      "description": "The BCP-47 locale for number formatting, if `<Map numberLocale>` set one."
+    },
+    {
+      "name": "useLocaleText",
+      "kind": "value",
+      "category": "hook",
+      "description": "The merged UI strings for the nearest `<Map>` (falls back to `enUS` outside one)."
+    },
+    {
       "name": "useMap",
       "kind": "value",
       "category": "hook",
@@ -3508,6 +3942,12 @@
       "description": "Adds a GeoJSON source + layers to the map and keeps them alive across theme-driven style swaps (MapLibre's `setStyle` wipes custom layers, so we re-add on `styledata`). Data and paint/layout updates are applied in place."
     },
     {
+      "name": "usePortalContainer",
+      "kind": "value",
+      "category": "hook",
+      "description": "The map container element — pass it as MUI `container` / `slotProps.popper.container` so your own menus and tooltips survive fullscreen. `null` outside `<Map>` or before mount."
+    },
+    {
       "name": "useRasterLayer",
       "kind": "value",
       "category": "hook",
@@ -3518,6 +3958,12 @@
       "kind": "value",
       "category": "provider",
       "description": "VersaTiles basemaps — free, open, no API key and no signup. Vector tiles built from OpenStreetMap data and served from a community CDN. \"colorful\" is the light style and \"eclipse\" the dark one, so the map tracks the MUI theme the same way CARTO's positron/dark-matter pair does — but with no usage restrictions for commercial use."
+    },
+    {
+      "name": "ZmapLocaleText",
+      "kind": "type",
+      "category": "other",
+      "description": "Every user-visible UI string the library renders (tooltips, aria-labels, menu items, legend text, transport bar). Override any subset via `<Map localeText>`; unset keys fall back to `enUS`. Ship-ready locales: `enUS`, `heIL`."
     }
   ]
 }

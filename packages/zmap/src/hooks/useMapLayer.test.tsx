@@ -31,10 +31,15 @@ const baseConfig = (over: Partial<MapLayerConfig> = {}): MapLayerConfig => ({
   ...over,
 });
 
-function renderMapLayer(map: FakeMap, config: MapLayerConfig, loaded = true) {
+function renderMapLayer(
+  map: FakeMap,
+  config: MapLayerConfig,
+  loaded = true,
+  reportError?: (error: Error, kind: string) => void,
+) {
   const wrapper = ({ children }: { children: ReactNode }) => (
     <MapContext.Provider
-      value={{ map: map as never, loaded }}
+      value={{ map: map as never, loaded, reportError: reportError as never }}
       children={children}
     />
   );
@@ -256,6 +261,99 @@ describe("useMapLayer", () => {
     expect(map.getSource("src-1")).toBeDefined();
   });
 
+  it("applies filter and zoom range in place when layer specs change", () => {
+    const map = new FakeMap();
+    const addSourceSpy = vi.spyOn(map, "addSource");
+    const { rerender } = renderMapLayer(map, baseConfig());
+    const source = map.getSource("src-1")!;
+    addSourceSpy.mockClear();
+
+    rerender(
+      baseConfig({
+        layers: [
+          {
+            id: "layer-1",
+            type: "circle",
+            paint: { "circle-radius": 4 },
+            filter: ["==", ["get", "kind"], "a"],
+            minzoom: 3,
+            maxzoom: 12,
+          } as MapLayerConfig["layers"][number],
+        ],
+      }),
+    );
+
+    expect(map.getFilter("layer-1")).toEqual(["==", ["get", "kind"], "a"]);
+    expect(map.zoomRanges.get("layer-1")).toEqual([3, 12]);
+    // Not re-added: same source instance, addSource never called again.
+    expect(map.getSource("src-1")).toBe(source);
+    expect(addSourceSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not call setFilter for layers that declare no filter", () => {
+    const map = new FakeMap();
+    const setFilterSpy = vi.spyOn(map, "setFilter");
+    const { rerender } = renderMapLayer(map, baseConfig());
+    setFilterSpy.mockClear();
+
+    rerender(
+      baseConfig({
+        layers: [
+          {
+            id: "layer-1",
+            type: "circle",
+            paint: { "circle-radius": 9 },
+          } as MapLayerConfig["layers"][number],
+        ],
+      }),
+    );
+
+    expect(setFilterSpy).not.toHaveBeenCalled();
+  });
+
+  it("removes and re-adds layers when a layer type changes", () => {
+    const map = new FakeMap();
+    const { rerender } = renderMapLayer(
+      map,
+      baseConfig({
+        layers: [
+          { id: "x-fill", type: "fill" } as MapLayerConfig["layers"][number],
+          { id: "x-line", type: "line" } as MapLayerConfig["layers"][number],
+        ],
+      }),
+    );
+    expect(map.getLayer("x-fill")).toMatchObject({ type: "fill" });
+    expect(map.getLayer("x-line")).toMatchObject({ type: "line" });
+
+    rerender(
+      baseConfig({
+        layers: [
+          {
+            id: "x-fill",
+            type: "fill-extrusion",
+          } as MapLayerConfig["layers"][number],
+        ],
+      }),
+    );
+
+    expect(map.getLayer("x-fill")).toMatchObject({ type: "fill-extrusion" });
+    expect(map.getLayer("x-line")).toBeUndefined();
+  });
+
+  it("re-adds the source when sourceOptions change", () => {
+    const map = new FakeMap();
+    const { rerender } = renderMapLayer(map, baseConfig());
+
+    rerender(
+      baseConfig({ sourceOptions: { cluster: true, clusterRadius: 80 } }),
+    );
+
+    expect(map.getSource("src-1")!.options).toMatchObject({
+      cluster: true,
+      clusterRadius: 80,
+    });
+  });
+
   it("logs and does not throw when addLayer fails", () => {
     const map = new FakeMap();
     const consoleError = vi
@@ -267,6 +365,26 @@ describe("useMapLayer", () => {
 
     expect(() => renderMapLayer(map, baseConfig())).not.toThrow();
     expect(consoleError).toHaveBeenCalled();
+
+    consoleError.mockRestore();
+  });
+
+  it('routes addLayer failures to reportError with kind "layer"', () => {
+    const map = new FakeMap();
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const reportError = vi.fn();
+    vi.spyOn(map, "addLayer").mockImplementationOnce(() => {
+      throw new Error("bad layer spec");
+    });
+
+    renderMapLayer(map, baseConfig(), true, reportError);
+
+    expect(reportError).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "bad layer spec" }),
+      "layer",
+    );
 
     consoleError.mockRestore();
   });

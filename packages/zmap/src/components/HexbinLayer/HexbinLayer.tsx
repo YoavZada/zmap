@@ -1,8 +1,13 @@
 import { useId, useMemo, type FC } from "react";
 import { useTheme } from "@mui/material/styles";
-import type { ExpressionSpecification, MapLayerMouseEvent } from "maplibre-gl";
+import type {
+  ExpressionSpecification,
+  MapGeoJSONFeature,
+  MapLayerMouseEvent,
+} from "maplibre-gl";
 import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
 import { useLayerClick } from "../../hooks/useLayerClick";
+import { useLayerHover } from "../../hooks/useLayerHover";
 import { resolvePaletteColor } from "../../utils/color";
 import { buildColorExpression } from "../../utils/choropleth";
 import { warnDeprecatedProp } from "../../utils/deprecation";
@@ -12,10 +17,19 @@ import {
 } from "../../utils/layerOverrides";
 import { binPoints } from "../../utils/bin";
 import type { LayerPoint } from "../PointLayer";
+import {
+  hoverCase,
+  resolveHoverHighlight,
+  type HoverHighlight,
+} from "../../utils/hoverPaint";
 
 /** Props for `<HexbinLayer>`, which aggregates points into hexagonal or square cells colored by count. */
 export type HexbinLayerProps = {
-  /** Unique source/layer id. Auto-generated when omitted. */
+  /**
+   * Unique source/layer id. Auto-generated when omitted. Sub-layers are
+   * `${id}-<role>`; see `layerIds()`. Auto-generated ids are not
+   * predictable — pass `id` when you need to reference the layers.
+   */
   id?: string;
   /** The points to aggregate into cells. */
   points: LayerPoint[];
@@ -60,6 +74,14 @@ export type HexbinLayerProps = {
   /** Insert the layers before this existing layer id (e.g. a label layer). */
   beforeId?: string;
   /**
+   * Feature property to use as the stable feature id (MapLibre `promoteId`).
+   * When omitted, ids are generated per feature (`generateId`), which is
+   * enough for hover / feature-state highlighting. Bins are computed
+   * features, so this usually stays unset — their `value` / `count`
+   * properties are rarely unique per cell and would collide as ids.
+   */
+  featureId?: string;
+  /**
    * Paint/layout patches merged into the generated layers. The `fill` role
    * covers both the flat fill and the extruded fill-extrusion variant.
    */
@@ -69,6 +91,19 @@ export type HexbinLayerProps = {
     bin: { value: number; count: number },
     event: MapLayerMouseEvent,
   ) => void;
+  /** Fired with the hovered feature (null when the pointer leaves) and the raw map event. */
+  onHover?: (
+    feature: MapGeoJSONFeature | null,
+    event: MapLayerMouseEvent,
+  ) => void;
+  /**
+   * Highlight the hovered feature: `true` for theme defaults (stronger fill,
+   * `text.primary` outline), or explicit colors/opacity. Uses feature-state,
+   * so it works with the default generated ids. When extruded, only the
+   * `fill-extrusion-color` is wrapped — `fill-extrusion-opacity` isn't a
+   * data-driven property in the style spec.
+   */
+  hoverHighlight?: boolean | HoverHighlight;
 };
 
 const DEFAULT_RAMP: [number, string][] = [
@@ -99,13 +134,17 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
   lineColor,
   lineWidth,
   beforeId,
+  featureId,
   layerOverrides,
   onClick,
+  onHover,
+  hoverHighlight,
 }) => {
   const theme = useTheme();
   const reactId = useId();
   const baseId = id ?? `zmap-hexbin-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const fillId = `${baseId}-fill`;
+  const lineId = `${baseId}-line`;
 
   if (opacity !== undefined) {
     warnDeprecatedProp("HexbinLayer", "opacity", "fillOpacity");
@@ -144,6 +183,19 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
   }, [colorRamp, max, theme]);
 
   const hScale = heightScale ?? 1500 / (max || 1);
+  const resolvedStrokeColor = resolvePaletteColor(theme, resolvedStroke);
+
+  const highlight = useMemo(
+    () =>
+      resolveHoverHighlight(theme, hoverHighlight, {
+        // `colorExpr` is always a value-driven ramp expression, never a flat
+        // color — omit the default so the color stays unwrapped unless the
+        // caller gives an explicit override.
+        strokeColor: resolvedStrokeColor,
+        fillOpacity: resolvedFillOpacity,
+      }),
+    [hoverHighlight, theme, resolvedStrokeColor, resolvedFillOpacity],
+  );
 
   const layers = useMemo<LayerInput[]>(() => {
     const base: LayerInput[] = extruded
@@ -152,13 +204,18 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
             id: fillId,
             type: "fill-extrusion",
             paint: {
-              "fill-extrusion-color": colorExpr,
+              "fill-extrusion-color":
+                highlight?.fillColor !== undefined
+                  ? hoverCase(highlight.fillColor, colorExpr)
+                  : colorExpr,
               "fill-extrusion-height": [
                 "*",
                 ["get", "value"],
                 hScale,
               ] as ExpressionSpecification,
               "fill-extrusion-base": 0,
+              // Not data-driven in the style spec — cannot be wrapped in a
+              // feature-state case, so it stays flat even when highlighted.
               "fill-extrusion-opacity": resolvedFillOpacity,
             },
           },
@@ -168,15 +225,22 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
             id: fillId,
             type: "fill",
             paint: {
-              "fill-color": colorExpr,
-              "fill-opacity": resolvedFillOpacity,
+              "fill-color":
+                highlight?.fillColor !== undefined
+                  ? hoverCase(highlight.fillColor, colorExpr)
+                  : colorExpr,
+              "fill-opacity": highlight
+                ? hoverCase(highlight.fillOpacity, resolvedFillOpacity)
+                : resolvedFillOpacity,
             },
           },
           {
-            id: `${baseId}-line`,
+            id: lineId,
             type: "line",
             paint: {
-              "line-color": resolvePaletteColor(theme, resolvedStroke),
+              "line-color": highlight
+                ? hoverCase(highlight.strokeColor, resolvedStrokeColor)
+                : resolvedStrokeColor,
               "line-width": resolvedStrokeWidth,
               "line-opacity": strokeOpacity,
             },
@@ -188,18 +252,23 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
   }, [
     extruded,
     fillId,
-    baseId,
+    lineId,
     colorExpr,
     hScale,
     resolvedFillOpacity,
-    resolvedStroke,
+    resolvedStrokeColor,
     resolvedStrokeWidth,
     strokeOpacity,
+    highlight,
     layerOverrides,
-    theme,
   ]);
 
-  useMapLayer({ id: baseId, data, layers, beforeId });
+  const sourceOptions = useMemo(
+    () => (featureId ? { promoteId: featureId } : { generateId: true }),
+    [featureId],
+  );
+
+  useMapLayer({ id: baseId, data, layers, beforeId, sourceOptions });
 
   useLayerClick(
     fillId,
@@ -218,6 +287,18 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
         }
       : undefined,
   );
+
+  const hoverLayerIds = useMemo(
+    () => (extruded ? [fillId] : [fillId, lineId]),
+    [extruded, fillId, lineId],
+  );
+
+  useLayerHover({
+    layerIds: hoverLayerIds,
+    sourceId: baseId,
+    featureState: Boolean(hoverHighlight),
+    onHover,
+  });
 
   return null;
 };

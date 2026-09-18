@@ -3,6 +3,7 @@ import { useTheme } from "@mui/material/styles";
 import type { MapLayerMouseEvent } from "maplibre-gl";
 import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
 import { useLayerClick } from "../../hooks/useLayerClick";
+import { useLayerHover } from "../../hooks/useLayerHover";
 import { resolvePaletteColor } from "../../utils/color";
 import { warnDeprecatedProp } from "../../utils/deprecation";
 import { featureCollection, pointFeature } from "../../utils/geojson";
@@ -11,13 +12,22 @@ import {
   applyLayerOverrides,
   type LayerOverride,
 } from "../../utils/layerOverrides";
+import {
+  hoverCase,
+  resolveHoverHighlight,
+  type HoverHighlight,
+} from "../../utils/hoverPaint";
 
 /** A point rendered by PointLayer. */
 export type LayerPoint = BasePoint;
 
 /** Props for `<PointLayer>`, which renders many points as a single GPU circle layer. */
 export type PointLayerProps = {
-  /** Unique source/layer id. Auto-generated when omitted. */
+  /**
+   * Unique source/layer id. Auto-generated when omitted. Sub-layers are
+   * `${id}-<role>`; see `layerIds()`. Auto-generated ids are not
+   * predictable — pass `id` when you need to reference the layers.
+   */
   id?: string;
   /** The points to draw as circles. */
   points: LayerPoint[];
@@ -45,6 +55,12 @@ export type PointLayerProps = {
   strokeOpacity?: number;
   /** Insert the layer before this existing layer id (e.g. a label layer). */
   beforeId?: string;
+  /**
+   * Feature property to use as the stable feature id (MapLibre `promoteId`).
+   * When omitted, ids are generated per feature (`generateId`), which is
+   * enough for hover / feature-state highlighting.
+   */
+  featureId?: string;
   /** Paint/layout patches merged into the generated circle layer. */
   layerOverrides?: { circle?: LayerOverride };
   /** Fired with the clicked point, its index in `points`, and the raw event. */
@@ -53,6 +69,14 @@ export type PointLayerProps = {
     index: number,
     event: MapLayerMouseEvent,
   ) => void;
+  /** Fired with the hovered point, its index in `points` (-1 on leave), and the raw event. */
+  onHover?: (
+    point: LayerPoint | null,
+    index: number,
+    event: MapLayerMouseEvent,
+  ) => void;
+  /** Highlight the hovered point: `true` for theme defaults (stronger fill, `text.primary` outline), or explicit colors/opacity. Uses feature-state, so it works with the default generated ids. */
+  hoverHighlight?: boolean | HoverHighlight;
 };
 
 /**
@@ -71,8 +95,11 @@ const PointLayer: FC<PointLayerProps> = ({
   strokeWidth = 1.5,
   strokeOpacity = 1,
   beforeId,
+  featureId,
   layerOverrides,
   onClick,
+  onHover,
+  hoverHighlight,
 }) => {
   const theme = useTheme();
   const reactId = useId();
@@ -98,6 +125,25 @@ const PointLayer: FC<PointLayerProps> = ({
     [points],
   );
 
+  const resolvedFillColor = resolvePaletteColor(theme, resolvedFill);
+  const resolvedStrokeColor = resolvePaletteColor(theme, strokeColor);
+
+  const highlight = useMemo(
+    () =>
+      resolveHoverHighlight(theme, hoverHighlight, {
+        fillColor: resolvedFillColor,
+        strokeColor: resolvedStrokeColor,
+        fillOpacity: resolvedFillOpacity,
+      }),
+    [
+      hoverHighlight,
+      theme,
+      resolvedFillColor,
+      resolvedStrokeColor,
+      resolvedFillOpacity,
+    ],
+  );
+
   const layers = useMemo<LayerInput[]>(
     () =>
       applyLayerOverrides(
@@ -107,9 +153,15 @@ const PointLayer: FC<PointLayerProps> = ({
             type: "circle",
             paint: {
               "circle-radius": radius,
-              "circle-color": resolvePaletteColor(theme, resolvedFill),
-              "circle-opacity": resolvedFillOpacity,
-              "circle-stroke-color": resolvePaletteColor(theme, strokeColor),
+              "circle-color": highlight
+                ? hoverCase(highlight.fillColor, resolvedFillColor)
+                : resolvedFillColor,
+              "circle-opacity": highlight
+                ? hoverCase(highlight.fillOpacity, resolvedFillOpacity)
+                : resolvedFillOpacity,
+              "circle-stroke-color": highlight
+                ? hoverCase(highlight.strokeColor, resolvedStrokeColor)
+                : resolvedStrokeColor,
               "circle-stroke-width": strokeWidth,
               "circle-stroke-opacity": strokeOpacity,
             },
@@ -120,17 +172,22 @@ const PointLayer: FC<PointLayerProps> = ({
     [
       layerId,
       radius,
-      resolvedFill,
+      resolvedFillColor,
       resolvedFillOpacity,
-      strokeColor,
+      resolvedStrokeColor,
       strokeWidth,
       strokeOpacity,
+      highlight,
       layerOverrides,
-      theme,
     ],
   );
 
-  useMapLayer({ id: baseId, data, layers, beforeId });
+  const sourceOptions = useMemo(
+    () => (featureId ? { promoteId: featureId } : { generateId: true }),
+    [featureId],
+  );
+
+  useMapLayer({ id: baseId, data, layers, beforeId, sourceOptions });
 
   useLayerClick(
     layerId,
@@ -142,6 +199,22 @@ const PointLayer: FC<PointLayerProps> = ({
         }
       : undefined,
   );
+
+  useLayerHover({
+    layerIds: [layerId],
+    sourceId: baseId,
+    featureState: Boolean(hoverHighlight),
+    onHover: onHover
+      ? (feature, event) => {
+          const idx = feature?.properties?._idx as number | undefined;
+          if (feature && idx != null && points[idx]) {
+            onHover(points[idx], idx, event);
+          } else {
+            onHover(null, -1, event);
+          }
+        }
+      : undefined,
+  });
 
   return null;
 };

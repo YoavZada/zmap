@@ -22,6 +22,10 @@ import SwapHorizOutlined from "@mui/icons-material/SwapHorizOutlined";
 import PublicOutlined from "@mui/icons-material/PublicOutlined";
 import GridOnOutlined from "@mui/icons-material/GridOnOutlined";
 import TerminalOutlined from "@mui/icons-material/TerminalOutlined";
+import BuildOutlined from "@mui/icons-material/BuildOutlined";
+import ScienceOutlined from "@mui/icons-material/ScienceOutlined";
+import AccessibilityNewOutlined from "@mui/icons-material/AccessibilityNewOutlined";
+import TranslateOutlined from "@mui/icons-material/TranslateOutlined";
 
 export interface NavItem {
   path: string;
@@ -66,6 +70,34 @@ export const navItems: NavItem[] = [
     icon: SwapHorizOutlined,
     description:
       "Migration guide — map react-map-gl concepts to zmapgl components, see what you gain and what differs.",
+  },
+  {
+    path: "/guides/troubleshooting",
+    label: "Troubleshooting",
+    icon: BuildOutlined,
+    description:
+      "Symptom, cause, and fix for blank maps, layers that vanish on theme toggle, hover that does nothing, and packaging gotchas.",
+  },
+  {
+    path: "/guides/testing",
+    label: "Testing",
+    icon: ScienceOutlined,
+    description:
+      "Unit test zmapgl components with the zmapgl/testing double (Vitest), plus the structure-only philosophy behind the e2e suite.",
+  },
+  {
+    path: "/guides/accessibility",
+    label: "Accessibility",
+    icon: AccessibilityNewOutlined,
+    description:
+      "What zmapgl ships for accessibility out of the box, how to translate every aria-label, and what's left for you to get right.",
+  },
+  {
+    path: "/guides/i18n",
+    label: "Localization & RTL",
+    icon: TranslateOutlined,
+    description:
+      "Translate every zmapgl string, format numbers to a locale, and mirror controls for right-to-left layouts.",
   },
   {
     path: "/markers",
@@ -225,6 +257,10 @@ export const componentGroups: NavGroup[] = [
       byPath("/providers"),
       byPath("/guides/nextjs"),
       byPath("/guides/react-map-gl"),
+      byPath("/guides/troubleshooting"),
+      byPath("/guides/testing"),
+      byPath("/guides/accessibility"),
+      byPath("/guides/i18n"),
     ],
   },
   {

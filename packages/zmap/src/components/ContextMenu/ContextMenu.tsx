@@ -10,6 +10,8 @@ import ContentCopy from "@mui/icons-material/ContentCopyOutlined";
 import PushPin from "@mui/icons-material/PushPinOutlined";
 import type { Map as MapLibreMap, MapMouseEvent } from "maplibre-gl";
 import { useMapContext } from "../../context/useMap";
+import { usePortalContainer } from "../../context/usePortalContainer";
+import { useLocaleText } from "../../context/useLocaleText";
 import type { LngLatTuple } from "../../utils/geojson";
 import Marker from "../Marker";
 import Styles from "./contextMenu.style";
@@ -72,6 +74,8 @@ const ContextMenu: FC<ContextMenuProps> = ({
   onDropMarker,
 }) => {
   const { map } = useMapContext();
+  const container = usePortalContainer();
+  const t = useLocaleText();
   const [anchor, setAnchor] = useState<AnchorState | null>(null);
   const [markers, setMarkers] = useState<DroppedMarker[]>([]);
   const [snack, setSnack] = useState<string | null>(null);
@@ -97,21 +101,21 @@ const ContextMenu: FC<ContextMenuProps> = ({
 
   const defaults: ContextMenuItem[] = [
     {
-      label: "Center here",
+      label: t.centerHere,
       icon: <CenterFocusStrong fontSize="small" />,
       onClick: ({ lngLat, map: m }) => m.easeTo({ center: lngLat }),
     },
     {
-      label: "Copy coordinates",
+      label: t.copyCoordinates,
       icon: <ContentCopy fontSize="small" />,
       onClick: ({ lngLat }) => {
         const text = `${lngLat[1].toFixed(precision)}, ${lngLat[0].toFixed(precision)}`;
         void navigator.clipboard?.writeText(text);
-        setSnack(`Copied ${text}`);
+        setSnack(t.copiedCoordinates(text));
       },
     },
     {
-      label: "Drop marker",
+      label: t.dropMarker,
       icon: <PushPin fontSize="small" />,
       onClick: ({ lngLat }) => {
         if (onDropMarker) onDropMarker(lngLat);
@@ -144,6 +148,7 @@ const ContextMenu: FC<ContextMenuProps> = ({
         onClose={close}
         anchorReference="anchorPosition"
         anchorPosition={anchor ? { top: anchor.y, left: anchor.x } : undefined}
+        container={container}
       >
         {list.flatMap((item, i) => {
           const node = (

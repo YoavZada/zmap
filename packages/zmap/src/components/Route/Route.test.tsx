@@ -39,6 +39,7 @@ describe("Route", () => {
     expect(paint["line-dasharray"]).toBeUndefined();
     const layout = layer.layout as Record<string, unknown>;
     expect(layout["line-cap"]).toBe("round");
+    expect(map.getSource("rt")!.options.generateId).toBe(true);
   });
 
   it("adds a dash pattern when dashed", () => {

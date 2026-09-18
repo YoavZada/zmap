@@ -113,4 +113,71 @@ describe("PointLayer", () => {
     expect(paint["circle-blur"]).toBe(0.5);
     expect(paint["circle-radius"]).toBe(6); // generated values kept
   });
+
+  it("passes generateId when featureId is absent", () => {
+    const map = new FakeMap();
+    renderPoints(map);
+
+    expect(map.getSource("pts")!.options.generateId).toBe(true);
+    expect(map.getSource("pts")!.options.promoteId).toBeUndefined();
+  });
+
+  it("passes promoteId when featureId is set", () => {
+    const map = new FakeMap();
+    renderPoints(map, { featureId: "name" });
+
+    expect(map.getSource("pts")!.options.promoteId).toBe("name");
+    expect(map.getSource("pts")!.options.generateId).toBeUndefined();
+  });
+
+  it("onHover receives the point and index, then null/-1 on leave", () => {
+    const map = new FakeMap();
+    const onHover = vi.fn();
+    renderPoints(map, { onHover });
+
+    map.fireLayer("mousemove", "pts-circle", {
+      features: [{ id: 0, properties: { _idx: 1 } }],
+    });
+    expect(onHover).toHaveBeenLastCalledWith(POINTS[1], 1, expect.anything());
+
+    map.fireLayer("mouseleave", "pts-circle");
+    expect(onHover).toHaveBeenLastCalledWith(null, -1, undefined);
+  });
+
+  it("wraps circle-color/circle-opacity/circle-stroke-color in a feature-state case when hoverHighlight is set", () => {
+    const map = new FakeMap();
+    renderPoints(map, { hoverHighlight: true });
+
+    const paint = map.getLayer("pts-circle")!.paint as Record<string, unknown>;
+    expect(paint["circle-color"]).toEqual([
+      "case",
+      ["boolean", ["feature-state", "hover"], false],
+      expect.anything(),
+      expect.anything(),
+    ]);
+    expect(paint["circle-opacity"]).toEqual([
+      "case",
+      ["boolean", ["feature-state", "hover"], false],
+      expect.anything(),
+      1,
+    ]);
+    expect(paint["circle-stroke-color"]).toEqual([
+      "case",
+      ["boolean", ["feature-state", "hover"], false],
+      expect.anything(),
+      expect.anything(),
+    ]);
+  });
+
+  it("mirrors hover into feature-state when hoverHighlight is set", () => {
+    const map = new FakeMap();
+    renderPoints(map, { hoverHighlight: true });
+
+    map.fireLayer("mousemove", "pts-circle", {
+      features: [{ id: 3, properties: { _idx: 0 } }],
+    });
+    expect(map.getFeatureState({ source: "pts", id: 3 })).toEqual({
+      hover: true,
+    });
+  });
 });

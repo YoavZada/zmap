@@ -3,15 +3,24 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { createRef, type FC } from "react";
 import type maplibregl from "maplibre-gl";
+import maplibreglRuntime from "maplibre-gl";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useMapContext } from "../../context/useMap";
+import { usePortalContainer } from "../../context/usePortalContainer";
 import {
+  fakeMaps,
   lastFakeMap,
   resetFakeMaps,
   setFakeMapConstructError,
 } from "../../test/mockMaplibre";
-import Map from "./Map";
+import PointLayer from "../PointLayer";
+import { DEFAULT_RTL_TEXT_PLUGIN_URL } from "../../providers/rtlTextPlugin";
+import Map, { type MapRef } from "./Map";
 
 vi.mock("maplibre-gl", () => import("../../test/mockMaplibre"));
+
+const setRTLTextPluginMock =
+  maplibreglRuntime.setRTLTextPlugin as unknown as ReturnType<typeof vi.fn>;
 
 const loadMap = () => {
   const map = lastFakeMap();
@@ -24,6 +33,12 @@ const loadMap = () => {
 const Probe: FC = () => {
   const { map, loaded } = useMapContext();
   return <div data-testid="probe">{`${!!map}:${loaded}`}</div>;
+};
+
+let probedContainer: HTMLElement | null | undefined;
+const PortalContainerProbe: FC = () => {
+  probedContainer = usePortalContainer();
+  return null;
 };
 
 beforeEach(() => {
@@ -173,6 +188,74 @@ describe("Map", () => {
       expect(first).not.toHaveBeenCalled();
       expect(second).toHaveBeenCalledTimes(1);
     });
+
+    it("forwards idle, style.load and resize events", () => {
+      const onIdle = vi.fn();
+      const onStyleLoad = vi.fn();
+      const onResize = vi.fn();
+      render(
+        <Map onIdle={onIdle} onStyleLoad={onStyleLoad} onResize={onResize} />,
+      );
+      const map = loadMap();
+
+      const idleEv = { type: "idle" };
+      const styleLoadEv = { type: "style.load" };
+      const resizeEv = { type: "resize" };
+      act(() => {
+        map.fire("idle", idleEv);
+        map.fire("style.load", styleLoadEv);
+        map.fire("resize", resizeEv);
+      });
+      expect(onIdle).toHaveBeenCalledTimes(1);
+      expect(onIdle).toHaveBeenCalledWith(idleEv);
+      expect(onStyleLoad).toHaveBeenCalledTimes(1);
+      expect(onStyleLoad).toHaveBeenCalledWith(styleLoadEv);
+      expect(onResize).toHaveBeenCalledTimes(1);
+      expect(onResize).toHaveBeenCalledWith(resizeEv);
+    });
+
+    it("hands camera state to onZoom", () => {
+      const onZoom = vi.fn();
+      render(<Map center={[10, 20]} zoom={4} onZoom={onZoom} />);
+      const map = loadMap();
+
+      act(() => {
+        map.fire("zoom", { type: "zoom" });
+      });
+      expect(onZoom).toHaveBeenCalledWith(
+        { center: [10, 20], zoom: 4, bearing: 0, pitch: 0 },
+        { type: "zoom" },
+      );
+    });
+
+    it("onMouseMove receives the raw event", () => {
+      const onMouseMove = vi.fn();
+      render(<Map onMouseMove={onMouseMove} />);
+      const map = loadMap();
+
+      const ev = { lngLat: { lng: 3, lat: 4 } };
+      act(() => {
+        map.fire("mousemove", ev);
+      });
+      expect(onMouseMove).toHaveBeenCalledWith(ev);
+    });
+
+    it("keeps the new handlers fresh without resubscribing", () => {
+      const first = vi.fn();
+      const second = vi.fn();
+      const { rerender } = render(<Map onIdle={first} />);
+      const map = loadMap();
+      const subscribed = map.handlerCount("idle");
+
+      rerender(<Map onIdle={second} />);
+      expect(map.handlerCount("idle")).toBe(subscribed);
+
+      act(() => {
+        map.fire("idle", { type: "idle" });
+      });
+      expect(first).not.toHaveBeenCalled();
+      expect(second).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("reactive camera", () => {
@@ -269,6 +352,116 @@ describe("Map", () => {
     });
   });
 
+  it("passes transformRequest, preserveDrawingBuffer, cooperativeGestures, hash, locale, minPitch/maxPitch and maxBounds to the constructor", () => {
+    const transformRequest = vi.fn();
+    const bounds: [[number, number], [number, number]] = [
+      [-10, -10],
+      [10, 10],
+    ];
+    render(
+      <Map
+        transformRequest={transformRequest}
+        preserveDrawingBuffer
+        cooperativeGestures
+        hash="map"
+        locale={{ "AttributionControl.ToggleAttribution": "Toggle" }}
+        minPitch={5}
+        maxPitch={70}
+        maxBounds={bounds}
+      />,
+    );
+    const map = lastFakeMap();
+    expect(map.options).toMatchObject({
+      transformRequest,
+      canvasContextAttributes: { preserveDrawingBuffer: true },
+      cooperativeGestures: true,
+      hash: "map",
+      locale: { "AttributionControl.ToggleAttribution": "Toggle" },
+      minPitch: 5,
+      maxPitch: 70,
+      maxBounds: bounds,
+    });
+  });
+
+  it("updates min/max zoom, min/max pitch and maxBounds after mount without recreating the map", () => {
+    const { rerender } = render(<Map minZoom={1} maxZoom={10} />);
+    loadMap();
+    expect(fakeMaps.length).toBe(1);
+
+    const bounds: [[number, number], [number, number]] = [
+      [-5, -5],
+      [5, 5],
+    ];
+    rerender(
+      <Map
+        minZoom={2}
+        maxZoom={12}
+        minPitch={5}
+        maxPitch={60}
+        maxBounds={bounds}
+      />,
+    );
+
+    const map = lastFakeMap();
+    expect(map.constraints).toMatchObject({
+      minZoom: 2,
+      maxZoom: 12,
+      minPitch: 5,
+      maxPitch: 60,
+      maxBounds: bounds,
+    });
+    expect(fakeMaps.length).toBe(1);
+  });
+
+  it("toggling interactive disables and re-enables every gesture handler", () => {
+    const { rerender } = render(<Map />);
+    const map = loadMap();
+    const handlers = [
+      "dragPan",
+      "scrollZoom",
+      "boxZoom",
+      "dragRotate",
+      "keyboard",
+      "doubleClickZoom",
+      "touchZoomRotate",
+      "touchPitch",
+    ] as const;
+
+    rerender(<Map interactive={false} />);
+    for (const h of handlers) expect(map[h].isEnabled()).toBe(false);
+
+    rerender(<Map interactive />);
+    for (const h of handlers) expect(map[h].isEnabled()).toBe(true);
+  });
+
+  it("applies cursor to the canvas and useLayerClick restores it on leave", () => {
+    const onClick = vi.fn();
+    render(
+      <Map cursor="crosshair">
+        <PointLayer
+          id="pts"
+          points={[{ longitude: 0, latitude: 0 }]}
+          onClick={onClick}
+        />
+      </Map>,
+    );
+    const map = loadMap();
+    expect(map.getCanvas().style.cursor).toBe("crosshair");
+
+    act(() => map.fireLayer("mouseenter", "pts-circle"));
+    expect(map.getCanvas().style.cursor).toBe("pointer");
+
+    act(() => map.fireLayer("mouseleave", "pts-circle"));
+    expect(map.getCanvas().style.cursor).toBe("crosshair");
+  });
+
+  it("exposes the map instance through ref", () => {
+    const ref = createRef<MapRef>();
+    render(<Map ref={ref} />);
+    const map = loadMap();
+    expect(ref.current).toBe(map as never);
+  });
+
   it("marks the container as a labeled region", () => {
     const { container } = render(<Map />);
     const region = container.querySelector('[role="region"]');
@@ -276,13 +469,35 @@ describe("Map", () => {
     expect(region?.getAttribute("aria-label")).toBe("Interactive map");
   });
 
+  it("aria-label follows localeText.mapLabel", () => {
+    const { container } = render(
+      <Map localeText={{ mapLabel: "מפה אינטראקטיבית" }} />,
+    );
+    const region = container.querySelector('[role="region"]');
+    expect(region?.getAttribute("aria-label")).toBe("מפה אינטראקטיבית");
+  });
+
+  it("provides the container element through usePortalContainer", () => {
+    probedContainer = undefined;
+    const { container } = render(
+      <Map>
+        <PortalContainerProbe />
+      </Map>,
+    );
+    loadMap();
+
+    const region = container.querySelector('[role="region"]');
+    expect(probedContainer).not.toBeNull();
+    expect(probedContainer).toBe(region);
+  });
+
   describe("error resilience", () => {
-    it("renders a themed fallback and calls onError when map creation throws", () => {
+    it('renders a themed fallback and calls onError with kind "init" when map creation throws', () => {
       const boom = new Error("WebGL unavailable");
       setFakeMapConstructError(boom);
       const onError = vi.fn();
       const { getByText } = render(<Map onError={onError} />);
-      expect(onError).toHaveBeenCalledWith(boom);
+      expect(onError).toHaveBeenCalledWith(boom, "init");
       expect(getByText(/unable to load the map/i)).toBeTruthy();
       setFakeMapConstructError(null);
     });
@@ -296,14 +511,70 @@ describe("Map", () => {
       setFakeMapConstructError(null);
     });
 
-    it("forwards runtime map error events to onError", () => {
+    it('classifies a non-tile error as "runtime"', () => {
       const onError = vi.fn();
       render(<Map onError={onError} />);
       const map = lastFakeMap();
       act(() => map.fire("error", { error: new Error("tile 404") }));
       expect(onError).toHaveBeenCalledWith(
         expect.objectContaining({ message: "tile 404" }),
+        "runtime",
       );
+    });
+
+    it("dedupes identical tile errors within 5s and reports again after", () => {
+      vi.useFakeTimers();
+      try {
+        const onError = vi.fn();
+        render(<Map onError={onError} />);
+        const map = lastFakeMap();
+        const fireTile = () =>
+          act(() => {
+            map.fire("error", {
+              sourceId: "s",
+              error: Object.assign(new Error("404"), { status: 404 }),
+            });
+          });
+
+        fireTile();
+        fireTile();
+        fireTile();
+        expect(onError).toHaveBeenCalledTimes(1);
+        expect(onError).toHaveBeenCalledWith(
+          expect.objectContaining({ message: "404" }),
+          "tile",
+        );
+
+        act(() => {
+          vi.advanceTimersByTime(5001);
+        });
+        fireTile();
+        expect(onError).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("switches to the fallback on webglcontextlost and recovers on restore", () => {
+      const onError = vi.fn();
+      render(
+        <Map onError={onError} fallback={<div>broken</div>}>
+          <div data-testid="child" />
+        </Map>,
+      );
+      loadMap();
+      const map = lastFakeMap();
+
+      act(() => map.fire("webglcontextlost"));
+      expect(screen.getByText("broken")).toBeTruthy();
+      expect(onError).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "WebGLContextLost" }),
+        "webgl",
+      );
+
+      act(() => map.fire("webglcontextrestored"));
+      expect(screen.queryByText("broken")).toBeNull();
+      expect(screen.getByTestId("child")).toBeDefined();
     });
   });
 
@@ -351,5 +622,50 @@ describe("Map", () => {
       expect(screen.queryByRole("status")).toBeNull();
       setFakeMapConstructError(null);
     });
+  });
+});
+
+describe("Map RTL text plugin", () => {
+  beforeEach(() => {
+    setRTLTextPluginMock.mockClear();
+  });
+
+  it("registers the RTL plugin when theme.direction is rtl", () => {
+    const theme = createTheme({ direction: "rtl" });
+    render(
+      <ThemeProvider theme={theme}>
+        <Map />
+      </ThemeProvider>,
+    );
+    expect(setRTLTextPluginMock).toHaveBeenCalledTimes(1);
+    expect(setRTLTextPluginMock).toHaveBeenCalledWith(
+      DEFAULT_RTL_TEXT_PLUGIN_URL,
+      true,
+    );
+  });
+
+  it("skips it for ltr themes", () => {
+    const theme = createTheme({ direction: "ltr" });
+    render(
+      <ThemeProvider theme={theme}>
+        <Map />
+      </ThemeProvider>,
+    );
+    expect(setRTLTextPluginMock).not.toHaveBeenCalled();
+  });
+
+  it("rtlTextPlugin={false} never registers even under rtl", () => {
+    const theme = createTheme({ direction: "rtl" });
+    render(
+      <ThemeProvider theme={theme}>
+        <Map rtlTextPlugin={false} />
+      </ThemeProvider>,
+    );
+    expect(setRTLTextPluginMock).not.toHaveBeenCalled();
+  });
+
+  it('rtlTextPlugin="https://x" passes the URL', () => {
+    render(<Map rtlTextPlugin="https://x" />);
+    expect(setRTLTextPluginMock).toHaveBeenCalledWith("https://x", true);
   });
 });

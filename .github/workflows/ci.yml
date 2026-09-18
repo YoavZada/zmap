@@ -1,9 +1,7 @@
 name: CI
 
 # The PR gate: lint + typecheck + unit tests + Playwright e2e against the
-# built docs bundle. The e2e job runs the handwritten suite as blocking and
-# bot-generated specs (tagged @generated) as advisory — a generated spec
-# becomes blocking once a reviewer removes its tag.
+# built docs bundle.
 on:
   pull_request:
     branches: [main]
@@ -43,7 +41,7 @@ jobs:
         run: pnpm typecheck
 
       - name: Unit tests
-        run: pnpm test
+        run: pnpm --filter zmapgl test:coverage
 
       - name: Build library
         run: pnpm build:lib
@@ -55,13 +53,29 @@ jobs:
         run: |
           node --input-type=module -e "await import('./packages/zmap/dist/index.js'); console.log('esm import OK')"
           node -e "require('./packages/zmap/dist/index.cjs'); console.log('cjs require OK')"
+          # zmapgl/testing is ESM-only by necessity: vitest's own CJS entry
+          # point deliberately throws on require() ("Vitest cannot be
+          # imported in a CommonJS module using require()"), and mockMaplibre
+          # uses `vi` at module scope. package.json's "./testing" export has
+          # no "require" condition, so there is no CJS one-liner to check here.
+          node --input-type=module -e "const m = await import('./packages/zmap/dist/testing/index.js'); if (typeof m.FakeMap !== 'function') throw new Error('testing entry broken'); console.log('testing esm OK')"
+
+      - name: 'Directive check ("use client" in dist)'
+        run: |
+          head -c 200 packages/zmap/dist/index.js  | grep -q '"use client"' || { echo 'missing "use client" in ESM'; exit 1; }
+          head -c 200 packages/zmap/dist/index.cjs | grep -q '"use client"' || { echo 'missing "use client" in CJS'; exit 1; }
 
       - name: Next build (SSR smoke)
         run: pnpm --filter next-smoke build
 
-  e2e:
+  # Proves the peer ranges advertised in packages/zmap/package.json
+  # (react/react-dom ^18||^19, @mui/material/@mui/icons-material ^6||^7)
+  # actually work, not just the latest majors pinned in devDependencies.
+  # Downgrades only this runner's node_modules — the mutated lockfile is
+  # never committed, so this can't run with --frozen-lockfile past the
+  # initial install.
+  compat:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -78,6 +92,75 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Downgrade to React 18 + MUI 6 (runner only)
+        run: pnpm --filter zmapgl add -D react@^18.3.0 react-dom@^18.3.0 @types/react@^18.3.0 @types/react-dom@^18.3.0 @mui/material@^6.4.0 @mui/icons-material@^6.4.0
+
+      - name: Typecheck
+        run: pnpm --filter zmapgl typecheck
+
+      - name: Unit tests
+        run: pnpm --filter zmapgl test
+
+  docs-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build docs
+        run: pnpm --filter docs build
+        env:
+          VITE_ARCGIS_KEY: ${{ secrets.ARCGIS_API_KEY }}
+
+      - name: Upload docs build
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-dist
+          path: apps/docs/dist
+          retention-days: 1
+
+  e2e:
+    needs: docs-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download docs build
+        uses: actions/download-artifact@v4
+        with:
+          name: docs-dist
+          path: apps/docs/dist
+
       - name: Resolve Playwright version
         id: playwright
         run: |
@@ -93,28 +176,65 @@ jobs:
       - name: Install Chromium
         run: pnpm --filter @zmap/e2e exec playwright install --with-deps chromium
 
-      # Playwright's webServer builds the docs and serves the production
-      # bundle (vite preview) because CI is set — PRs validate the real
-      # artifact, not the dev server.
-      - name: E2E (core suite, blocking)
-        id: core
-        run: pnpm --filter @zmap/e2e exec playwright test --grep-invert "@generated"
+      # docs-dist was built once by docs-build and downloaded above — each
+      # shard serves the same prebuilt bundle via `vite preview` instead of
+      # rebuilding it, so both shards test the identical artifact.
+      - name: E2E (shard ${{ matrix.shard }}/2)
+        id: e2e
+        env:
+          E2E_PREBUILT: "1"
+        run: pnpm --filter @zmap/e2e exec playwright test --shard=${{ matrix.shard }}/2
 
-      - name: E2E (generated specs, advisory)
-        id: generated
-        continue-on-error: true
-        run: pnpm --filter @zmap/e2e exec playwright test --grep "@generated" --pass-with-no-tests
+      - name: Upload blob report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: tools/e2e/blob-report
+          retention-days: 1
 
-      - name: Flag advisory failures
-        if: steps.generated.outcome == 'failure'
-        run: echo "::warning::Bot-generated e2e specs failed (advisory, not blocking). See the playwright-report artifact."
+      - name: Upload test results on failure
+        if: always() && steps.e2e.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.shard }}
+          path: tools/e2e/test-results/
+          retention-days: 7
 
-      - name: Upload Playwright report
-        if: always() && (steps.core.outcome == 'failure' || steps.generated.outcome == 'failure')
+  e2e-report:
+    needs: e2e
+    # Merge whatever shards ran; skip when e2e itself never ran (docs-build failed).
+    if: always() && needs.e2e.result != 'skipped' && needs.e2e.result != 'cancelled'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download blob reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: blob-report-*
+          path: all-blob-reports
+          merge-multiple: true
+
+      - name: Merge reports
+        run: pnpm --filter @zmap/e2e exec playwright merge-reports --reporter html ./all-blob-reports
+
+      - name: Upload merged HTML report
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: |
-            tools/e2e/playwright-report/
-            tools/e2e/test-results/
+          path: tools/e2e/playwright-report
           retention-days: 7

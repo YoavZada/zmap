@@ -104,11 +104,86 @@ describe("HexbinLayer", () => {
     expect(onClick).toHaveBeenCalledWith({ value: 3, count: 3 }, event);
   });
 
+  it("toggling extruded swaps the fill layer for fill-extrusion and drops the line layer", () => {
+    const map = new FakeMap();
+    const { rerender } = renderHexbin(map, { extruded: false });
+
+    expect(map.getLayer("bins-fill")!.type).toBe("fill");
+    expect(map.getLayer("bins-line")).toBeDefined();
+
+    // Rerender through the same wrapper (not re-wrapped) so React reconciles
+    // the existing HexbinLayer instance in place instead of remounting it —
+    // remounting would mask the in-place shape-change bug under test.
+    rerender(<HexbinLayer id="bins" points={POINTS} extruded />);
+
+    expect(map.getLayer("bins-fill")!.type).toBe("fill-extrusion");
+    expect(map.getLayer("bins-line")).toBeUndefined();
+  });
+
   it("inserts before an existing layer via beforeId", () => {
     const map = new FakeMap();
     map.addLayer({ id: "labels" });
     renderHexbin(map, { beforeId: "labels" });
 
     expect(map.layerOrder).toEqual(["bins-fill", "bins-line", "labels"]);
+  });
+
+  it("hoverHighlight: true leaves the ramp fill-color expression unwrapped and wraps fill-opacity/line-color in flat mode", () => {
+    const map = new FakeMap();
+    renderHexbin(map, { hoverHighlight: true });
+
+    const fill = map.getLayer("bins-fill")!.paint as Record<string, unknown>;
+    expect((fill["fill-color"] as unknown[])[0]).not.toBe("case");
+    expect((fill["fill-opacity"] as unknown[])[0]).toBe("case");
+
+    const line = map.getLayer("bins-line")!.paint as Record<string, unknown>;
+    expect((line["line-color"] as unknown[])[0]).toBe("case");
+  });
+
+  it("hoverHighlight: { fillColor } wraps fill-color with the ramp expression as the base branch (flat mode)", () => {
+    const map = new FakeMap();
+    renderHexbin(map, { hoverHighlight: { fillColor: "#ff00ff" } });
+
+    const fill = map.getLayer("bins-fill")!.paint as Record<string, unknown>;
+    const fillColor = fill["fill-color"] as unknown[];
+    expect(fillColor[0]).toBe("case");
+    expect(fillColor[2]).toBe("#ff00ff");
+    expect((fillColor[3] as unknown[])[0]).toBe("interpolate");
+  });
+
+  it("hoverHighlight only wraps fill-extrusion-color when extruded and given an explicit fillColor (opacity stays flat)", () => {
+    const map = new FakeMap();
+    renderHexbin(map, { extruded: true, hoverHighlight: true });
+
+    const paint = map.getLayer("bins-fill")!.paint as Record<string, unknown>;
+    expect((paint["fill-extrusion-color"] as unknown[])[0]).not.toBe("case");
+    expect(typeof paint["fill-extrusion-opacity"]).toBe("number");
+  });
+
+  it("hoverHighlight: { fillColor } wraps fill-extrusion-color with the ramp expression as the base branch when extruded", () => {
+    const map = new FakeMap();
+    renderHexbin(map, {
+      extruded: true,
+      hoverHighlight: { fillColor: "#ff00ff" },
+    });
+
+    const paint = map.getLayer("bins-fill")!.paint as Record<string, unknown>;
+    const fillColor = paint["fill-extrusion-color"] as unknown[];
+    expect(fillColor[0]).toBe("case");
+    expect(fillColor[2]).toBe("#ff00ff");
+    expect((fillColor[3] as unknown[])[0]).toBe("interpolate");
+  });
+
+  it("mirrors hover into feature-state and calls onHover", () => {
+    const map = new FakeMap();
+    const onHover = vi.fn();
+    renderHexbin(map, { onHover, hoverHighlight: true });
+
+    const feature = { id: 7, properties: { value: 3, count: 3 } };
+    map.fireLayer("mousemove", "bins-fill", { features: [feature] });
+    expect(onHover).toHaveBeenCalledWith(feature, expect.anything());
+    expect(map.getFeatureState({ source: "bins", id: 7 })).toEqual({
+      hover: true,
+    });
   });
 });
