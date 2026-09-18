@@ -20,7 +20,11 @@ export type ChoroplethLegendConfig = {
 
 /** Props for `<ChoroplethLayer>`, a data-driven polygon fill (choropleth). */
 export type ChoroplethLayerProps = {
-  /** Unique source/layer id. Auto-generated when omitted. */
+  /**
+   * Unique source/layer id. Auto-generated when omitted. Sub-layers are
+   * `${id}-<role>`; see `layerIds()`. Auto-generated ids are not
+   * predictable — pass `id` when you need to reference the layers.
+   */
   id?: string;
   /** GeoJSON polygons to color. */
   data: GeoJSON;
@@ -55,6 +59,12 @@ export type ChoroplethLayerProps = {
   lineOpacity?: number;
   /** Insert the layers before this existing layer id (e.g. a label layer). */
   beforeId?: string;
+  /**
+   * Feature property to use as the stable feature id (MapLibre `promoteId`).
+   * When omitted, ids are generated per feature (`generateId`), which is
+   * enough for hover / feature-state highlighting.
+   */
+  featureId?: string;
   /** Paint/layout patches merged into the generated fill/line layers. */
   layerOverrides?: { fill?: LayerOverride; line?: LayerOverride };
   /** Fired with the clicked feature and the raw map event. */
@@ -86,6 +96,7 @@ const ChoroplethLayer: FC<ChoroplethLayerProps> = ({
   lineWidth,
   lineOpacity,
   beforeId,
+  featureId,
   layerOverrides,
   onClick,
   legend,
@@ -118,6 +129,7 @@ const ChoroplethLayer: FC<ChoroplethLayerProps> = ({
         strokeWidth={strokeWidth ?? lineWidth ?? 1}
         strokeOpacity={strokeOpacity ?? lineOpacity ?? 1}
         beforeId={beforeId}
+        featureId={featureId}
         layerOverrides={layerOverrides}
         onClick={onClick}
       />

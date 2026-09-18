@@ -15,7 +15,11 @@ import type { LayerPoint } from "../PointLayer";
 
 /** Props for `<HexbinLayer>`, which aggregates points into hexagonal or square cells colored by count. */
 export type HexbinLayerProps = {
-  /** Unique source/layer id. Auto-generated when omitted. */
+  /**
+   * Unique source/layer id. Auto-generated when omitted. Sub-layers are
+   * `${id}-<role>`; see `layerIds()`. Auto-generated ids are not
+   * predictable — pass `id` when you need to reference the layers.
+   */
   id?: string;
   /** The points to aggregate into cells. */
   points: LayerPoint[];
@@ -60,6 +64,14 @@ export type HexbinLayerProps = {
   /** Insert the layers before this existing layer id (e.g. a label layer). */
   beforeId?: string;
   /**
+   * Feature property to use as the stable feature id (MapLibre `promoteId`).
+   * When omitted, ids are generated per feature (`generateId`), which is
+   * enough for hover / feature-state highlighting. The bins here are
+   * computed features, so this usually stays unset; if set, it should name a
+   * bin property (e.g. "count").
+   */
+  featureId?: string;
+  /**
    * Paint/layout patches merged into the generated layers. The `fill` role
    * covers both the flat fill and the extruded fill-extrusion variant.
    */
@@ -99,6 +111,7 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
   lineColor,
   lineWidth,
   beforeId,
+  featureId,
   layerOverrides,
   onClick,
 }) => {
@@ -199,7 +212,12 @@ const HexbinLayer: FC<HexbinLayerProps> = ({
     theme,
   ]);
 
-  useMapLayer({ id: baseId, data, layers, beforeId });
+  const sourceOptions = useMemo(
+    () => (featureId ? { promoteId: featureId } : { generateId: true }),
+    [featureId],
+  );
+
+  useMapLayer({ id: baseId, data, layers, beforeId, sourceOptions });
 
   useLayerClick(
     fillId,

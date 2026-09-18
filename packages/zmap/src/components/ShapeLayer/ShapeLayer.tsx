@@ -18,7 +18,11 @@ import {
 
 /** Props for `<ShapeLayer>`, which renders GeoJSON polygons/lines as fill + outline layers. */
 export type ShapeLayerProps = {
-  /** Unique source/layer id. Auto-generated when omitted. */
+  /**
+   * Unique source/layer id. Auto-generated when omitted. Sub-layers are
+   * `${id}-<role>`; see `layerIds()`. Auto-generated ids are not
+   * predictable — pass `id` when you need to reference the layers.
+   */
   id?: string;
   /** GeoJSON polygons and/or lines. */
   data: GeoJSON;
@@ -49,6 +53,12 @@ export type ShapeLayerProps = {
   lineOpacity?: number;
   /** Insert the layers before this existing layer id (e.g. a label layer). */
   beforeId?: string;
+  /**
+   * Feature property to use as the stable feature id (MapLibre `promoteId`).
+   * When omitted, ids are generated per feature (`generateId`), which is
+   * enough for hover / feature-state highlighting.
+   */
+  featureId?: string;
   /** Paint/layout patches merged into the generated fill/line layers. */
   layerOverrides?: { fill?: LayerOverride; line?: LayerOverride };
   /** Fired with the clicked feature and the raw map event. */
@@ -68,6 +78,7 @@ const ShapeLayer: FC<ShapeLayerProps> = ({
   lineWidth,
   lineOpacity,
   beforeId,
+  featureId,
   layerOverrides,
   onClick,
 }) => {
@@ -131,7 +142,12 @@ const ShapeLayer: FC<ShapeLayerProps> = ({
     ],
   );
 
-  useMapLayer({ id: baseId, data, layers, beforeId });
+  const sourceOptions = useMemo(
+    () => (featureId ? { promoteId: featureId } : { generateId: true }),
+    [featureId],
+  );
+
+  useMapLayer({ id: baseId, data, layers, beforeId, sourceOptions });
 
   useLayerClick(
     fillId,

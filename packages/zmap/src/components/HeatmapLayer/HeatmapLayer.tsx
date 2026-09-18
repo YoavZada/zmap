@@ -12,7 +12,11 @@ import type { LayerPoint } from "../PointLayer";
 
 /** Props for `<HeatmapLayer>`, which renders points as a density heatmap. */
 export type HeatmapLayerProps = {
-  /** Unique source/layer id. Auto-generated when omitted. */
+  /**
+   * Unique source/layer id. Auto-generated when omitted. Sub-layers are
+   * `${id}-<role>`; see `layerIds()`. Auto-generated ids are not
+   * predictable — pass `id` when you need to reference the layers.
+   */
   id?: string;
   /** The points that feed the density surface. */
   points: LayerPoint[];
@@ -32,6 +36,12 @@ export type HeatmapLayerProps = {
   colorRamp?: [number, string][] | ExpressionSpecification;
   /** Insert the layer before this existing layer id. */
   beforeId?: string;
+  /**
+   * Feature property to use as the stable feature id (MapLibre `promoteId`).
+   * When omitted, ids are generated per feature (`generateId`), which is
+   * enough for hover / feature-state highlighting.
+   */
+  featureId?: string;
   /** Paint/layout patches merged into the generated heatmap layer. */
   layerOverrides?: { heat?: LayerOverride };
 };
@@ -53,6 +63,7 @@ const HeatmapLayer: FC<HeatmapLayerProps> = ({
   opacity = 0.85,
   colorRamp,
   beforeId,
+  featureId,
   layerOverrides,
 }) => {
   const theme = useTheme();
@@ -124,7 +135,12 @@ const HeatmapLayer: FC<HeatmapLayerProps> = ({
     [baseId, weightProperty, intensity, radius, ramp, opacity, layerOverrides],
   );
 
-  useMapLayer({ id: baseId, data, layers, beforeId });
+  const sourceOptions = useMemo(
+    () => (featureId ? { promoteId: featureId } : { generateId: true }),
+    [featureId],
+  );
+
+  useMapLayer({ id: baseId, data, layers, beforeId, sourceOptions });
   return null;
 };
 

@@ -184,6 +184,8 @@ export {
 export type { MeasureUnit } from "./utils/measure";
 export { pointInPolygon, pointInBox } from "./utils/geometry";
 export type { ScreenPoint } from "./utils/geometry";
+export { LAYER_ROLES, layerIds } from "./utils/layerIds";
+export type { LayerComponentName } from "./utils/layerIds";
 
 /** The underlying MapLibre GL namespace, re-exported for power users. */
 export const maplibregl = maplibreglNamespace;

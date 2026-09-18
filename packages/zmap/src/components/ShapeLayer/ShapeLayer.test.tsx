@@ -138,4 +138,12 @@ describe("ShapeLayer", () => {
     >;
     expect(lineLayout["line-cap"]).toBe("round");
   });
+
+  it("passes promoteId when featureId is set", () => {
+    const map = new FakeMap();
+    renderShape(map, { featureId: "value" });
+
+    expect(map.getSource("shape")!.options.promoteId).toBe("value");
+    expect(map.getSource("shape")!.options.generateId).toBeUndefined();
+  });
 });

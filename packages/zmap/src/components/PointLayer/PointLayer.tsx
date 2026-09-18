@@ -17,7 +17,11 @@ export type LayerPoint = BasePoint;
 
 /** Props for `<PointLayer>`, which renders many points as a single GPU circle layer. */
 export type PointLayerProps = {
-  /** Unique source/layer id. Auto-generated when omitted. */
+  /**
+   * Unique source/layer id. Auto-generated when omitted. Sub-layers are
+   * `${id}-<role>`; see `layerIds()`. Auto-generated ids are not
+   * predictable — pass `id` when you need to reference the layers.
+   */
   id?: string;
   /** The points to draw as circles. */
   points: LayerPoint[];
@@ -45,6 +49,12 @@ export type PointLayerProps = {
   strokeOpacity?: number;
   /** Insert the layer before this existing layer id (e.g. a label layer). */
   beforeId?: string;
+  /**
+   * Feature property to use as the stable feature id (MapLibre `promoteId`).
+   * When omitted, ids are generated per feature (`generateId`), which is
+   * enough for hover / feature-state highlighting.
+   */
+  featureId?: string;
   /** Paint/layout patches merged into the generated circle layer. */
   layerOverrides?: { circle?: LayerOverride };
   /** Fired with the clicked point, its index in `points`, and the raw event. */
@@ -71,6 +81,7 @@ const PointLayer: FC<PointLayerProps> = ({
   strokeWidth = 1.5,
   strokeOpacity = 1,
   beforeId,
+  featureId,
   layerOverrides,
   onClick,
 }) => {
@@ -130,7 +141,12 @@ const PointLayer: FC<PointLayerProps> = ({
     ],
   );
 
-  useMapLayer({ id: baseId, data, layers, beforeId });
+  const sourceOptions = useMemo(
+    () => (featureId ? { promoteId: featureId } : { generateId: true }),
+    [featureId],
+  );
+
+  useMapLayer({ id: baseId, data, layers, beforeId, sourceOptions });
 
   useLayerClick(
     layerId,

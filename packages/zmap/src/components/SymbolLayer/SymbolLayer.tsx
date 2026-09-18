@@ -20,7 +20,11 @@ export type SymbolPoint = BasePoint & {
 
 /** Props for `<SymbolLayer>`, text labels (optionally with an icon) rendered as a single GPU symbol layer. */
 export type SymbolLayerProps = {
-  /** Unique source/layer id. Auto-generated when omitted. */
+  /**
+   * Unique source/layer id. Auto-generated when omitted. Sub-layers are
+   * `${id}-<role>`; see `layerIds()`. Auto-generated ids are not
+   * predictable — pass `id` when you need to reference the layers.
+   */
   id?: string;
   /** The labeled points to render. */
   points: SymbolPoint[];
@@ -60,6 +64,12 @@ export type SymbolLayerProps = {
   allowOverlap?: boolean;
   /** Insert the layer before this existing layer id. */
   beforeId?: string;
+  /**
+   * Feature property to use as the stable feature id (MapLibre `promoteId`).
+   * When omitted, ids are generated per feature (`generateId`), which is
+   * enough for hover / feature-state highlighting.
+   */
+  featureId?: string;
   /** Paint/layout patches merged into the generated symbol layer. */
   layerOverrides?: { symbol?: LayerOverride };
   /** Fired with the clicked point, its index in `points`, and the raw event. */
@@ -88,6 +98,7 @@ const SymbolLayer: FC<SymbolLayerProps> = ({
   icon,
   allowOverlap = false,
   beforeId,
+  featureId,
   layerOverrides,
   onClick,
 }) => {
@@ -190,7 +201,12 @@ const SymbolLayer: FC<SymbolLayerProps> = ({
     ],
   );
 
-  useMapLayer({ id: baseId, data, layers, beforeId });
+  const sourceOptions = useMemo(
+    () => (featureId ? { promoteId: featureId } : { generateId: true }),
+    [featureId],
+  );
+
+  useMapLayer({ id: baseId, data, layers, beforeId, sourceOptions });
 
   useLayerClick(
     layerId,

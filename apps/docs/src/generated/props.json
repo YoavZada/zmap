@@ -52,11 +52,19 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Explicit source/layer id. Auto-generated when omitted.",
+          "description": "Explicit source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -161,6 +169,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "fillOpacity",
           "type": "number",
           "required": false,
@@ -173,7 +189,7 @@
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -477,6 +493,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "fillColor",
           "type": "string | ChoroplethSpec",
           "required": false,
@@ -521,7 +545,7 @@
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -683,7 +707,7 @@
           "type": "LayerInput[]",
           "required": true,
           "defaultValue": null,
-          "description": "One or more layers to render. Memoize this array to avoid churn.",
+          "description": "One or more layers to render. Memoize this array to avoid churn.\n`paint`, `layout`, `filter`, `minzoom`/`maxzoom` update in place;\nchanging a layer's `type`, the set of layer ids, or `sourceOptions`\nremoves and re-adds the source and layers.",
           "deprecated": null
         },
         {
@@ -732,11 +756,19 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -825,6 +857,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting. The bins here are\ncomputed features, so this usually stays unset; if set, it should name a\nbin property (e.g. \"count\").",
+          "deprecated": null
+        },
+        {
           "name": "fillOpacity",
           "type": "number",
           "required": false,
@@ -845,7 +885,7 @@
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -1617,6 +1657,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "fillColor",
           "type": "string",
           "required": false,
@@ -1637,7 +1685,7 @@
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -1928,11 +1976,19 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "id",
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Explicit source/layer id. Auto-generated when omitted.",
+          "description": "Explicit source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -2082,6 +2138,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "fillColor",
           "type": "string | ChoroplethSpec",
           "required": false,
@@ -2102,7 +2166,7 @@
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -2215,6 +2279,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "font",
           "type": "string[]",
           "required": false,
@@ -2251,7 +2323,7 @@
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -2405,6 +2477,14 @@
           "deprecated": null
         },
         {
+          "name": "featureId",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Feature property to use as the stable feature id (MapLibre `promoteId`).\nWhen omitted, ids are generated per feature (`generateId`), which is\nenough for hover / feature-state highlighting.",
+          "deprecated": null
+        },
+        {
           "name": "formatTime",
           "type": "((value: number) => string)",
           "required": false,
@@ -2417,7 +2497,7 @@
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Unique source/layer id. Auto-generated when omitted.",
+          "description": "Unique source/layer id. Auto-generated when omitted. Sub-layers are\n`${id}-<role>`; see `layerIds()`. Auto-generated ids are not\npredictable — pass `id` when you need to reference the layers.",
           "deprecated": null
         },
         {
@@ -2980,6 +3060,18 @@
       "description": "Registers a named, toggleable overlay with the map's layer registry and shows or hides its children based on visibility. Pair with <LayerControl>."
     },
     {
+      "name": "LAYER_ROLES",
+      "kind": "value",
+      "category": "util",
+      "description": "Sub-layer roles each layer component generates, in render order. The MapLibre layer id is `${id}-${role}`; `role` is also the key for `layerOverrides`. HexbinLayer's `extruded` mode emits only `-fill` (a `fill-extrusion` layer, not the flat `fill` + `line` pair)."
+    },
+    {
+      "name": "LayerComponentName",
+      "kind": "type",
+      "category": "util",
+      "description": "A zmap layer component name with a documented `LAYER_ROLES` entry."
+    },
+    {
       "name": "LayerConfig",
       "kind": "type",
       "category": "component",
@@ -3002,6 +3094,12 @@
       "kind": "type",
       "category": "hook",
       "description": "A registered overlay layer, as shown in the LayerControl panel."
+    },
+    {
+      "name": "layerIds",
+      "kind": "value",
+      "category": "util",
+      "description": "MapLibre layer ids a zmap layer component generates for an explicit `id`, e.g. `layerIds(\"ShapeLayer\", \"zones\")` → `[\"zones-fill\", \"zones-line\"]`."
     },
     {
       "name": "LayerInput",

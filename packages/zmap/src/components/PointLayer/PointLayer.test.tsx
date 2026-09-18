@@ -113,4 +113,20 @@ describe("PointLayer", () => {
     expect(paint["circle-blur"]).toBe(0.5);
     expect(paint["circle-radius"]).toBe(6); // generated values kept
   });
+
+  it("passes generateId when featureId is absent", () => {
+    const map = new FakeMap();
+    renderPoints(map);
+
+    expect(map.getSource("pts")!.options.generateId).toBe(true);
+    expect(map.getSource("pts")!.options.promoteId).toBeUndefined();
+  });
+
+  it("passes promoteId when featureId is set", () => {
+    const map = new FakeMap();
+    renderPoints(map, { featureId: "name" });
+
+    expect(map.getSource("pts")!.options.promoteId).toBe("name");
+    expect(map.getSource("pts")!.options.generateId).toBeUndefined();
+  });
 });

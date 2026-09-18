@@ -24,7 +24,11 @@ const SPEEDS = [0.5, 1, 2, 4];
 
 /** Props for `<TimePlayback>`, which animates time-stamped GeoJSON points along a playhead. */
 export type TimePlaybackProps = {
-  /** Unique source/layer id. Auto-generated when omitted. */
+  /**
+   * Unique source/layer id. Auto-generated when omitted. Sub-layers are
+   * `${id}-<role>`; see `layerIds()`. Auto-generated ids are not
+   * predictable — pass `id` when you need to reference the layers.
+   */
   id?: string;
   /** GeoJSON points, each carrying a numeric timestamp property. */
   data: FeatureCollection;
@@ -69,6 +73,12 @@ export type TimePlaybackProps = {
   onTimeChange?: (value: number) => void;
   /** Insert the layers before this existing layer id. */
   beforeId?: string;
+  /**
+   * Feature property to use as the stable feature id (MapLibre `promoteId`).
+   * When omitted, ids are generated per feature (`generateId`), which is
+   * enough for hover / feature-state highlighting.
+   */
+  featureId?: string;
   /** Paint/layout patches merged into the generated trail/head layers. */
   layerOverrides?: { trail?: LayerOverride; head?: LayerOverride };
 };
@@ -101,6 +111,7 @@ const TimePlayback: FC<TimePlaybackProps> = ({
   formatTime,
   onTimeChange,
   beforeId,
+  featureId,
   layerOverrides,
 }) => {
   const theme = useTheme();
@@ -215,7 +226,12 @@ const TimePlayback: FC<TimePlaybackProps> = ({
     ],
   );
 
-  useMapLayer({ id: baseId, data, layers, beforeId });
+  const sourceOptions = useMemo(
+    () => (featureId ? { promoteId: featureId } : { generateId: true }),
+    [featureId],
+  );
+
+  useMapLayer({ id: baseId, data, layers, beforeId, sourceOptions });
 
   // The latest filters, applied imperatively so per-frame playhead changes never
   // re-create the layers (which would churn the source).
