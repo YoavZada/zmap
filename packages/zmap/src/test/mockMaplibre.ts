@@ -47,6 +47,54 @@ export function resetFakeMarkers(): void {
   fakeMarkers.length = 0;
 }
 
+/** Earth radius (metres) used by FakeLngLat#distanceTo's haversine formula. */
+const EARTH_RADIUS_M = 6371008.8;
+
+/** Stand-in for maplibregl.LngLat — enough for `unproject().distanceTo(...)`. */
+export class FakeLngLat {
+  constructor(
+    public lng: number,
+    public lat: number,
+  ) {}
+  distanceTo(other: FakeLngLat): number {
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const dLat = toRad(other.lat - this.lat);
+    const dLng = toRad(other.lng - this.lng);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(this.lat)) *
+        Math.cos(toRad(other.lat)) *
+        Math.sin(dLng / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return EARTH_RADIUS_M * c;
+  }
+}
+
+/**
+ * enable/disable flip an internal flag; `isEnabled()` reads it back. Typed as
+ * plain `() => void` (not `ReturnType<typeof vi.fn>`, which resolves to an
+ * uncallable union when `vi.fn` isn't given an explicit generic) — vitest's
+ * `toHaveBeenCalled()` matcher works on any function value regardless.
+ */
+type FakeGestureHandler = {
+  enable: () => void;
+  disable: () => void;
+  isEnabled(): boolean;
+};
+
+function makeHandler(): FakeGestureHandler {
+  let enabled = true;
+  return {
+    enable: vi.fn(() => {
+      enabled = true;
+    }),
+    disable: vi.fn(() => {
+      enabled = false;
+    }),
+    isEnabled: () => enabled,
+  };
+}
+
 export class FakeMap {
   options: Record<string, unknown>;
   handlers = new Map<string, Set<Handler>>();
@@ -61,19 +109,75 @@ export class FakeMap {
   private bearing: number;
   private pitch: number;
 
-  doubleClickZoom: {
-    disable: ReturnType<typeof vi.fn>;
-    enable: ReturnType<typeof vi.fn>;
-  } = { disable: vi.fn(), enable: vi.fn() };
-  dragPan: {
-    disable: ReturnType<typeof vi.fn>;
-    enable: ReturnType<typeof vi.fn>;
-  } = { disable: vi.fn(), enable: vi.fn() };
-  boxZoom: {
-    disable: ReturnType<typeof vi.fn>;
-    enable: ReturnType<typeof vi.fn>;
-  } = { disable: vi.fn(), enable: vi.fn() };
+  // --- camera constraints (setMinZoom/setMaxZoom/setMinPitch/setMaxPitch/setMaxBounds) ---
+  constraints: Record<string, unknown> = {};
+  setMinZoom(v?: number | null): this {
+    this.constraints.minZoom = v;
+    return this;
+  }
+  getMinZoom(): unknown {
+    return this.constraints.minZoom;
+  }
+  setMaxZoom(v?: number | null): this {
+    this.constraints.maxZoom = v;
+    return this;
+  }
+  getMaxZoom(): unknown {
+    return this.constraints.maxZoom;
+  }
+  setMinPitch(v?: number | null): this {
+    this.constraints.minPitch = v;
+    return this;
+  }
+  getMinPitch(): unknown {
+    return this.constraints.minPitch;
+  }
+  setMaxPitch(v?: number | null): this {
+    this.constraints.maxPitch = v;
+    return this;
+  }
+  getMaxPitch(): unknown {
+    return this.constraints.maxPitch;
+  }
+  setMaxBounds(b?: unknown): this {
+    this.constraints.maxBounds = b;
+    return this;
+  }
+  getMaxBounds(): unknown {
+    return this.constraints.maxBounds;
+  }
+
+  // --- per-layer zoom range (setLayerZoomRange) ---
+  zoomRanges = new Map<string, [number | null, number | null]>();
+  setLayerZoomRange(
+    id: string,
+    min?: number | null,
+    max?: number | null,
+  ): this {
+    this.zoomRanges.set(id, [min ?? null, max ?? null]);
+    return this;
+  }
+
+  setTransformRequest = vi.fn((_transformRequest?: unknown) => this);
+
+  scrollZoom = makeHandler();
+  boxZoom = makeHandler();
+  dragRotate = makeHandler();
+  dragPan = makeHandler();
+  keyboard = makeHandler();
+  doubleClickZoom = makeHandler();
+  touchZoomRotate = makeHandler();
+  touchPitch = makeHandler();
+  cooperativeGestures = makeHandler();
+
   private canvas = Object.assign(document.createElement("canvas"), {});
+  /**
+   * Real element so tests can `Object.defineProperty(map.getContainer(),
+   * "clientHeight", { value })`. Falls back to a minimal stub when no
+   * `document` global exists (defensive — the `canvas` field above already
+   * requires `document`, so in practice this file needs jsdom).
+   */
+  private containerEl: HTMLDivElement;
 
   setStyle = vi.fn((_style: unknown) => {
     // Real setStyle wipes custom sources/layers; tests that need the wipe +
@@ -116,8 +220,24 @@ export class FakeMap {
     this.zoom = (options.zoom as number) ?? 0;
     this.bearing = (options.bearing as number) ?? 0;
     this.pitch = (options.pitch as number) ?? 0;
+    const container = options.container;
+    this.containerEl =
+      container instanceof HTMLElement
+        ? (container as HTMLDivElement)
+        : typeof document !== "undefined"
+          ? document.createElement("div")
+          : ({} as HTMLDivElement);
     fakeMaps.push(this);
   }
+
+  getContainer(): HTMLDivElement {
+    return this.containerEl;
+  }
+
+  resize = vi.fn(() => {
+    this.fire("resize");
+    return this;
+  });
 
   // --- events (plain `on(event, fn)` and layer-scoped `on(event, layerId, fn)`) ---
   private key(event: string, layerId?: string): string {
@@ -132,6 +252,27 @@ export class FakeMap {
     if (!this.handlers.has(k)) this.handlers.set(k, new Set());
     this.handlers.get(k)!.add(h);
     return this;
+  }
+  /** Subscribes via `on`, then removes itself after the first call. */
+  once(
+    event: string,
+    layerOrHandler: string | Handler,
+    handler?: Handler,
+  ): this {
+    if (typeof layerOrHandler === "string") {
+      const layerId = layerOrHandler;
+      const wrapped: Handler = (payload) => {
+        this.off(event, layerId, wrapped);
+        handler!(payload);
+      };
+      return this.on(event, layerId, wrapped);
+    }
+    const plainHandler = layerOrHandler;
+    const wrapped: Handler = (payload) => {
+      this.off(event, wrapped);
+      plainHandler(payload);
+    };
+    return this.on(event, wrapped);
   }
   off(
     event: string,
@@ -193,9 +334,31 @@ export class FakeMap {
       : [lngLat.lng, lngLat.lat];
     return { x: lng, y: lat };
   }
+  /** Inverse of `project` — same identity mapping (x/y → lng/lat). */
+  unproject(point: [number, number] | { x: number; y: number }): FakeLngLat {
+    const [x, y] = Array.isArray(point) ? point : [point.x, point.y];
+    return new FakeLngLat(x, y);
+  }
   /** Test-only: move the center directly, without a camera call/event. */
   setCenterForTest(center: [number, number]): void {
     this.center = center;
+  }
+  getBounds() {
+    const [lng, lat] = this.center;
+    const west = lng - 1;
+    const east = lng + 1;
+    const south = lat - 1;
+    const north = lat + 1;
+    return {
+      getWest: () => west,
+      getSouth: () => south,
+      getEast: () => east,
+      getNorth: () => north,
+      toArray: (): [[number, number], [number, number]] => [
+        [west, south],
+        [east, north],
+      ],
+    };
   }
 
   // --- sources & layers ---
@@ -239,6 +402,20 @@ export class FakeMap {
     if (at >= 0) this.layerOrder.splice(at, 0, id);
     else this.layerOrder.push(id);
     return this;
+  }
+  /** Same shape `tools/e2e/helpers/map.ts` reads off a real maplibre style. */
+  getStyle(): {
+    layers: Record<string, unknown>[];
+    sources: Record<string, Record<string, unknown>>;
+  } {
+    const layers = this.layerOrder
+      .map((id) => this.layers.get(id))
+      .filter((l): l is Record<string, unknown> => l !== undefined);
+    const sources: Record<string, Record<string, unknown>> = {};
+    for (const [id, source] of this.sources) {
+      sources[id] = { type: source.type, data: source.data, ...source.options };
+    }
+    return { layers, sources };
   }
 
   // --- filters (what setFilter last applied, per layer) ---
@@ -399,8 +576,23 @@ export class FakePopup {
     this.el.appendChild(node);
     return this;
   }
+  setOffset = vi.fn((_offset?: unknown) => this);
+  setMaxWidth = vi.fn((_width?: unknown) => this);
+  addClassName(name: string): this {
+    this.el.classList.add(name);
+    return this;
+  }
+  removeClassName(name: string): this {
+    this.el.classList.remove(name);
+    return this;
+  }
+  private open = false;
+  isOpen(): boolean {
+    return this.open;
+  }
   addTo(_map: unknown): this {
     document.body.appendChild(this.el);
+    this.open = true;
     return this;
   }
   getElement(): HTMLElement {
@@ -421,13 +613,24 @@ export class FakePopup {
   }
   remove(): this {
     this.removed = true;
+    this.open = false;
     this.el.remove();
     this.fire("close");
     return this;
   }
 }
 
+/** Stubs for the module-level RTL text plugin functions library code calls. */
+const setRTLTextPlugin = vi.fn(async (_url: string, _lazy?: boolean) => {});
+const getRTLTextPluginStatus = vi.fn(() => "unavailable");
+
 // Module shape for vi.mock("maplibre-gl", ...): the library only uses the
 // default export's Map, Marker, and Popup constructors at runtime (everything
 // else it imports from maplibre-gl is types, which are erased).
-export default { Map: FakeMap, Marker: FakeMarker, Popup: FakePopup };
+export default {
+  Map: FakeMap,
+  Marker: FakeMarker,
+  Popup: FakePopup,
+  setRTLTextPlugin,
+  getRTLTextPluginStatus,
+};
