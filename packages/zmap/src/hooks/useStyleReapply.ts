@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import type { Map as MapLibreMap } from "maplibre-gl";
+import { toError } from "../utils/errors";
 
 /**
  * Run `apply` once the map is loaded, on every subsequent change to `apply`'s
@@ -25,11 +26,14 @@ export function useStyleReapply(
   loaded: boolean,
   apply: (map: MapLibreMap) => void,
   cleanup?: (map: MapLibreMap) => void,
+  onError?: (error: Error) => void,
 ): void {
   const applyRef = useRef(apply);
   applyRef.current = apply;
   const cleanupRef = useRef(cleanup);
   cleanupRef.current = cleanup;
+  const onErrorRef = useRef(onError);
+  onErrorRef.current = onError;
 
   // A bad source/layer spec must fail in isolation, not crash the React tree —
   // log and move on instead of rethrowing. Stable identity (empty deps; reads
@@ -40,6 +44,7 @@ export function useStyleReapply(
       applyRef.current(m);
     } catch (err) {
       console.error("zmap: failed to apply a map layer/source", err);
+      onErrorRef.current?.(toError(err));
     }
   }, []);
 

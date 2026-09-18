@@ -63,7 +63,7 @@ const Terrain: FC<TerrainProps> = ({
   id,
   demSourceOptions,
 }) => {
-  const { map, loaded } = useMapContext();
+  const { map, loaded, reportError } = useMapContext();
   const reactId = useId();
   const sourceId =
     id ?? `zmap-terrain-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
@@ -117,7 +117,13 @@ const Terrain: FC<TerrainProps> = ({
     [sourceId],
   );
 
-  useStyleReapply(map, loaded, apply, cleanup);
+  useStyleReapply(
+    map,
+    loaded,
+    apply,
+    cleanup,
+    useCallback((e: Error) => reportError?.(e, "layer"), [reportError]),
+  );
   return null;
 };
 

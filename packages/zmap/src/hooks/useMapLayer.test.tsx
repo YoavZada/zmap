@@ -31,10 +31,15 @@ const baseConfig = (over: Partial<MapLayerConfig> = {}): MapLayerConfig => ({
   ...over,
 });
 
-function renderMapLayer(map: FakeMap, config: MapLayerConfig, loaded = true) {
+function renderMapLayer(
+  map: FakeMap,
+  config: MapLayerConfig,
+  loaded = true,
+  reportError?: (error: Error, kind: string) => void,
+) {
   const wrapper = ({ children }: { children: ReactNode }) => (
     <MapContext.Provider
-      value={{ map: map as never, loaded }}
+      value={{ map: map as never, loaded, reportError: reportError as never }}
       children={children}
     />
   );
@@ -360,6 +365,26 @@ describe("useMapLayer", () => {
 
     expect(() => renderMapLayer(map, baseConfig())).not.toThrow();
     expect(consoleError).toHaveBeenCalled();
+
+    consoleError.mockRestore();
+  });
+
+  it('routes addLayer failures to reportError with kind "layer"', () => {
+    const map = new FakeMap();
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const reportError = vi.fn();
+    vi.spyOn(map, "addLayer").mockImplementationOnce(() => {
+      throw new Error("bad layer spec");
+    });
+
+    renderMapLayer(map, baseConfig(), true, reportError);
+
+    expect(reportError).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "bad layer spec" }),
+      "layer",
+    );
 
     consoleError.mockRestore();
   });

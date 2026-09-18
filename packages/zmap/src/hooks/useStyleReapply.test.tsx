@@ -91,4 +91,25 @@ describe("useStyleReapply", () => {
 
     consoleError.mockRestore();
   });
+
+  it("calls onError when apply throws", () => {
+    const map = new FakeMap();
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const apply = vi.fn(() => {
+      throw new Error("bad apply");
+    });
+    const onError = vi.fn();
+
+    renderHook(() =>
+      useStyleReapply(map as never, true, apply, undefined, onError),
+    );
+
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "bad apply" }),
+    );
+
+    consoleError.mockRestore();
+  });
 });

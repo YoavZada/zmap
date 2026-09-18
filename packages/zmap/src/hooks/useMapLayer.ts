@@ -7,6 +7,7 @@ import type {
 } from "maplibre-gl";
 import type { GeoJSON } from "geojson";
 import { useMapContext } from "../context/useMap";
+import { toError } from "../utils/errors";
 
 /**
  * Omit that distributes over a union instead of collapsing it to common keys —
@@ -86,7 +87,7 @@ function removeAll(map: MapLibreMap, cfg: MapLayerConfig) {
  * re-add on `styledata`). Data and paint/layout updates are applied in place.
  */
 export function useMapLayer(config: MapLayerConfig): void {
-  const { map, loaded } = useMapContext();
+  const { map, loaded, reportError } = useMapContext();
   const { id, data, layers, beforeId } = config;
 
   // The re-add path reads the *latest* config from a ref: layers restored
@@ -123,6 +124,7 @@ export function useMapLayer(config: MapLayerConfig): void {
       applied = cfgRef.current;
     } catch (err) {
       console.error("zmap: failed to apply a map layer/source", err);
+      reportError?.(toError(err), "layer");
     }
 
     const ensure = () => {
@@ -132,6 +134,7 @@ export function useMapLayer(config: MapLayerConfig): void {
           applied = cfgRef.current;
         } catch (err) {
           console.error("zmap: failed to apply a map layer/source", err);
+          reportError?.(toError(err), "layer");
         }
       }
     };

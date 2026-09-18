@@ -20,12 +20,13 @@ import maplibregl, {
 import Box, { type BoxProps } from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { MapContext } from "../../context/MapContext";
+import { MapContext, type MapErrorKind } from "../../context/MapContext";
 import { LayerRegistryProvider } from "../../context/LayerRegistryContext";
 import { useColorScheme, type ColorScheme } from "../../hooks/useColorScheme";
 import { useStyleReapply } from "../../hooks/useStyleReapply";
 import { providerKey, resolveStyle, type MapStyleInput } from "../../providers";
 import { registerPmtilesProtocol, usesPmtiles } from "../../providers/pmtiles";
+import { toError } from "../../utils/errors";
 import type { LngLatTuple } from "../../utils/geojson";
 import MapErrorPanel from "./components/MapErrorPanel";
 import MapLoader, { type MapLoaderProps } from "./components/MapLoader";
@@ -116,15 +117,17 @@ export interface MapProps
   /** Called once with the map instance after the "load" event. */
   onLoad?: (map: maplibregl.Map) => void;
   /**
-   * Called when the map instance fails to initialize (e.g. WebGL unavailable)
-   * or emits a runtime error event (e.g. a tile request failing). On
-   * initialization failure, a themed fallback replaces the map — see
-   * `fallback` to customize it.
+   * Fired for initialization failures (`"init"`), MapLibre runtime errors
+   * (`"runtime"`), failed tile/source requests (`"tile"`, deduped),
+   * layer/source spec failures (`"layer"`), style failures (`"style"`), and
+   * WebGL context loss (`"webgl"`).
    */
-  onError?: (error: Error) => void;
+  onError?: (error: Error, kind: MapErrorKind) => void;
   /**
    * Rendered in place of the map when it fails to initialize. Defaults to a
-   * themed panel with a "Unable to load the map" message.
+   * themed panel with a "Unable to load the map" message. Also shown while
+   * the WebGL context is lost (e.g. a GPU reset or the laptop waking from
+   * sleep) — children remount once the context is restored.
    */
   fallback?: ReactNode;
   /**
@@ -243,6 +246,19 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
   onLoadRef.current = onLoad;
   const onErrorRef = useRef(onError);
   onErrorRef.current = onError;
+  // Stable identity: read the latest onError via the ref above so this never
+  // needs to be re-created, and can be included in the memoized context value
+  // without ever busting it.
+  const reportError = useCallback(
+    (error: Error, kind: MapErrorKind) => onErrorRef.current?.(error, kind),
+    [],
+  );
+  // Last-reported timestamp per deduped tile-error key
+  // (`${sourceId}|${status}|${message}`) — see the "error" listener below. A
+  // plain object (not `Map`): inside this component's own named function
+  // expression, the identifier `Map` self-references the component, shadowing
+  // the global collection class.
+  const tileErrorsRef = useRef<Record<string, number>>({});
   const handlersRef = useRef({
     onClick,
     onDblClick,
@@ -289,16 +305,44 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
           ...mapOptions,
         });
       } catch (err) {
-        const e = err instanceof Error ? err : new Error(String(err));
-        onErrorRef.current?.(e);
+        const e = toError(err);
+        reportError(e, "init");
         setMapError(e);
         return;
       }
       mapRef.current = instance;
       setMap(instance);
-      instance.on("error", (ev: { error?: Error }) =>
-        onErrorRef.current?.(ev?.error ?? new Error("map error")),
-      );
+      instance.on("error", (ev: { error?: unknown; sourceId?: string }) => {
+        const error = toError(ev?.error ?? new Error("map error"));
+        const status = (ev?.error as { status?: unknown })?.status;
+        const isTile = ev?.sourceId !== undefined || typeof status === "number";
+        if (isTile) {
+          const key = `${ev?.sourceId ?? ""}|${status ?? ""}|${error.message}`;
+          const now = Date.now();
+          const tileErrors = tileErrorsRef.current;
+          const last = tileErrors[key];
+          if (last !== undefined && now - last < 5000) return;
+          tileErrors[key] = now;
+          if (Object.keys(tileErrors).length > 200) {
+            for (const [k, t] of Object.entries(tileErrors)) {
+              if (now - t > 60000) delete tileErrors[k];
+            }
+          }
+          reportError(error, "tile");
+          return;
+        }
+        const kind: MapErrorKind = error.message.toLowerCase().includes("style")
+          ? "style"
+          : "runtime";
+        reportError(error, kind);
+      });
+      instance.on("webglcontextlost", () => {
+        const e = new Error("WebGL context lost");
+        e.name = "WebGLContextLost";
+        reportError(e, "webgl");
+        setMapError(e);
+      });
+      instance.on("webglcontextrestored", () => setMapError(null));
       handleLoad = () => {
         setLoaded(true);
         // Tooling affordance (e2e, console debugging): mark the container ready
@@ -376,6 +420,8 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
       (m: MapLibreMap) => m.setProjection({ type: projection }),
       [projection],
     ),
+    undefined,
+    useCallback((e: Error) => reportError(e, "style"), [reportError]),
   );
 
   // Map-level event props. Subscribed once per map instance; the handlers stay
@@ -446,7 +492,10 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
 
   useImperativeHandle(ref, () => map as maplibregl.Map, [map]);
 
-  const value = useMemo(() => ({ map, loaded }), [map, loaded]);
+  const value = useMemo(
+    () => ({ map, loaded, reportError }),
+    [map, loaded, reportError],
+  );
 
   // Loading indicator (opt-in via `loader`, off by default), shown until the
   // map loads. The built-in loader cross-fades out via `Fade` (disabled under
@@ -489,3 +538,4 @@ const Map = forwardRef<maplibregl.Map | null, MapProps>(function Map(
 });
 
 export default Map;
+export type { MapErrorKind } from "../../context/MapContext";

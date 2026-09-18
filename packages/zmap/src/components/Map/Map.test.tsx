@@ -277,12 +277,12 @@ describe("Map", () => {
   });
 
   describe("error resilience", () => {
-    it("renders a themed fallback and calls onError when map creation throws", () => {
+    it('renders a themed fallback and calls onError with kind "init" when map creation throws', () => {
       const boom = new Error("WebGL unavailable");
       setFakeMapConstructError(boom);
       const onError = vi.fn();
       const { getByText } = render(<Map onError={onError} />);
-      expect(onError).toHaveBeenCalledWith(boom);
+      expect(onError).toHaveBeenCalledWith(boom, "init");
       expect(getByText(/unable to load the map/i)).toBeTruthy();
       setFakeMapConstructError(null);
     });
@@ -296,14 +296,70 @@ describe("Map", () => {
       setFakeMapConstructError(null);
     });
 
-    it("forwards runtime map error events to onError", () => {
+    it('classifies a non-tile error as "runtime"', () => {
       const onError = vi.fn();
       render(<Map onError={onError} />);
       const map = lastFakeMap();
       act(() => map.fire("error", { error: new Error("tile 404") }));
       expect(onError).toHaveBeenCalledWith(
         expect.objectContaining({ message: "tile 404" }),
+        "runtime",
       );
+    });
+
+    it("dedupes identical tile errors within 5s and reports again after", () => {
+      vi.useFakeTimers();
+      try {
+        const onError = vi.fn();
+        render(<Map onError={onError} />);
+        const map = lastFakeMap();
+        const fireTile = () =>
+          act(() => {
+            map.fire("error", {
+              sourceId: "s",
+              error: Object.assign(new Error("404"), { status: 404 }),
+            });
+          });
+
+        fireTile();
+        fireTile();
+        fireTile();
+        expect(onError).toHaveBeenCalledTimes(1);
+        expect(onError).toHaveBeenCalledWith(
+          expect.objectContaining({ message: "404" }),
+          "tile",
+        );
+
+        act(() => {
+          vi.advanceTimersByTime(5001);
+        });
+        fireTile();
+        expect(onError).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("switches to the fallback on webglcontextlost and recovers on restore", () => {
+      const onError = vi.fn();
+      render(
+        <Map onError={onError} fallback={<div>broken</div>}>
+          <div data-testid="child" />
+        </Map>,
+      );
+      loadMap();
+      const map = lastFakeMap();
+
+      act(() => map.fire("webglcontextlost"));
+      expect(screen.getByText("broken")).toBeTruthy();
+      expect(onError).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "WebGLContextLost" }),
+        "webgl",
+      );
+
+      act(() => map.fire("webglcontextrestored"));
+      expect(screen.queryByText("broken")).toBeNull();
+      expect(screen.getByTestId("child")).toBeDefined();
     });
   });
 
