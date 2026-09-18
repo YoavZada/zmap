@@ -104,6 +104,22 @@ describe("HexbinLayer", () => {
     expect(onClick).toHaveBeenCalledWith({ value: 3, count: 3 }, event);
   });
 
+  it("toggling extruded swaps the fill layer for fill-extrusion and drops the line layer", () => {
+    const map = new FakeMap();
+    const { rerender } = renderHexbin(map, { extruded: false });
+
+    expect(map.getLayer("bins-fill")!.type).toBe("fill");
+    expect(map.getLayer("bins-line")).toBeDefined();
+
+    // Rerender through the same wrapper (not re-wrapped) so React reconciles
+    // the existing HexbinLayer instance in place instead of remounting it —
+    // remounting would mask the in-place shape-change bug under test.
+    rerender(<HexbinLayer id="bins" points={POINTS} extruded />);
+
+    expect(map.getLayer("bins-fill")!.type).toBe("fill-extrusion");
+    expect(map.getLayer("bins-line")).toBeUndefined();
+  });
+
   it("inserts before an existing layer via beforeId", () => {
     const map = new FakeMap();
     map.addLayer({ id: "labels" });

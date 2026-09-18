@@ -33,7 +33,12 @@ export interface MapLayerConfig {
   data: GeoJSON | string;
   /** Extra source options (clustering, generateId, …). */
   sourceOptions?: Partial<Omit<GeoJSONSourceSpecification, "type" | "data">>;
-  /** One or more layers to render. Memoize this array to avoid churn. */
+  /**
+   * One or more layers to render. Memoize this array to avoid churn.
+   * `paint`, `layout`, `filter`, `minzoom`/`maxzoom` update in place;
+   * changing a layer's `type`, the set of layer ids, or `sourceOptions`
+   * removes and re-adds the source and layers.
+   */
   layers: LayerInput[];
   /** Insert the layers before this existing layer id (e.g. a label layer). */
   beforeId?: string;
@@ -90,20 +95,32 @@ export function useMapLayer(config: MapLayerConfig): void {
   const cfgRef = useRef(config);
   cfgRef.current = config;
 
-  // Add on load + re-add after every style reload. Keyed by source id only.
+  // Forces a remount (removeAll + addAll) when a layer's `type` changes, the
+  // set of layer ids changes, or `sourceOptions` changes — none of those can
+  // be applied in place (see the in-place update effect below).
+  const shapeKey = layers.map((l) => `${l.id}:${l.type}`).join("|");
+  const sourceKey = JSON.stringify(config.sourceOptions ?? null);
+
+  // Add on load + re-add after every style reload. Keyed by source id, plus
+  // shapeKey/sourceKey to force a remount when they change.
   //
   // Two events guard the re-add: `styledata` covers the common case, but a
   // style swap's *final* styledata can fire while isStyleLoaded() is still
   // false (sprite/glyphs pending) — with no later styledata, the layers would
   // be lost until something else touched the style. `idle` fires once the map
   // settles, so it reliably sweeps up that race.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: re-add is keyed by map/loaded; id is included to rebind if it changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: re-add is keyed by map/loaded; id is included to rebind if it changes; shapeKey/sourceKey force a remount when a layer's type, the set of layer ids, or sourceOptions changes
   useEffect(() => {
     if (!map || !loaded) return;
+    // Tracks whichever config was last successfully applied within this
+    // effect's lifetime, so cleanup removes exactly what's on the map —
+    // not the (possibly newer, not-yet-applied) `cfgRef.current`.
+    let applied = cfgRef.current;
     // A bad source/layer spec must fail in isolation, not crash the React
     // tree — log and move on instead of rethrowing.
     try {
       addAll(map, cfgRef.current);
+      applied = cfgRef.current;
     } catch (err) {
       console.error("zmap: failed to apply a map layer/source", err);
     }
@@ -112,6 +129,7 @@ export function useMapLayer(config: MapLayerConfig): void {
       if (!map.getSource(cfgRef.current.id) && map.isStyleLoaded()) {
         try {
           addAll(map, cfgRef.current);
+          applied = cfgRef.current;
         } catch (err) {
           console.error("zmap: failed to apply a map layer/source", err);
         }
@@ -123,9 +141,9 @@ export function useMapLayer(config: MapLayerConfig): void {
     return () => {
       map.off("styledata", ensure);
       map.off("idle", ensure);
-      removeAll(map, cfgRef.current);
+      removeAll(map, applied);
     };
-  }, [map, loaded, id]);
+  }, [map, loaded, id, shapeKey, sourceKey]);
 
   // Update GeoJSON data in place.
   useEffect(() => {
@@ -162,6 +180,24 @@ export function useMapLayer(config: MapLayerConfig): void {
         for (const [k, v] of Object.entries(layout)) {
           map.setLayoutProperty(layer.id, k as never, v as never);
         }
+      }
+      // Not every layer type supports `filter` (e.g. background/raster), so
+      // `"filter" in layer` also doubles as the type guard here. It's
+      // required, not just an optimization: TimePlayback applies filters
+      // imperatively per animation frame and its layer specs carry no
+      // `filter` key at all — calling setFilter(id, null) for them on every
+      // paint-driven render would wipe the playhead filter out from under it.
+      const filterField = layer as { filter?: unknown };
+      if ("filter" in layer) {
+        map.setFilter(layer.id, (filterField.filter ?? null) as never);
+      }
+      const zoomField = layer as { minzoom?: number; maxzoom?: number };
+      if ("minzoom" in layer || "maxzoom" in layer) {
+        map.setLayerZoomRange(
+          layer.id,
+          zoomField.minzoom ?? 0,
+          zoomField.maxzoom ?? 24,
+        );
       }
     }
   }, [map, loaded, layers]);
