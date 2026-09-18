@@ -204,6 +204,9 @@ export class FakeMap {
   easeTo = vi.fn((opts: Record<string, unknown>) => this.applyCamera(opts));
   jumpTo = vi.fn((opts: Record<string, unknown>) => this.applyCamera(opts));
   flyTo = vi.fn((opts: Record<string, unknown>) => this.applyCamera(opts));
+  zoomIn = vi.fn((): this => this);
+  zoomOut = vi.fn((): this => this);
+  resetNorth = vi.fn((): this => this);
   private projection: { type: string } = { type: "mercator" };
   setProjection = vi.fn((spec: { type: string }) => {
     this.projection = spec;
