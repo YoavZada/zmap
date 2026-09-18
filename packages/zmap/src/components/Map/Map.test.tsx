@@ -175,6 +175,74 @@ describe("Map", () => {
       expect(first).not.toHaveBeenCalled();
       expect(second).toHaveBeenCalledTimes(1);
     });
+
+    it("forwards idle, style.load and resize events", () => {
+      const onIdle = vi.fn();
+      const onStyleLoad = vi.fn();
+      const onResize = vi.fn();
+      render(
+        <Map onIdle={onIdle} onStyleLoad={onStyleLoad} onResize={onResize} />,
+      );
+      const map = loadMap();
+
+      const idleEv = { type: "idle" };
+      const styleLoadEv = { type: "style.load" };
+      const resizeEv = { type: "resize" };
+      act(() => {
+        map.fire("idle", idleEv);
+        map.fire("style.load", styleLoadEv);
+        map.fire("resize", resizeEv);
+      });
+      expect(onIdle).toHaveBeenCalledTimes(1);
+      expect(onIdle).toHaveBeenCalledWith(idleEv);
+      expect(onStyleLoad).toHaveBeenCalledTimes(1);
+      expect(onStyleLoad).toHaveBeenCalledWith(styleLoadEv);
+      expect(onResize).toHaveBeenCalledTimes(1);
+      expect(onResize).toHaveBeenCalledWith(resizeEv);
+    });
+
+    it("hands camera state to onZoom", () => {
+      const onZoom = vi.fn();
+      render(<Map center={[10, 20]} zoom={4} onZoom={onZoom} />);
+      const map = loadMap();
+
+      act(() => {
+        map.fire("zoom", { type: "zoom" });
+      });
+      expect(onZoom).toHaveBeenCalledWith(
+        { center: [10, 20], zoom: 4, bearing: 0, pitch: 0 },
+        { type: "zoom" },
+      );
+    });
+
+    it("onMouseMove receives the raw event", () => {
+      const onMouseMove = vi.fn();
+      render(<Map onMouseMove={onMouseMove} />);
+      const map = loadMap();
+
+      const ev = { lngLat: { lng: 3, lat: 4 } };
+      act(() => {
+        map.fire("mousemove", ev);
+      });
+      expect(onMouseMove).toHaveBeenCalledWith(ev);
+    });
+
+    it("keeps the new handlers fresh without resubscribing", () => {
+      const first = vi.fn();
+      const second = vi.fn();
+      const { rerender } = render(<Map onIdle={first} />);
+      const map = loadMap();
+      const subscribed = map.handlerCount("idle");
+
+      rerender(<Map onIdle={second} />);
+      expect(map.handlerCount("idle")).toBe(subscribed);
+
+      act(() => {
+        map.fire("idle", { type: "idle" });
+      });
+      expect(first).not.toHaveBeenCalled();
+      expect(second).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("reactive camera", () => {

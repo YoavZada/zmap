@@ -1413,11 +1413,27 @@
           "deprecated": null
         },
         {
+          "name": "onIdle",
+          "type": "((event: MapLibreEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fires when the map has finished rendering and no camera transition or tile load is pending — the \"settled\" signal for screenshots, analytics, or tests.",
+          "deprecated": null
+        },
+        {
           "name": "onLoad",
           "type": "((map: Map$1) => void)",
           "required": false,
           "defaultValue": null,
           "description": "Called once with the map instance after the \"load\" event.",
+          "deprecated": null
+        },
+        {
+          "name": "onMouseMove",
+          "type": "((event: MapMouseEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Pointer movement over the map; `event.lngLat` is the coordinate under the cursor.",
           "deprecated": null
         },
         {
@@ -1434,6 +1450,30 @@
           "required": false,
           "defaultValue": null,
           "description": "Fires once when a camera movement settles.",
+          "deprecated": null
+        },
+        {
+          "name": "onResize",
+          "type": "((event: MapLibreEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fires after the map resized to fit its container (MapLibre already observes the container for you).",
+          "deprecated": null
+        },
+        {
+          "name": "onStyleLoad",
+          "type": "((event: MapLibreEvent) => void)",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fires when a basemap style finishes loading — on first load and after every theme swap.",
+          "deprecated": null
+        },
+        {
+          "name": "onZoom",
+          "type": "MapViewEventHandler",
+          "required": false,
+          "defaultValue": null,
+          "description": "Fires continuously while zooming (wheel, pinch, buttons). Receives the camera state like `onMove`.",
           "deprecated": null
         },
         {

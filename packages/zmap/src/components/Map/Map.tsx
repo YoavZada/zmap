@@ -57,7 +57,13 @@ export type MapViewEventHandler = (
 export interface MapProps
   extends Omit<
     BoxProps,
-    "onLoad" | "ref" | "onClick" | "onDoubleClick" | "onContextMenu" | "onError"
+    | "onLoad"
+    | "ref"
+    | "onClick"
+    | "onDoubleClick"
+    | "onContextMenu"
+    | "onError"
+    | "onMouseMove"
   > {
   /**
    * Basemap source: a built-in keyless id ("carto" | "osm" | "versatiles" |
@@ -194,6 +200,16 @@ export interface MapProps
   onMoveEnd?: MapViewEventHandler;
   /** Fires once when a zoom gesture/animation settles. */
   onZoomEnd?: MapViewEventHandler;
+  /** Fires when the map has finished rendering and no camera transition or tile load is pending — the "settled" signal for screenshots, analytics, or tests. */
+  onIdle?: (event: MapLibreEvent) => void;
+  /** Fires continuously while zooming (wheel, pinch, buttons). Receives the camera state like `onMove`. */
+  onZoom?: MapViewEventHandler;
+  /** Fires when a basemap style finishes loading — on first load and after every theme swap. */
+  onStyleLoad?: (event: MapLibreEvent) => void;
+  /** Pointer movement over the map; `event.lngLat` is the coordinate under the cursor. */
+  onMouseMove?: (event: MapMouseEvent) => void;
+  /** Fires after the map resized to fit its container (MapLibre already observes the container for you). */
+  onResize?: (event: MapLibreEvent) => void;
   /** Map content — rendered once the map has loaded. Typically markers, popups, controls, and layers. */
   children?: ReactNode;
 }
@@ -294,6 +310,11 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     onMove,
     onMoveEnd,
     onZoomEnd,
+    onIdle,
+    onZoom,
+    onStyleLoad,
+    onMouseMove,
+    onResize,
     children,
     sx,
     ...boxProps
@@ -334,6 +355,11 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     onMove,
     onMoveEnd,
     onZoomEnd,
+    onIdle,
+    onZoom,
+    onStyleLoad,
+    onMouseMove,
+    onResize,
   });
   handlersRef.current = {
     onClick,
@@ -342,6 +368,11 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     onMove,
     onMoveEnd,
     onZoomEnd,
+    onIdle,
+    onZoom,
+    onStyleLoad,
+    onMouseMove,
+    onResize,
   };
 
   // Create the map exactly once.
@@ -562,6 +593,12 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
       h.current.onMoveEnd?.(toViewState(map), e);
     const onZoomEndEv = (e: MapLibreEvent) =>
       h.current.onZoomEnd?.(toViewState(map), e);
+    const onIdleEv = (e: MapLibreEvent) => h.current.onIdle?.(e);
+    const onZoomEv = (e: MapLibreEvent) =>
+      h.current.onZoom?.(toViewState(map), e);
+    const onStyleLoadEv = (e: MapLibreEvent) => h.current.onStyleLoad?.(e);
+    const onMouseMoveEv = (e: MapMouseEvent) => h.current.onMouseMove?.(e);
+    const onResizeEv = (e: MapLibreEvent) => h.current.onResize?.(e);
 
     map.on("click", onClickEv);
     map.on("dblclick", onDblClickEv);
@@ -569,6 +606,11 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     map.on("move", onMoveEv);
     map.on("moveend", onMoveEndEv);
     map.on("zoomend", onZoomEndEv);
+    map.on("idle", onIdleEv);
+    map.on("zoom", onZoomEv);
+    map.on("style.load", onStyleLoadEv);
+    map.on("mousemove", onMouseMoveEv);
+    map.on("resize", onResizeEv);
     return () => {
       map.off("click", onClickEv);
       map.off("dblclick", onDblClickEv);
@@ -576,6 +618,11 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
       map.off("move", onMoveEv);
       map.off("moveend", onMoveEndEv);
       map.off("zoomend", onZoomEndEv);
+      map.off("idle", onIdleEv);
+      map.off("zoom", onZoomEv);
+      map.off("style.load", onStyleLoadEv);
+      map.off("mousemove", onMouseMoveEv);
+      map.off("resize", onResizeEv);
     };
   }, [map]);
 
