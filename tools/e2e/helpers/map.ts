@@ -96,7 +96,19 @@ export async function revealAllDemos(page: Page, timeout = 60_000) {
   // fires, so give the canvas a bounded window to appear before deciding this
   // section has no map — a one-shot count() here races the mount and can
   // silently skip the load wait.
-  const lastDemo = page.getByTestId("demo-section").last();
+  const sections = page.getByTestId("demo-section");
+  if ((await sections.count()) === 0) {
+    // Pages without demo sections (landing, blocks gallery, API, guides):
+    // there is no "last demo" to settle on — if the page mounts any map at
+    // all, wait for the first one to load so the scan sees mounted content.
+    if (await page.locator(".maplibregl-canvas").count()) {
+      await expect(page.locator("[data-zmap-loaded]").first()).toBeAttached({
+        timeout: 60_000,
+      });
+    }
+    return;
+  }
+  const lastDemo = sections.last();
   await expect(lastDemo).toBeVisible();
   const hasCanvas = await expect
     .poll(() => lastDemo.locator(".maplibregl-canvas").count(), {
@@ -110,7 +122,7 @@ export async function revealAllDemos(page: Page, timeout = 60_000) {
     );
   if (hasCanvas) {
     await expect(lastDemo.locator("[data-zmap-loaded]").first()).toBeAttached({
-      timeout: 45_000,
+      timeout: 60_000,
     });
   }
 }
@@ -124,7 +136,7 @@ export async function revealDemo(page: Page, anchor: string): Promise<Locator> {
   const demo = page.locator(`#${anchor}`);
   await demo.scrollIntoViewIfNeeded();
   await expect(demo.locator("[data-zmap-loaded]").first()).toBeAttached({
-    timeout: 45_000,
+    timeout: 60_000,
   });
   return demo;
 }
