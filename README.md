@@ -10,6 +10,7 @@ MUI and follow your theme, including automatic light/dark basemaps.
 
 [**Docs & live demos**](https://yoavzada.github.io/zmap) · [Quick start](#quick-start) · [Components](#components) · [Providers & theming](#providers--theming)
 
+[![CI](https://github.com/YoavZada/zmap/actions/workflows/ci.yml/badge.svg)](https://github.com/YoavZada/zmap/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/zmapgl.svg)](https://www.npmjs.com/package/zmapgl)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![MapLibre GL](https://img.shields.io/badge/MapLibre%20GL-1A1A2E)](https://maplibre.org/)
@@ -173,7 +174,8 @@ pnpm test      # run the library test suite
 
 ## Contributing
 
-Contributions are welcome!
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup,
+commands, and conventions — the short version:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
