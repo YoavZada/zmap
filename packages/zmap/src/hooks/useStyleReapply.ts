@@ -60,7 +60,13 @@ export function useStyleReapply(
     return () => {
       map.off("styledata", ensure);
       map.off("idle", ensure);
-      cleanupRef.current?.(map);
+      // A lost WebGL context or a torn-down style can make cleanup throw —
+      // never let that take down the React tree.
+      try {
+        cleanupRef.current?.(map);
+      } catch (err) {
+        console.error("zmap: failed to clean up a style-bound feature", err);
+      }
     };
   }, [map, loaded, safeApply]);
 

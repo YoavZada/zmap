@@ -28,9 +28,6 @@ export function useUpdateEffect(
       return;
     }
     return effect();
-    // `deps` is a parameter, not an array literal, so biome's
-    // useExhaustiveDependencies can't verify it here — that check runs at
-    // each call site instead (biome-ignore comments are added there,
-    // when needed, with a reason).
+    // biome-ignore lint/correctness/useExhaustiveDependencies: `deps` is the caller's list, forwarded verbatim — call sites are checked instead
   }, deps);
 }
