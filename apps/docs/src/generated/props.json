@@ -1577,7 +1577,7 @@
           "type": "string | boolean",
           "required": false,
           "defaultValue": null,
-          "description": "Load MapLibre's RTL text plugin so Hebrew/Arabic basemap labels render\ncorrectly. `true` uses the default CDN URL, a string is a custom URL, or\n`false` never loads it. Default: enabled when the MUI theme `direction`\nis \"rtl\". Loaded lazily, once per page.",
+          "description": "Load MapLibre's RTL text plugin so Hebrew/Arabic basemap labels render\ncorrectly. `true` uses the default CDN URL, a string is a custom URL, or\n`false` never loads it. Default: enabled when the MUI theme `direction`\nis \"rtl\". Loaded lazily, once per page. Evaluated when the map is\ncreated — the plugin is page-global, so an app that mounts LTR and later\nswitches its theme to RTL should pass `rtlTextPlugin` explicitly (or call\n`registerRtlTextPlugin()` itself).",
           "deprecated": null
         },
         {
