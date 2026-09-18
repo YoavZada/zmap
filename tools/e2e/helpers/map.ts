@@ -91,10 +91,24 @@ export async function revealAllDemos(page: Page, timeout = 60_000) {
     )
     .toBe(true);
 
-  // Settle: the last-revealed demo may still be mounting its map.
+  // Settle: the last-revealed demo may still be mounting its map. The
+  // demo-section wrapper exists (as a Skeleton) before its IntersectionObserver
+  // fires, so give the canvas a bounded window to appear before deciding this
+  // section has no map — a one-shot count() here races the mount and can
+  // silently skip the load wait.
   const lastDemo = page.getByTestId("demo-section").last();
   await expect(lastDemo).toBeVisible();
-  if (await lastDemo.locator(".maplibregl-canvas").count()) {
+  const hasCanvas = await expect
+    .poll(() => lastDemo.locator(".maplibregl-canvas").count(), {
+      timeout: 3_000,
+      intervals: [250],
+    })
+    .toBeGreaterThan(0)
+    .then(
+      () => true,
+      () => false,
+    );
+  if (hasCanvas) {
     await expect(lastDemo.locator("[data-zmap-loaded]").first()).toBeAttached({
       timeout: 45_000,
     });
