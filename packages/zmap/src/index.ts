@@ -1,3 +1,10 @@
+"use client";
+
+// Source-aliased consumers (docs, pathfinder, any Next `transpilePackages`
+// setup pointed at src/ instead of dist/) never see tsup's banner (see
+// tsup.config.ts) — the directive has to live in source too. A doubled
+// directive when both apply is harmless.
+
 import maplibreglNamespace from "maplibre-gl";
 
 // Components

@@ -56,6 +56,11 @@ jobs:
           node --input-type=module -e "await import('./packages/zmap/dist/index.js'); console.log('esm import OK')"
           node -e "require('./packages/zmap/dist/index.cjs'); console.log('cjs require OK')"
 
+      - name: 'Directive check ("use client" in dist)'
+        run: |
+          head -c 200 packages/zmap/dist/index.js  | grep -q '"use client"' || { echo 'missing "use client" in ESM'; exit 1; }
+          head -c 200 packages/zmap/dist/index.cjs | grep -q '"use client"' || { echo 'missing "use client" in CJS'; exit 1; }
+
       - name: Next build (SSR smoke)
         run: pnpm --filter next-smoke build
 

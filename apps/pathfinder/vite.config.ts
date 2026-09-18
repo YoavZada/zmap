@@ -22,4 +22,14 @@ export default defineConfig({
       zmapgl: zmapSrc,
     },
   },
+  build: {
+    rollupOptions: {
+      onwarn(warning, defaultHandler) {
+        // zmapgl source starts with "use client" for RSC consumers; Rollup
+        // can't act on it here.
+        if (warning.code === "MODULE_LEVEL_DIRECTIVE") return;
+        defaultHandler(warning);
+      },
+    },
+  },
 });
