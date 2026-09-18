@@ -18,6 +18,7 @@ import GestureOutlined from "@mui/icons-material/GestureOutlined";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import type { MapMouseEvent } from "maplibre-gl";
 import { useMapContext } from "../../context/useMap";
+import { useLocaleText } from "../../context/useLocaleText";
 import { resolvePaletteColor } from "../../utils/color";
 import type { LngLatTuple } from "../../utils/geojson";
 import {
@@ -56,9 +57,9 @@ export type SelectControlProps = {
   highlightColor?: string;
 };
 
-const TOOL_META: Record<SelectTool, { icon: ElementType; label: string }> = {
-  box: { icon: HighlightAltOutlined, label: "Box select" },
-  lasso: { icon: GestureOutlined, label: "Lasso select" },
+const TOOL_ICONS: Record<SelectTool, ElementType> = {
+  box: HighlightAltOutlined,
+  lasso: GestureOutlined,
 };
 
 /**
@@ -78,6 +79,11 @@ const SelectControl: FC<SelectControlProps> = ({
   highlightColor = "secondary.main",
 }) => {
   const { map } = useMapContext();
+  const t = useLocaleText();
+  const toolLabel: Record<SelectTool, string> = {
+    box: t.boxSelect,
+    lasso: t.lassoSelect,
+  };
   const theme = useTheme();
   const reactId = useId();
   const idPrefix = `zmap-select-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
@@ -263,14 +269,15 @@ const SelectControl: FC<SelectControlProps> = ({
         <Paper elevation={3} sx={Styles.panel(position)}>
           <Stack direction="column" divider={<Divider flexItem />}>
             <Stack direction="column" divider={<Divider flexItem />}>
-              {tools.map((t) => {
-                const { icon: Icon, label } = TOOL_META[t];
-                const active = tool === t;
+              {tools.map((toolKey) => {
+                const Icon = TOOL_ICONS[toolKey];
+                const label = toolLabel[toolKey];
+                const active = tool === toolKey;
                 return (
-                  <ControlTooltip key={t} title={label} placement="right">
+                  <ControlTooltip key={toolKey} title={label} placement="right">
                     <IconButton
                       size="small"
-                      onClick={() => setTool(active ? null : t)}
+                      onClick={() => setTool(active ? null : toolKey)}
                       sx={Styles.toolButton(active)}
                       aria-label={label}
                       aria-pressed={active}
@@ -283,11 +290,11 @@ const SelectControl: FC<SelectControlProps> = ({
             </Stack>
 
             {selected.length > 0 && (
-              <ControlTooltip title="Clear selection" placement="right">
+              <ControlTooltip title={t.clearSelection} placement="right">
                 <IconButton
                   size="small"
                   onClick={clearSelection}
-                  aria-label="Clear selection"
+                  aria-label={t.clearSelection}
                 >
                   <DeleteOutline fontSize="small" />
                 </IconButton>
@@ -339,7 +346,7 @@ const SelectControl: FC<SelectControlProps> = ({
       {tool === "box" && <KeyboardCrosshair />}
       {kbCornerPending && (
         <Box sx={Styles.kbHint} aria-live="polite">
-          Space: set the second corner
+          {t.selectKeyboardHint}
         </Box>
       )}
     </>

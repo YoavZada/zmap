@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import maplibregl, { type PopupOptions } from "maplibre-gl";
 import { useTheme } from "@mui/material/styles";
 import { useMapContext } from "../../context/useMap";
+import { useLocaleText } from "../../context/useLocaleText";
 import {
   applyOverlayTheme,
   injectOverlayStyles,
@@ -43,7 +44,7 @@ export interface PopupProps {
   maxWidth?: string;
   /** Extra class name(s) for the popup container. */
   className?: string;
-  /** Accessible name for the popup dialog. Default "Map popup". */
+  /** Accessible name for the popup dialog. Defaults to the locale's "Map popup". */
   ariaLabel?: string;
   /** Content rendered inside the popup. */
   children?: ReactNode;
@@ -66,11 +67,13 @@ const Popup: FC<PopupProps> = ({
   closeOnMove = false,
   maxWidth = "320px",
   className,
-  ariaLabel = "Map popup",
+  ariaLabel,
   children,
 }) => {
   const { map } = useMapContext();
   const theme = useTheme();
+  const t = useLocaleText();
+  const label = ariaLabel ?? t.popupLabel;
 
   const isControlled = open !== undefined;
   const [internalOpen, setInternalOpen] = useState(defaultOpen ?? true);
@@ -143,7 +146,7 @@ const Popup: FC<PopupProps> = ({
     // a11y: the portaled content is a non-modal dialog.
     content.setAttribute("role", "dialog");
     content.setAttribute("aria-modal", "false");
-    content.setAttribute("aria-label", ariaLabel);
+    content.setAttribute("aria-label", label);
     content.tabIndex = -1;
 
     // Move focus into the popup once it's mounted.
@@ -207,8 +210,8 @@ const Popup: FC<PopupProps> = ({
   }, [theme]);
 
   useEffect(() => {
-    contentRef.current?.setAttribute("aria-label", ariaLabel);
-  }, [ariaLabel]);
+    contentRef.current?.setAttribute("aria-label", label);
+  }, [label]);
 
   if (!contentRef.current || !isOpen) return null;
   return createPortal(children, contentRef.current);

@@ -96,6 +96,7 @@ export type { RasterLayerProps } from "./components/RasterLayer";
 export { useMap, useMapContext } from "./context/useMap";
 export type { MapContextValue } from "./context/MapContext";
 export { usePortalContainer } from "./context/usePortalContainer";
+export { useLocaleText, useLocale } from "./context/useLocaleText";
 export { useMapLayer } from "./hooks/useMapLayer";
 export type { MapLayerConfig, LayerInput } from "./hooks/useMapLayer";
 export { useRasterLayer } from "./hooks/useRasterLayer";
@@ -167,6 +168,10 @@ export {
   registerPmtilesProtocol,
   isPmtilesRegistered,
 } from "./providers/pmtiles";
+
+// Locales
+export { enUS, heIL } from "./locales";
+export type { ZmapLocaleText } from "./locales";
 
 // Utils
 export { generateArc } from "./utils/arc";

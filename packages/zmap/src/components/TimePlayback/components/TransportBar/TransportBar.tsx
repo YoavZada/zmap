@@ -9,6 +9,7 @@ import PlayArrow from "@mui/icons-material/PlayArrow";
 import Pause from "@mui/icons-material/Pause";
 import Replay from "@mui/icons-material/Replay";
 import ControlTooltip from "../../../ControlTooltip";
+import { useLocaleText } from "../../../../context/useLocaleText";
 import type { ControlPosition } from "../../../MapControls";
 import Styles from "./transportBar.style";
 
@@ -42,14 +43,15 @@ const TransportBar: FC<TransportBarProps> = ({
   onScrub,
   onCycleSpeed,
 }) => {
+  const t = useLocaleText();
   return (
     <Paper elevation={3} sx={Styles.transport(position)}>
       <Stack direction="row" alignItems="center" spacing={0.5}>
-        <ControlTooltip title={playing ? "Pause" : "Play"} placement="top">
+        <ControlTooltip title={playing ? t.pause : t.play} placement="top">
           <IconButton
             size="small"
             onClick={onToggle}
-            aria-label={playing ? "Pause" : "Play"}
+            aria-label={playing ? t.pause : t.play}
           >
             {atEnd && !playing ? (
               <Replay fontSize="small" />
@@ -67,7 +69,7 @@ const TransportBar: FC<TransportBarProps> = ({
           max={max}
           value={playhead}
           onChange={(_, v) => onScrub(v as number)}
-          aria-label="Playhead"
+          aria-label={t.playhead}
           sx={Styles.slider}
         />
 
@@ -75,13 +77,13 @@ const TransportBar: FC<TransportBarProps> = ({
           {format(playhead)}
         </Typography>
 
-        <ControlTooltip title="Playback speed" placement="top">
+        <ControlTooltip title={t.playbackSpeed} placement="top">
           <Button
             size="small"
             color="inherit"
             onClick={onCycleSpeed}
             sx={Styles.speed}
-            aria-label={`Playback speed: ${speed}×`}
+            aria-label={t.playbackSpeedLabel(speed)}
           >
             {speed}×
           </Button>

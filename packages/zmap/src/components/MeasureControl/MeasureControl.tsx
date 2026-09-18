@@ -9,6 +9,7 @@ import StraightenOutlined from "@mui/icons-material/StraightenOutlined";
 import SquareFootOutlined from "@mui/icons-material/SquareFootOutlined";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import { useDraw } from "../../hooks/useDraw";
+import { useLocaleText } from "../../context/useLocaleText";
 import {
   formatArea,
   formatDistance,
@@ -40,9 +41,9 @@ export type MeasureControlProps = {
   color?: string;
 };
 
-const MODE_META: Record<MeasureMode, { icon: ElementType; label: string }> = {
-  line: { icon: StraightenOutlined, label: "Measure distance" },
-  polygon: { icon: SquareFootOutlined, label: "Measure area" },
+const MODE_ICONS: Record<MeasureMode, ElementType> = {
+  line: StraightenOutlined,
+  polygon: SquareFootOutlined,
 };
 
 type Readout = { icon: ElementType; text: string };
@@ -59,6 +60,11 @@ const MeasureControl: FC<MeasureControlProps> = ({
   unit = "metric",
   color = "secondary.main",
 }) => {
+  const t = useLocaleText();
+  const modeLabel: Record<MeasureMode, string> = {
+    line: t.measureDistance,
+    polygon: t.measureArea,
+  };
   const reactId = useId();
   const idPrefix = `zmap-measure-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const { mode, setMode, features, draft, cursor, isDrawing, clear, remove } =
@@ -121,7 +127,8 @@ const MeasureControl: FC<MeasureControlProps> = ({
         <Stack direction="column" divider={<Divider flexItem />}>
           <Stack direction="column" divider={<Divider flexItem />}>
             {modes.map((m) => {
-              const { icon: Icon, label } = MODE_META[m];
+              const Icon = MODE_ICONS[m];
+              const label = modeLabel[m];
               const active = mode === m;
               return (
                 <ControlTooltip key={m} title={label} placement="right">
@@ -140,11 +147,11 @@ const MeasureControl: FC<MeasureControlProps> = ({
           </Stack>
 
           {hasContent && (
-            <ControlTooltip title="Clear measurements" placement="right">
+            <ControlTooltip title={t.clearMeasurements} placement="right">
               <IconButton
                 size="small"
                 onClick={clear}
-                aria-label="Clear measurements"
+                aria-label={t.clearMeasurements}
               >
                 <DeleteOutline fontSize="small" />
               </IconButton>

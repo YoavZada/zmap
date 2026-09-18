@@ -621,8 +621,8 @@
           "name": "noOptionsText",
           "type": "string",
           "required": false,
-          "defaultValue": "No places found",
-          "description": "Empty-state text, also shown when the provider errors. Default \"No places found\".",
+          "defaultValue": null,
+          "description": "Empty-state text, also shown when the provider errors. Defaults to the locale's \"No places found\".",
           "deprecated": null
         },
         {
@@ -645,8 +645,8 @@
           "name": "placeholder",
           "type": "string",
           "required": false,
-          "defaultValue": "Search places…",
-          "description": "Input placeholder, also used as the accessible label. Default \"Search places…\".",
+          "defaultValue": null,
+          "description": "Input placeholder, also used as the accessible label. Defaults to the locale's \"Search places…\".",
           "deprecated": null
         },
         {
@@ -1134,8 +1134,8 @@
           "name": "title",
           "type": "string",
           "required": false,
-          "defaultValue": "Layers",
-          "description": "Heading for the panel (and the trigger's tooltip). Default \"Layers\".",
+          "defaultValue": null,
+          "description": "Heading for the panel (and the trigger's tooltip). Defaults to the locale's \"Layers\".",
           "deprecated": null
         },
         {
@@ -1330,6 +1330,22 @@
           "required": false,
           "defaultValue": null,
           "description": "Override MapLibre's built-in UI strings (attribution toggle,\ncooperative-gesture hints, ...). Creation-time only.",
+          "deprecated": null
+        },
+        {
+          "name": "localeTag",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "BCP-47 tag (e.g. \"he-IL\") used for number formatting in the scale bar\nand measurements. Defaults to the browser locale. Named `localeTag`\n(not `locale`) because `locale` above already forwards MapLibre's own\nbuilt-in UI-string overrides to the constructor.",
+          "deprecated": null
+        },
+        {
+          "name": "localeText",
+          "type": "Partial<ZmapLocaleText>",
+          "required": false,
+          "defaultValue": null,
+          "description": "Override any built-in zmap UI string (tooltips, aria-labels, menu\nitems). Partial; merged over `enUS`. Ship-ready locales: `enUS`, `heIL`.",
           "deprecated": null
         },
         {
@@ -1901,8 +1917,8 @@
           "name": "ariaLabel",
           "type": "string",
           "required": false,
-          "defaultValue": "Map popup",
-          "description": "Accessible name for the popup dialog. Default \"Map popup\".",
+          "defaultValue": null,
+          "description": "Accessible name for the popup dialog. Defaults to the locale's \"Map popup\".",
           "deprecated": null
         },
         {
@@ -2754,7 +2770,7 @@
           "type": "string",
           "required": false,
           "defaultValue": null,
-          "description": "Accessible name for the popup dialog. Default \"Map popup\".",
+          "description": "Accessible name for the popup dialog. Defaults to the locale's \"Map popup\".",
           "deprecated": null
         },
         {
@@ -3042,6 +3058,12 @@
       "description": "Which drawing tool is active: point, line, or polygon."
     },
     {
+      "name": "enUS",
+      "kind": "value",
+      "category": "other",
+      "description": "English (US) UI strings — the library's built-in default."
+    },
+    {
       "name": "ExtrusionLayer",
       "kind": "value",
       "category": "component",
@@ -3160,6 +3182,12 @@
       "kind": "type",
       "category": "component",
       "description": "Props for `<HeatmapLayer>`, which renders points as a density heatmap."
+    },
+    {
+      "name": "heIL",
+      "kind": "value",
+      "category": "other",
+      "description": "Hebrew (Israel) UI strings. Pass to `<Map localeText={heIL}>`."
     },
     {
       "name": "HexbinLayer",
@@ -3732,6 +3760,18 @@
       "description": "Returns whether a layer id is currently visible, falling back to `defaultVisible` until the layer has registered."
     },
     {
+      "name": "useLocale",
+      "kind": "value",
+      "category": "hook",
+      "description": "The BCP-47 locale for number formatting, if `<Map localeTag>` set one."
+    },
+    {
+      "name": "useLocaleText",
+      "kind": "value",
+      "category": "hook",
+      "description": "The merged UI strings for the nearest `<Map>` (falls back to `enUS` outside one)."
+    },
+    {
       "name": "useMap",
       "kind": "value",
       "category": "hook",
@@ -3766,6 +3806,12 @@
       "kind": "value",
       "category": "provider",
       "description": "VersaTiles basemaps — free, open, no API key and no signup. Vector tiles built from OpenStreetMap data and served from a community CDN. \"colorful\" is the light style and \"eclipse\" the dark one, so the map tracks the MUI theme the same way CARTO's positron/dark-matter pair does — but with no usage restrictions for commercial use."
+    },
+    {
+      "name": "ZmapLocaleText",
+      "kind": "type",
+      "category": "other",
+      "description": "Every user-visible UI string the library renders (tooltips, aria-labels, menu items, legend text, transport bar). Override any subset via `<Map localeText>`; unset keys fall back to `enUS`. Ship-ready locales: `enUS`, `heIL`."
     }
   ]
 }

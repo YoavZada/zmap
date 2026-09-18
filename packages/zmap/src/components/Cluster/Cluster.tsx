@@ -12,6 +12,7 @@ import type { GeoJSONSource } from "maplibre-gl";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useMapContext } from "../../context/useMap";
+import { useLocaleText } from "../../context/useLocaleText";
 import { useMapLayer, type LayerInput } from "../../hooks/useMapLayer";
 import Marker from "../Marker";
 import { resolvePaletteColor } from "../../utils/color";
@@ -143,6 +144,7 @@ const Cluster: FC<ClusterProps> = ({
 }) => {
   const { map, loaded } = useMapContext();
   const theme = useTheme();
+  const t = useLocaleText();
   const reactId = useId();
   const baseId = id ?? `zmap-cluster-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
 
@@ -290,7 +292,7 @@ const Cluster: FC<ClusterProps> = ({
             longitude={item.lng}
             latitude={item.lat}
             anchor="center"
-            label={`Map point ${item.idx + 1}`}
+            label={t.clusterPointLabel(item.idx + 1)}
             onClick={() => onPointClick?.(points[item.idx], item.idx)}
           >
             {renderPoint ? (

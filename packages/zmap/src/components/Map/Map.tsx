@@ -25,9 +25,15 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { MapContext, type MapErrorKind } from "../../context/MapContext";
 import { LayerRegistryProvider } from "../../context/LayerRegistryContext";
 import { PortalContainerContext } from "../../context/PortalContainerContext";
+import {
+  LocaleContext,
+  type LocaleContextValue,
+} from "../../context/LocaleContext";
 import { useColorScheme, type ColorScheme } from "../../hooks/useColorScheme";
 import { useStyleReapply } from "../../hooks/useStyleReapply";
 import { useUpdateEffect } from "../../hooks/useUpdateEffect";
+import { enUS } from "../../locales";
+import type { ZmapLocaleText } from "../../locales";
 import { providerKey, resolveStyle, type MapStyleInput } from "../../providers";
 import { registerPmtilesProtocol, usesPmtiles } from "../../providers/pmtiles";
 import { toError } from "../../utils/errors";
@@ -148,6 +154,18 @@ export interface MapProps
    * cooperative-gesture hints, ...). Creation-time only.
    */
   locale?: Record<string, string>;
+  /**
+   * Override any built-in zmap UI string (tooltips, aria-labels, menu
+   * items). Partial; merged over `enUS`. Ship-ready locales: `enUS`, `heIL`.
+   */
+  localeText?: Partial<ZmapLocaleText>;
+  /**
+   * BCP-47 tag (e.g. "he-IL") used for number formatting in the scale bar
+   * and measurements. Defaults to the browser locale. Named `localeTag`
+   * (not `locale`) because `locale` above already forwards MapLibre's own
+   * built-in UI-string overrides to the constructor.
+   */
+  localeTag?: string;
   /**
    * CSS cursor over the map canvas. Layer hover cursors (pointer) still take
    * precedence while hovering. Reactive.
@@ -297,6 +315,8 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     cooperativeGestures,
     hash,
     locale,
+    localeText,
+    localeTag,
     cursor,
     mapOptions,
     projection = "mercator",
@@ -681,6 +701,14 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     [map, loaded, reportError],
   );
 
+  // Merged UI strings + number-formatting locale, provided outside the Box
+  // below so the loader, error panel, and the Box's own aria-label all see
+  // it.
+  const localeValue = useMemo<LocaleContextValue>(
+    () => ({ text: { ...enUS, ...localeText }, locale: localeTag }),
+    [localeText, localeTag],
+  );
+
   // Loading indicator (opt-in via `loader`, off by default), shown until the
   // map loads. The built-in loader cross-fades out via `Fade` (disabled under
   // reduced-motion); a custom node is mounted/unmounted plainly so we never
@@ -699,27 +727,29 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
   }
 
   return (
-    <MapContext.Provider value={value}>
-      <Box
-        ref={setContainerRef}
-        role="region"
-        aria-label="Interactive map"
-        aria-busy={loader ? !loaded : undefined}
-        sx={[Styles.container, ...(Array.isArray(sx) ? sx : [sx])]}
-        {...boxProps}
-      >
-        <PortalContainerContext.Provider value={containerEl}>
-          {mapError ? (
-            (fallback ?? <MapErrorPanel error={mapError} />)
-          ) : (
-            <LayerRegistryProvider>
-              {loaded ? children : null}
-            </LayerRegistryProvider>
-          )}
-          {loaderElement}
-        </PortalContainerContext.Provider>
-      </Box>
-    </MapContext.Provider>
+    <LocaleContext.Provider value={localeValue}>
+      <MapContext.Provider value={value}>
+        <Box
+          ref={setContainerRef}
+          role="region"
+          aria-label={localeValue.text.mapLabel}
+          aria-busy={loader ? !loaded : undefined}
+          sx={[Styles.container, ...(Array.isArray(sx) ? sx : [sx])]}
+          {...boxProps}
+        >
+          <PortalContainerContext.Provider value={containerEl}>
+            {mapError ? (
+              (fallback ?? <MapErrorPanel error={mapError} />)
+            ) : (
+              <LayerRegistryProvider>
+                {loaded ? children : null}
+              </LayerRegistryProvider>
+            )}
+            {loaderElement}
+          </PortalContainerContext.Provider>
+        </Box>
+      </MapContext.Provider>
+    </LocaleContext.Provider>
   );
 });
 

@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
+import { useLocaleText } from "../../../../context/useLocaleText";
 import Styles from "./mapLoader.style";
 
 /** Configures the built-in `<Map>` loading indicator (see `Map`'s `loaderProps`). */
@@ -43,9 +44,10 @@ const MapLoader = forwardRef<HTMLDivElement, Props>(function MapLoader(
   { variant = "overlay", label, progress, size = 40, style, className },
   ref,
 ) {
+  const t = useLocaleText();
   const determinate = typeof progress === "number";
   const value = determinate ? clamp(progress) : undefined;
-  const name = typeof label === "string" ? label : "Loading map";
+  const name = typeof label === "string" ? label : t.mapLoading;
 
   const rootProps = {
     ref,

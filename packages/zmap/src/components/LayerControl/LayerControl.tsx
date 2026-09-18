@@ -10,6 +10,7 @@ import LayersIcon from "@mui/icons-material/LayersOutlined";
 import Close from "@mui/icons-material/Close";
 import { useLayerRegistry } from "../../context/useLayerRegistry";
 import type { LayerEntry } from "../../context/LayerRegistryContext";
+import { useLocaleText } from "../../context/useLocaleText";
 import { resolvePaletteColor } from "../../utils/color";
 import ControlTooltip from "../ControlTooltip";
 import type { ControlPosition } from "../MapControls";
@@ -48,7 +49,7 @@ export type LayerControlProps = {
   position?: ControlPosition;
   /** Start with the panel expanded. Default false (just the icon button). */
   defaultOpen?: boolean;
-  /** Heading for the panel (and the trigger's tooltip). Default "Layers". */
+  /** Heading for the panel (and the trigger's tooltip). Defaults to the locale's "Layers". */
   title?: string;
   /** Optional config-driven layers, in addition to any declarative <Layer>s. */
   layers?: LayerConfig[];
@@ -82,7 +83,7 @@ const toArr = (s?: SxProps<Theme>): SxProps<Theme>[] =>
 const LayerControl: FC<LayerControlProps> = ({
   position = "top-right",
   defaultOpen = false,
-  title = "Layers",
+  title,
   layers,
   icon,
   collapseIcon,
@@ -94,6 +95,8 @@ const LayerControl: FC<LayerControlProps> = ({
   slotProps,
 }) => {
   const theme = useTheme();
+  const t = useLocaleText();
+  const label = title ?? t.layersTitle;
   const { entries, setVisible } = useLayerRegistry();
   const [open, setOpen] = useState(defaultOpen);
   const baseId = useId();
@@ -192,12 +195,12 @@ const LayerControl: FC<LayerControlProps> = ({
             <Box sx={Styles.header}>
               <Box sx={Styles.icon}>{triggerIcon}</Box>
               <Typography variant="subtitle2" sx={Styles.headerTitle}>
-                {title}
+                {label}
               </Typography>
               <IconButton
                 size="small"
                 onClick={() => setOpen(false)}
-                aria-label="Collapse layers"
+                aria-label={t.collapseLayers}
               >
                 {collapseIcon ?? <Close fontSize="small" />}
               </IconButton>
@@ -237,11 +240,11 @@ const LayerControl: FC<LayerControlProps> = ({
           renderTrigger(() => setOpen(true))
         ) : (
           <Paper elevation={3} sx={Styles.panel}>
-            <ControlTooltip title={title} placement="left">
+            <ControlTooltip title={label} placement="left">
               <IconButton
                 size="small"
                 onClick={() => setOpen(true)}
-                aria-label="Show layers"
+                aria-label={t.showLayers}
               >
                 {triggerIcon}
               </IconButton>

@@ -463,6 +463,14 @@ describe("Map", () => {
     expect(region?.getAttribute("aria-label")).toBe("Interactive map");
   });
 
+  it("aria-label follows localeText.mapLabel", () => {
+    const { container } = render(
+      <Map localeText={{ mapLabel: "מפה אינטראקטיבית" }} />,
+    );
+    const region = container.querySelector('[role="region"]');
+    expect(region?.getAttribute("aria-label")).toBe("מפה אינטראקטיבית");
+  });
+
   it("provides the container element through usePortalContainer", () => {
     probedContainer = undefined;
     const { container } = render(

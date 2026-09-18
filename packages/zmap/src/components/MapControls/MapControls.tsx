@@ -13,6 +13,7 @@ import Fullscreen from "@mui/icons-material/Fullscreen";
 import FullscreenExit from "@mui/icons-material/FullscreenExit";
 import ViewInAr from "@mui/icons-material/ViewInAr";
 import { useMapContext } from "../../context/useMap";
+import { useLocaleText } from "../../context/useLocaleText";
 import ControlTooltip from "../ControlTooltip";
 import Styles from "./mapControls.style";
 
@@ -62,6 +63,7 @@ function ScaleBar({
   unit: "metric" | "imperial";
 }) {
   const { map } = useMapContext();
+  const t = useLocaleText();
   const [state, setState] = useState<{ width: number; label: string } | null>(
     null,
   );
@@ -82,18 +84,21 @@ function ScaleBar({
           const miles = niceRound(maxFeet / 5280);
           setState({
             width: (maxWidth * ((miles * 5280) / maxFeet)) | 0,
-            label: `${miles} mi`,
+            label: `${miles} ${t.unitMiles}`,
           });
         } else {
           const feet = niceRound(maxFeet);
           setState({
             width: (maxWidth * (feet / maxFeet)) | 0,
-            label: `${feet} ft`,
+            label: `${feet} ${t.unitFeet}`,
           });
         }
       } else {
         const meters = niceRound(maxMeters);
-        const label = meters >= 1000 ? `${meters / 1000} km` : `${meters} m`;
+        const label =
+          meters >= 1000
+            ? `${meters / 1000} ${t.unitKilometers}`
+            : `${meters} ${t.unitMeters}`;
         setState({ width: (maxWidth * (meters / maxMeters)) | 0, label });
       }
     };
@@ -102,7 +107,7 @@ function ScaleBar({
     return () => {
       map.off("move", update);
     };
-  }, [map, unit]);
+  }, [map, unit, t]);
 
   if (!state) return null;
 
@@ -134,6 +139,7 @@ const MapControls: FC<MapControlsProps> = ({
   scaleUnit = "metric",
 }) => {
   const { map } = useMapContext();
+  const t = useLocaleText();
   const [bearing, setBearing] = useState(0);
   const [pitch, setPitch] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -203,16 +209,16 @@ const MapControls: FC<MapControlsProps> = ({
         <Stack direction="column" divider={<Divider flexItem />}>
           {showZoom && (
             <Stack direction="column" divider={<Divider flexItem />}>
-              <ControlTooltip title="Zoom in" placement="left">
-                <IconButton size="small" onClick={zoomIn} aria-label="Zoom in">
+              <ControlTooltip title={t.zoomIn} placement="left">
+                <IconButton size="small" onClick={zoomIn} aria-label={t.zoomIn}>
                   <Add fontSize="small" />
                 </IconButton>
               </ControlTooltip>
-              <ControlTooltip title="Zoom out" placement="left">
+              <ControlTooltip title={t.zoomOut} placement="left">
                 <IconButton
                   size="small"
                   onClick={zoomOut}
-                  aria-label="Zoom out"
+                  aria-label={t.zoomOut}
                 >
                   <Remove fontSize="small" />
                 </IconButton>
@@ -221,11 +227,11 @@ const MapControls: FC<MapControlsProps> = ({
           )}
 
           {showCompass && (
-            <ControlTooltip title="Reset bearing" placement="left">
+            <ControlTooltip title={t.resetBearing} placement="left">
               <IconButton
                 size="small"
                 onClick={resetNorth}
-                aria-label="Reset bearing to north"
+                aria-label={t.resetBearingLabel}
               >
                 <Navigation fontSize="small" sx={Styles.compass(bearing)} />
               </IconButton>
@@ -234,13 +240,13 @@ const MapControls: FC<MapControlsProps> = ({
 
           {showPitch && (
             <ControlTooltip
-              title={tilted ? "Reset tilt" : "Tilt (3D)"}
+              title={tilted ? t.resetTilt : t.tilt}
               placement="left"
             >
               <IconButton
                 size="small"
                 onClick={togglePitch}
-                aria-label="Toggle 3D tilt"
+                aria-label={t.toggleTiltLabel}
                 color={tilted ? "primary" : "default"}
               >
                 <ViewInAr fontSize="small" />
@@ -249,11 +255,11 @@ const MapControls: FC<MapControlsProps> = ({
           )}
 
           {showGeolocate && (
-            <ControlTooltip title="My location" placement="left">
+            <ControlTooltip title={t.myLocation} placement="left">
               <IconButton
                 size="small"
                 onClick={geolocate}
-                aria-label="Go to my location"
+                aria-label={t.myLocationLabel}
               >
                 <MyLocation fontSize="small" />
               </IconButton>
@@ -262,13 +268,13 @@ const MapControls: FC<MapControlsProps> = ({
 
           {showFullscreen && (
             <ControlTooltip
-              title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+              title={isFullscreen ? t.exitFullscreen : t.fullscreen}
               placement="left"
             >
               <IconButton
                 size="small"
                 onClick={toggleFullscreen}
-                aria-label="Toggle fullscreen"
+                aria-label={t.toggleFullscreenLabel}
               >
                 {isFullscreen ? (
                   <FullscreenExit fontSize="small" />
