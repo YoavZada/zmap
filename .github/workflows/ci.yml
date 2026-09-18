@@ -95,9 +95,8 @@ jobs:
       - name: Unit tests
         run: pnpm --filter zmapgl test
 
-  e2e:
+  docs-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -114,6 +113,48 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build docs
+        run: pnpm --filter docs build
+        env:
+          VITE_ARCGIS_KEY: ${{ secrets.ARCGIS_API_KEY }}
+
+      - name: Upload docs build
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-dist
+          path: apps/docs/dist
+          retention-days: 1
+
+  e2e:
+    needs: docs-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download docs build
+        uses: actions/download-artifact@v4
+        with:
+          name: docs-dist
+          path: apps/docs/dist
+
       - name: Resolve Playwright version
         id: playwright
         run: |
@@ -129,19 +170,64 @@ jobs:
       - name: Install Chromium
         run: pnpm --filter @zmap/e2e exec playwright install --with-deps chromium
 
-      # Playwright's webServer builds the docs and serves the production
-      # bundle (vite preview) because CI is set — PRs validate the real
-      # artifact, not the dev server.
-      - name: E2E
+      # docs-dist was built once by docs-build and downloaded above — each
+      # shard serves the same prebuilt bundle via `vite preview` instead of
+      # rebuilding it, so both shards test the identical artifact.
+      - name: E2E (shard ${{ matrix.shard }}/2)
         id: e2e
-        run: pnpm --filter @zmap/e2e exec playwright test
+        env:
+          E2E_PREBUILT: "1"
+        run: pnpm --filter @zmap/e2e exec playwright test --shard=${{ matrix.shard }}/2
 
-      - name: Upload Playwright report
+      - name: Upload blob report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: tools/e2e/blob-report
+          retention-days: 1
+
+      - name: Upload test results on failure
         if: always() && steps.e2e.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
+          name: test-results-${{ matrix.shard }}
+          path: tools/e2e/test-results/
+          retention-days: 7
+
+  e2e-report:
+    needs: e2e
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download blob reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: blob-report-*
+          path: all-blob-reports
+          merge-multiple: true
+
+      - name: Merge reports
+        run: pnpm --filter @zmap/e2e exec playwright merge-reports --reporter html ./all-blob-reports
+
+      - name: Upload merged HTML report
+        uses: actions/upload-artifact@v4
+        with:
           name: playwright-report
-          path: |
-            tools/e2e/playwright-report/
-            tools/e2e/test-results/
+          path: tools/e2e/playwright-report
           retention-days: 7
