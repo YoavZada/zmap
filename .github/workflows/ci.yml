@@ -62,6 +62,39 @@ jobs:
       - name: Next build (SSR smoke)
         run: pnpm --filter next-smoke build
 
+  # Proves the peer ranges advertised in packages/zmap/package.json
+  # (react/react-dom ^18||^19, @mui/material/@mui/icons-material ^6||^7)
+  # actually work, not just the latest majors pinned in devDependencies.
+  # Downgrades only this runner's node_modules — the mutated lockfile is
+  # never committed, so this can't run with --frozen-lockfile past the
+  # initial install.
+  compat:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Downgrade to React 18 + MUI 6 (runner only)
+        run: pnpm --filter zmapgl add -D react@^18.3.0 react-dom@^18.3.0 @types/react@^18.3.0 @types/react-dom@^18.3.0 @mui/material@^6.4.0 @mui/icons-material@^6.4.0
+
+      - name: Typecheck
+        run: pnpm --filter zmapgl typecheck
+
+      - name: Unit tests
+        run: pnpm --filter zmapgl test
+
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 30
