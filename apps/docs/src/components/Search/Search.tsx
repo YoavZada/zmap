@@ -145,6 +145,7 @@ const Search: FC<SearchProps> = ({ variant = "icon" }) => {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reset the active row whenever the query or open state changes
   useEffect(() => {
     setActive(0);
   }, [query, open]);

@@ -22,11 +22,11 @@ describe("layer registry", () => {
   it("preserves visibility + order when re-registering (metadata update)", () => {
     let s = registerEntry(emptyLayerState, { id: "a", label: "A" });
     s = setEntryVisible(s, "a", false);
-    const order = s.entries["a"].order;
+    const order = s.entries.a.order;
     s = registerEntry(s, { id: "a", label: "A renamed" });
-    expect(s.entries["a"].label).toBe("A renamed");
-    expect(s.entries["a"].visible).toBe(false);
-    expect(s.entries["a"].order).toBe(order);
+    expect(s.entries.a.label).toBe("A renamed");
+    expect(s.entries.a.visible).toBe(false);
+    expect(s.entries.a.order).toBe(order);
   });
 
   it("returns the same state reference when nothing changed", () => {

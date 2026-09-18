@@ -75,7 +75,7 @@ const Layer: FC<LayerProps> = ({
   }, [registryVisible, controlled, onVisibleChange]);
 
   const visible = controlled !== undefined ? controlled : registryVisible;
-  return visible ? <>{children}</> : null;
+  return visible ? children : null;
 };
 
 export default Layer;

@@ -141,7 +141,7 @@ exports.sort((a, b) => a.name.localeCompare(b.name));
 // --- write ---
 
 mkdirSync(path.dirname(outFile), { recursive: true });
-writeFileSync(outFile, JSON.stringify({ components, exports }, null, 2) + "\n");
+writeFileSync(outFile, `${JSON.stringify({ components, exports }, null, 2)}\n`);
 console.log(
   `props.json: ${Object.keys(components).length} components, ${exports.length} exports`,
 );

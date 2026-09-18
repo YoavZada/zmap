@@ -9,7 +9,7 @@ export type Phase = "idle" | "routing" | "done" | "error";
 const DRAW_MS = 650;
 
 function easeOutCubic(t: number): number {
-  return 1 - Math.pow(1 - t, 3);
+  return 1 - (1 - t) ** 3;
 }
 
 export type Pathfinder = {

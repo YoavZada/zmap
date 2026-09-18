@@ -48,7 +48,7 @@ export interface MapControlsProps {
 }
 
 function niceRound(value: number): number {
-  const pow = Math.pow(10, Math.floor(Math.log10(value)));
+  const pow = 10 ** Math.floor(Math.log10(value));
   const d = value / pow;
   const nice = d >= 5 ? 5 : d >= 3 ? 3 : d >= 2 ? 2 : 1;
   return nice * pow;
@@ -74,7 +74,7 @@ function ScaleBar({
       const left = map.unproject([0, y]);
       const right = map.unproject([maxWidth, y]);
       const maxMeters = left.distanceTo(right);
-      if (!isFinite(maxMeters) || maxMeters <= 0) return;
+      if (!Number.isFinite(maxMeters) || maxMeters <= 0) return;
 
       if (unit === "imperial") {
         const maxFeet = maxMeters * 3.28084;
