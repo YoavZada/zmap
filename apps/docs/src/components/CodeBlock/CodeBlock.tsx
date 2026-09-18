@@ -53,6 +53,11 @@ const CodeBlock: FC<CodeBlockProps> = ({
       {({ style, tokens, getLineProps, getTokenProps }) => (
         <Box
           component="pre"
+          // overflow: auto (see codeBlock.style.ts) makes this scrollable
+          // whenever a line overruns the block's width — tabIndex lets
+          // keyboard users actually reach that scroll (axe:
+          // scrollable-region-focusable).
+          tabIndex={0}
           sx={flush ? Styles.preFlush(style) : Styles.pre(style)}
         >
           {tokens.map((line, i) => (

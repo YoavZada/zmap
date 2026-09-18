@@ -1,5 +1,7 @@
 import type { FC } from "react";
 import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
+import { Link as RouterLink } from "react-router-dom";
 import CodeBlock from "../../components/CodeBlock";
 import DemoSection from "../../components/DemoSection";
 import PageHeader from "../../components/PageHeader";
@@ -34,7 +36,12 @@ const ProvidersPage: FC = () => {
             anything MapLibre-compatible also works via a style URL, spec, or a
             custom <code>MapProvider</code>. With{" "}
             <code>colorScheme="auto"</code> the basemap tracks the MUI theme —
-            toggle the app theme (top-right) to see it.
+            toggle the app theme (top-right) to see it. For right-to-left
+            layouts, see the{" "}
+            <Link component={RouterLink} to="/guides/i18n">
+              Localization &amp; RTL guide
+            </Link>
+            .
           </>
         }
       />
