@@ -3,7 +3,6 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import PlaceOutlined from "@mui/icons-material/PlaceOutlined";
 import TimelineOutlined from "@mui/icons-material/TimelineOutlined";
 import PentagonOutlined from "@mui/icons-material/PentagonOutlined";
@@ -11,6 +10,7 @@ import Check from "@mui/icons-material/Check";
 import Undo from "@mui/icons-material/Undo";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import { useDraw, type DrawFeature, type DrawMode } from "../../hooks/useDraw";
+import ControlTooltip from "../ControlTooltip";
 import type { ControlPosition } from "../MapControls";
 import DrawLayers from "../DrawLayers";
 import KeyboardCrosshair from "../KeyboardCrosshair";
@@ -83,7 +83,7 @@ const DrawControl: FC<DrawControlProps> = ({
               const { icon: Icon, label } = MODE_META[m];
               const active = mode === m;
               return (
-                <Tooltip key={m} title={label} placement="right">
+                <ControlTooltip key={m} title={label} placement="right">
                   <IconButton
                     size="small"
                     onClick={() => setMode(active ? null : m)}
@@ -93,14 +93,14 @@ const DrawControl: FC<DrawControlProps> = ({
                   >
                     <Icon fontSize="small" />
                   </IconButton>
-                </Tooltip>
+                </ControlTooltip>
               );
             })}
           </Stack>
 
           {isDrawing && (
             <Stack direction="column" divider={<Divider flexItem />}>
-              <Tooltip title="Finish shape" placement="right">
+              <ControlTooltip title="Finish shape" placement="right">
                 <IconButton
                   size="small"
                   onClick={finish}
@@ -108,8 +108,8 @@ const DrawControl: FC<DrawControlProps> = ({
                 >
                   <Check fontSize="small" />
                 </IconButton>
-              </Tooltip>
-              <Tooltip title="Undo last point" placement="right">
+              </ControlTooltip>
+              <ControlTooltip title="Undo last point" placement="right">
                 <IconButton
                   size="small"
                   onClick={undo}
@@ -117,16 +117,16 @@ const DrawControl: FC<DrawControlProps> = ({
                 >
                   <Undo fontSize="small" />
                 </IconButton>
-              </Tooltip>
+              </ControlTooltip>
             </Stack>
           )}
 
           {showClear && hasContent && (
-            <Tooltip title="Clear all" placement="right">
+            <ControlTooltip title="Clear all" placement="right">
               <IconButton size="small" onClick={clear} aria-label="Clear all">
                 <DeleteOutline fontSize="small" />
               </IconButton>
-            </Tooltip>
+            </ControlTooltip>
           )}
         </Stack>
       </Paper>

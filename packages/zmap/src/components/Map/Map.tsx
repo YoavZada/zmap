@@ -24,6 +24,7 @@ import Fade from "@mui/material/Fade";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { MapContext, type MapErrorKind } from "../../context/MapContext";
 import { LayerRegistryProvider } from "../../context/LayerRegistryContext";
+import { PortalContainerContext } from "../../context/PortalContainerContext";
 import { useColorScheme, type ColorScheme } from "../../hooks/useColorScheme";
 import { useStyleReapply } from "../../hooks/useStyleReapply";
 import { useUpdateEffect } from "../../hooks/useUpdateEffect";
@@ -326,6 +327,14 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
   const [map, setMap] = useState<maplibregl.Map | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [mapError, setMapError] = useState<Error | null>(null);
+  // The map's root element, shared through PortalContainerContext so MUI
+  // overlays (tooltips, menus, the geocoder listbox) can portal into it
+  // instead of document.body — which fullscreen leaves them stranded outside.
+  const [containerEl, setContainerEl] = useState<HTMLElement | null>(null);
+  const setContainerRef = useCallback((el: HTMLDivElement | null) => {
+    containerRef.current = el;
+    setContainerEl(el);
+  }, []);
 
   const mode = useColorScheme(colorScheme);
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
@@ -692,21 +701,23 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
   return (
     <MapContext.Provider value={value}>
       <Box
-        ref={containerRef}
+        ref={setContainerRef}
         role="region"
         aria-label="Interactive map"
         aria-busy={loader ? !loaded : undefined}
         sx={[Styles.container, ...(Array.isArray(sx) ? sx : [sx])]}
         {...boxProps}
       >
-        {mapError ? (
-          (fallback ?? <MapErrorPanel error={mapError} />)
-        ) : (
-          <LayerRegistryProvider>
-            {loaded ? children : null}
-          </LayerRegistryProvider>
-        )}
-        {loaderElement}
+        <PortalContainerContext.Provider value={containerEl}>
+          {mapError ? (
+            (fallback ?? <MapErrorPanel error={mapError} />)
+          ) : (
+            <LayerRegistryProvider>
+              {loaded ? children : null}
+            </LayerRegistryProvider>
+          )}
+          {loaderElement}
+        </PortalContainerContext.Provider>
       </Box>
     </MapContext.Provider>
   );

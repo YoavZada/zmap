@@ -3750,6 +3750,12 @@
       "description": "Adds a GeoJSON source + layers to the map and keeps them alive across theme-driven style swaps (MapLibre's `setStyle` wipes custom layers, so we re-add on `styledata`). Data and paint/layout updates are applied in place."
     },
     {
+      "name": "usePortalContainer",
+      "kind": "value",
+      "category": "hook",
+      "description": "The map container element — pass it as MUI `container` / `slotProps.popper.container` so your own menus and tooltips survive fullscreen. `null` outside `<Map>` or before mount."
+    },
+    {
       "name": "useRasterLayer",
       "kind": "value",
       "category": "hook",

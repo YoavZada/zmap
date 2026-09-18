@@ -10,6 +10,7 @@ import ContentCopy from "@mui/icons-material/ContentCopyOutlined";
 import PushPin from "@mui/icons-material/PushPinOutlined";
 import type { Map as MapLibreMap, MapMouseEvent } from "maplibre-gl";
 import { useMapContext } from "../../context/useMap";
+import { usePortalContainer } from "../../context/usePortalContainer";
 import type { LngLatTuple } from "../../utils/geojson";
 import Marker from "../Marker";
 import Styles from "./contextMenu.style";
@@ -72,6 +73,7 @@ const ContextMenu: FC<ContextMenuProps> = ({
   onDropMarker,
 }) => {
   const { map } = useMapContext();
+  const container = usePortalContainer();
   const [anchor, setAnchor] = useState<AnchorState | null>(null);
   const [markers, setMarkers] = useState<DroppedMarker[]>([]);
   const [snack, setSnack] = useState<string | null>(null);
@@ -144,6 +146,7 @@ const ContextMenu: FC<ContextMenuProps> = ({
         onClose={close}
         anchorReference="anchorPosition"
         anchorPosition={anchor ? { top: anchor.y, left: anchor.x } : undefined}
+        container={container}
       >
         {list.flatMap((item, i) => {
           const node = (

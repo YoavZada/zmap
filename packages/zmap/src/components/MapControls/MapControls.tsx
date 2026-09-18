@@ -4,7 +4,6 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import Add from "@mui/icons-material/Add";
 import Remove from "@mui/icons-material/Remove";
@@ -14,6 +13,7 @@ import Fullscreen from "@mui/icons-material/Fullscreen";
 import FullscreenExit from "@mui/icons-material/FullscreenExit";
 import ViewInAr from "@mui/icons-material/ViewInAr";
 import { useMapContext } from "../../context/useMap";
+import ControlTooltip from "../ControlTooltip";
 import Styles from "./mapControls.style";
 
 /** Which corner of the map a control is anchored to. */
@@ -203,12 +203,12 @@ const MapControls: FC<MapControlsProps> = ({
         <Stack direction="column" divider={<Divider flexItem />}>
           {showZoom && (
             <Stack direction="column" divider={<Divider flexItem />}>
-              <Tooltip title="Zoom in" placement="left">
+              <ControlTooltip title="Zoom in" placement="left">
                 <IconButton size="small" onClick={zoomIn} aria-label="Zoom in">
                   <Add fontSize="small" />
                 </IconButton>
-              </Tooltip>
-              <Tooltip title="Zoom out" placement="left">
+              </ControlTooltip>
+              <ControlTooltip title="Zoom out" placement="left">
                 <IconButton
                   size="small"
                   onClick={zoomOut}
@@ -216,12 +216,12 @@ const MapControls: FC<MapControlsProps> = ({
                 >
                   <Remove fontSize="small" />
                 </IconButton>
-              </Tooltip>
+              </ControlTooltip>
             </Stack>
           )}
 
           {showCompass && (
-            <Tooltip title="Reset bearing" placement="left">
+            <ControlTooltip title="Reset bearing" placement="left">
               <IconButton
                 size="small"
                 onClick={resetNorth}
@@ -229,11 +229,11 @@ const MapControls: FC<MapControlsProps> = ({
               >
                 <Navigation fontSize="small" sx={Styles.compass(bearing)} />
               </IconButton>
-            </Tooltip>
+            </ControlTooltip>
           )}
 
           {showPitch && (
-            <Tooltip
+            <ControlTooltip
               title={tilted ? "Reset tilt" : "Tilt (3D)"}
               placement="left"
             >
@@ -245,11 +245,11 @@ const MapControls: FC<MapControlsProps> = ({
               >
                 <ViewInAr fontSize="small" />
               </IconButton>
-            </Tooltip>
+            </ControlTooltip>
           )}
 
           {showGeolocate && (
-            <Tooltip title="My location" placement="left">
+            <ControlTooltip title="My location" placement="left">
               <IconButton
                 size="small"
                 onClick={geolocate}
@@ -257,11 +257,11 @@ const MapControls: FC<MapControlsProps> = ({
               >
                 <MyLocation fontSize="small" />
               </IconButton>
-            </Tooltip>
+            </ControlTooltip>
           )}
 
           {showFullscreen && (
-            <Tooltip
+            <ControlTooltip
               title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
               placement="left"
             >
@@ -276,7 +276,7 @@ const MapControls: FC<MapControlsProps> = ({
                   <Fullscreen fontSize="small" />
                 )}
               </IconButton>
-            </Tooltip>
+            </ControlTooltip>
           )}
         </Stack>
       </Paper>

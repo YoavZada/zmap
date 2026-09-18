@@ -5,10 +5,10 @@ import Slider from "@mui/material/Slider";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import Pause from "@mui/icons-material/Pause";
 import Replay from "@mui/icons-material/Replay";
+import ControlTooltip from "../../../ControlTooltip";
 import type { ControlPosition } from "../../../MapControls";
 import Styles from "./transportBar.style";
 
@@ -45,7 +45,7 @@ const TransportBar: FC<TransportBarProps> = ({
   return (
     <Paper elevation={3} sx={Styles.transport(position)}>
       <Stack direction="row" alignItems="center" spacing={0.5}>
-        <Tooltip title={playing ? "Pause" : "Play"} placement="top">
+        <ControlTooltip title={playing ? "Pause" : "Play"} placement="top">
           <IconButton
             size="small"
             onClick={onToggle}
@@ -59,7 +59,7 @@ const TransportBar: FC<TransportBarProps> = ({
               <PlayArrow fontSize="small" />
             )}
           </IconButton>
-        </Tooltip>
+        </ControlTooltip>
 
         <Slider
           size="small"
@@ -75,7 +75,7 @@ const TransportBar: FC<TransportBarProps> = ({
           {format(playhead)}
         </Typography>
 
-        <Tooltip title="Playback speed" placement="top">
+        <ControlTooltip title="Playback speed" placement="top">
           <Button
             size="small"
             color="inherit"
@@ -85,7 +85,7 @@ const TransportBar: FC<TransportBarProps> = ({
           >
             {speed}×
           </Button>
-        </Tooltip>
+        </ControlTooltip>
       </Stack>
     </Paper>
   );

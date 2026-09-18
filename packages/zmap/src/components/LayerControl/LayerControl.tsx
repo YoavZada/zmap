@@ -6,12 +6,12 @@ import IconButton from "@mui/material/IconButton";
 import Checkbox, { type CheckboxProps } from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
 import LayersIcon from "@mui/icons-material/LayersOutlined";
 import Close from "@mui/icons-material/Close";
 import { useLayerRegistry } from "../../context/useLayerRegistry";
 import type { LayerEntry } from "../../context/LayerRegistryContext";
 import { resolvePaletteColor } from "../../utils/color";
+import ControlTooltip from "../ControlTooltip";
 import type { ControlPosition } from "../MapControls";
 import Layer from "../Layer";
 import Styles from "./layerControl.style";
@@ -237,7 +237,7 @@ const LayerControl: FC<LayerControlProps> = ({
           renderTrigger(() => setOpen(true))
         ) : (
           <Paper elevation={3} sx={Styles.panel}>
-            <Tooltip title={title} placement="left">
+            <ControlTooltip title={title} placement="left">
               <IconButton
                 size="small"
                 onClick={() => setOpen(true)}
@@ -245,7 +245,7 @@ const LayerControl: FC<LayerControlProps> = ({
               >
                 {triggerIcon}
               </IconButton>
-            </Tooltip>
+            </ControlTooltip>
           </Paper>
         )}
       </Box>

@@ -12,7 +12,6 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
 import HighlightAltOutlined from "@mui/icons-material/HighlightAltOutlined";
 import GestureOutlined from "@mui/icons-material/GestureOutlined";
@@ -26,6 +25,7 @@ import {
   pointInPolygon,
   type ScreenPoint,
 } from "../../utils/geometry";
+import ControlTooltip from "../ControlTooltip";
 import KeyboardCrosshair from "../KeyboardCrosshair";
 import type { ControlPosition } from "../MapControls";
 import PointLayer, { type LayerPoint } from "../PointLayer";
@@ -267,7 +267,7 @@ const SelectControl: FC<SelectControlProps> = ({
                 const { icon: Icon, label } = TOOL_META[t];
                 const active = tool === t;
                 return (
-                  <Tooltip key={t} title={label} placement="right">
+                  <ControlTooltip key={t} title={label} placement="right">
                     <IconButton
                       size="small"
                       onClick={() => setTool(active ? null : t)}
@@ -277,13 +277,13 @@ const SelectControl: FC<SelectControlProps> = ({
                     >
                       <Icon fontSize="small" />
                     </IconButton>
-                  </Tooltip>
+                  </ControlTooltip>
                 );
               })}
             </Stack>
 
             {selected.length > 0 && (
-              <Tooltip title="Clear selection" placement="right">
+              <ControlTooltip title="Clear selection" placement="right">
                 <IconButton
                   size="small"
                   onClick={clearSelection}
@@ -291,7 +291,7 @@ const SelectControl: FC<SelectControlProps> = ({
                 >
                   <DeleteOutline fontSize="small" />
                 </IconButton>
-              </Tooltip>
+              </ControlTooltip>
             )}
           </Stack>
         </Paper>

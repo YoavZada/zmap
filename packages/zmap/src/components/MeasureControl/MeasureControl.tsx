@@ -3,7 +3,6 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
 import StraightenOutlined from "@mui/icons-material/StraightenOutlined";
@@ -18,6 +17,7 @@ import {
   type MeasureUnit,
 } from "../../utils/measure";
 import type { LngLatTuple } from "../../utils/geojson";
+import ControlTooltip from "../ControlTooltip";
 import type { ControlPosition } from "../MapControls";
 import DrawLayers from "../DrawLayers";
 import KeyboardCrosshair from "../KeyboardCrosshair";
@@ -124,7 +124,7 @@ const MeasureControl: FC<MeasureControlProps> = ({
               const { icon: Icon, label } = MODE_META[m];
               const active = mode === m;
               return (
-                <Tooltip key={m} title={label} placement="right">
+                <ControlTooltip key={m} title={label} placement="right">
                   <IconButton
                     size="small"
                     onClick={() => setMode(active ? null : m)}
@@ -134,13 +134,13 @@ const MeasureControl: FC<MeasureControlProps> = ({
                   >
                     <Icon fontSize="small" />
                   </IconButton>
-                </Tooltip>
+                </ControlTooltip>
               );
             })}
           </Stack>
 
           {hasContent && (
-            <Tooltip title="Clear measurements" placement="right">
+            <ControlTooltip title="Clear measurements" placement="right">
               <IconButton
                 size="small"
                 onClick={clear}
@@ -148,7 +148,7 @@ const MeasureControl: FC<MeasureControlProps> = ({
               >
                 <DeleteOutline fontSize="small" />
               </IconButton>
-            </Tooltip>
+            </ControlTooltip>
           )}
         </Stack>
       </Paper>

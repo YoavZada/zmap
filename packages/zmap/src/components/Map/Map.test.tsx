@@ -4,6 +4,7 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import { createRef, type FC } from "react";
 import type maplibregl from "maplibre-gl";
 import { useMapContext } from "../../context/useMap";
+import { usePortalContainer } from "../../context/usePortalContainer";
 import {
   fakeMaps,
   lastFakeMap,
@@ -26,6 +27,12 @@ const loadMap = () => {
 const Probe: FC = () => {
   const { map, loaded } = useMapContext();
   return <div data-testid="probe">{`${!!map}:${loaded}`}</div>;
+};
+
+let probedContainer: HTMLElement | null | undefined;
+const PortalContainerProbe: FC = () => {
+  probedContainer = usePortalContainer();
+  return null;
 };
 
 beforeEach(() => {
@@ -454,6 +461,20 @@ describe("Map", () => {
     const region = container.querySelector('[role="region"]');
     expect(region).not.toBeNull();
     expect(region?.getAttribute("aria-label")).toBe("Interactive map");
+  });
+
+  it("provides the container element through usePortalContainer", () => {
+    probedContainer = undefined;
+    const { container } = render(
+      <Map>
+        <PortalContainerProbe />
+      </Map>,
+    );
+    loadMap();
+
+    const region = container.querySelector('[role="region"]');
+    expect(probedContainer).not.toBeNull();
+    expect(probedContainer).toBe(region);
   });
 
   describe("error resilience", () => {

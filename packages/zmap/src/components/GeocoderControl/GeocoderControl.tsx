@@ -6,6 +6,7 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import { type FC, useMemo, useState } from "react";
 import { useMapContext } from "../../context/useMap";
+import { usePortalContainer } from "../../context/usePortalContainer";
 import { DEFAULT_MIN_QUERY_LENGTH, useGeocoder } from "../../hooks/useGeocoder";
 import { resolveGeocoder } from "../../providers/geocoding";
 import type { GeocodeResult, GeocoderInput } from "../../providers/geocoding";
@@ -63,6 +64,7 @@ const GeocoderControl: FC<GeocoderControlProps> = ({
   noOptionsText = "No places found",
 }) => {
   const { map } = useMapContext();
+  const container = usePortalContainer();
   const [selected, setSelected] = useState<GeocodeResult | null>(null);
   const [inputText, setInputText] = useState("");
   const [focused, setFocused] = useState(false);
@@ -137,6 +139,7 @@ const GeocoderControl: FC<GeocoderControlProps> = ({
           open={open}
           onClose={() => setDirty(false)}
           loading={loading}
+          slotProps={{ popper: { container } }}
           filterOptions={(options) => options}
           getOptionLabel={(option) => option.name}
           isOptionEqualToValue={(a, b) => a.id === b.id}
