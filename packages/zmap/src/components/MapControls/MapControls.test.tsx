@@ -24,7 +24,7 @@ describe("MapControls locale", () => {
     expect(screen.getByLabelText(heIL.toggleFullscreenLabel)).toBeTruthy();
   });
 
-  it("scale bar formats its label with localeTag", () => {
+  it("scale bar formats its label with numberLocale", () => {
     // The "nice number" selection (niceRound) always lands the km branch on
     // an exact multiple of 1000 (nice ∈ {1,2,3,5} × a power of ten ≥ 1000),
     // so this math can never surface a fractional km value — we assert the

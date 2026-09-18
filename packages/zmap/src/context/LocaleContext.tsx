@@ -6,7 +6,7 @@ import type { ZmapLocaleText } from "../locales/types";
 export interface LocaleContextValue {
   /** The merged UI strings: `enUS` overridden by `<Map localeText>`. */
   text: ZmapLocaleText;
-  /** The BCP-47 tag from `<Map localeTag>`, if one was set. */
+  /** The BCP-47 tag from `<Map numberLocale>`, if one was set. */
   locale?: string;
 }
 

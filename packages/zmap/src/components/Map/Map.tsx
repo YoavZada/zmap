@@ -160,12 +160,11 @@ export interface MapProps
    */
   localeText?: Partial<ZmapLocaleText>;
   /**
-   * BCP-47 tag (e.g. "he-IL") used for number formatting in the scale bar
-   * and measurements. Defaults to the browser locale. Named `localeTag`
-   * (not `locale`) because `locale` above already forwards MapLibre's own
-   * built-in UI-string overrides to the constructor.
+   * BCP-47 tag (e.g. "he-IL") for number formatting in the scale bar and
+   * measurements. Defaults to the browser locale. Distinct from `locale`,
+   * which overrides MapLibre's own UI strings.
    */
-  localeTag?: string;
+  numberLocale?: string;
   /**
    * CSS cursor over the map canvas. Layer hover cursors (pointer) still take
    * precedence while hovering. Reactive.
@@ -316,7 +315,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     hash,
     locale,
     localeText,
-    localeTag,
+    numberLocale,
     cursor,
     mapOptions,
     projection = "mercator",
@@ -705,8 +704,8 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
   // below so the loader, error panel, and the Box's own aria-label all see
   // it.
   const localeValue = useMemo<LocaleContextValue>(
-    () => ({ text: { ...enUS, ...localeText }, locale: localeTag }),
-    [localeText, localeTag],
+    () => ({ text: { ...enUS, ...localeText }, locale: numberLocale }),
+    [localeText, numberLocale],
   );
 
   // Loading indicator (opt-in via `loader`, off by default), shown until the

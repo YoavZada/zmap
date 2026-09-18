@@ -7,7 +7,7 @@ export function useLocaleText(): ZmapLocaleText {
   return useContext(LocaleContext).text;
 }
 
-/** The BCP-47 locale for number formatting, if `<Map localeTag>` set one. */
+/** The BCP-47 locale for number formatting, if `<Map numberLocale>` set one. */
 export function useLocale(): string | undefined {
   return useContext(LocaleContext).locale;
 }
