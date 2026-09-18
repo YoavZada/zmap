@@ -40,21 +40,24 @@ export async function setColorMode(page: Page, mode: ColorMode) {
 /**
  * Wait for at least `min` loaded maps, nudging the page downward as needed —
  * demos below the fold lazy-mount via IntersectionObserver, so a plain wait
- * would never reveal them.
+ * would never reveal them. Condition-based: each poll tick checks the current
+ * count and, if it's still short, scrolls before the next tick — no fixed
+ * sleeps, so this resolves as soon as the maps actually load.
  */
 export async function revealMaps(page: Page, min = 1, timeout = 45_000) {
   const loaded = page.locator("[data-zmap-loaded]");
-  const deadline = Date.now() + timeout;
-  while ((await loaded.count()) < min) {
-    if (Date.now() > deadline) {
-      throw new Error(
-        `expected >=${min} loaded map(s) within ${timeout}ms, ` +
-          `got ${await loaded.count()}`,
-      );
-    }
-    await page.evaluate(() => window.scrollBy(0, window.innerHeight / 2));
-    await page.waitForTimeout(300);
-  }
+  await expect
+    .poll(
+      async () => {
+        const count = await loaded.count();
+        if (count < min) {
+          await page.evaluate(() => window.scrollBy(0, window.innerHeight / 2));
+        }
+        return count;
+      },
+      { timeout, intervals: [250] },
+    )
+    .toBeGreaterThanOrEqual(min);
 }
 
 /**
@@ -65,19 +68,37 @@ export async function revealMaps(page: Page, min = 1, timeout = 45_000) {
  * happen to be in the DOM — and therefore whether the scan turns up a given
  * demo's violation — depends on scroll/CPU timing, making the gate flaky.
  * Scanning the fully-revealed page is deterministic instead.
+ *
+ * Condition-based, no fixed sleeps: polls `window.scrollY` and keeps
+ * scrolling until two consecutive reads agree (the page stopped advancing —
+ * reached the bottom), then waits for the last demo section to actually be
+ * visible and, if it holds a map, for that map to finish loading.
  */
 export async function revealAllDemos(page: Page, timeout = 60_000) {
-  const deadline = Date.now() + timeout;
   let lastY = -1;
-  while (Date.now() < deadline) {
-    const y = await page.evaluate(() => window.scrollY);
-    if (y === lastY) break; // scrollY stopped advancing — reached the bottom
-    lastY = y;
-    await page.evaluate(() => window.scrollBy(0, window.innerHeight / 2));
-    await page.waitForTimeout(300);
+  await expect
+    .poll(
+      async () => {
+        const y = await page.evaluate(() => window.scrollY);
+        const stopped = y === lastY;
+        lastY = y;
+        if (!stopped) {
+          await page.evaluate(() => window.scrollBy(0, window.innerHeight / 2));
+        }
+        return stopped;
+      },
+      { timeout, intervals: [250] },
+    )
+    .toBe(true);
+
+  // Settle: the last-revealed demo may still be mounting its map.
+  const lastDemo = page.getByTestId("demo-section").last();
+  await expect(lastDemo).toBeVisible();
+  if (await lastDemo.locator(".maplibregl-canvas").count()) {
+    await expect(lastDemo.locator("[data-zmap-loaded]").first()).toBeAttached({
+      timeout: 45_000,
+    });
   }
-  // Settle: give the last-revealed demo's map a moment to finish mounting.
-  await page.waitForTimeout(500);
 }
 
 /**
