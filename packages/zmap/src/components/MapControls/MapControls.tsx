@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type FC } from "react";
+import { useCallback, useEffect, useMemo, useState, type FC } from "react";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
@@ -13,7 +13,7 @@ import Fullscreen from "@mui/icons-material/Fullscreen";
 import FullscreenExit from "@mui/icons-material/FullscreenExit";
 import ViewInAr from "@mui/icons-material/ViewInAr";
 import { useMapContext } from "../../context/useMap";
-import { useLocaleText } from "../../context/useLocaleText";
+import { useLocale, useLocaleText } from "../../context/useLocaleText";
 import ControlTooltip from "../ControlTooltip";
 import Styles from "./mapControls.style";
 
@@ -64,6 +64,8 @@ function ScaleBar({
 }) {
   const { map } = useMapContext();
   const t = useLocaleText();
+  const locale = useLocale();
+  const numberFormat = useMemo(() => new Intl.NumberFormat(locale), [locale]);
   const [state, setState] = useState<{ width: number; label: string } | null>(
     null,
   );
@@ -84,21 +86,21 @@ function ScaleBar({
           const miles = niceRound(maxFeet / 5280);
           setState({
             width: (maxWidth * ((miles * 5280) / maxFeet)) | 0,
-            label: `${miles} ${t.unitMiles}`,
+            label: `${numberFormat.format(miles)} ${t.unitMiles}`,
           });
         } else {
           const feet = niceRound(maxFeet);
           setState({
             width: (maxWidth * (feet / maxFeet)) | 0,
-            label: `${feet} ${t.unitFeet}`,
+            label: `${numberFormat.format(feet)} ${t.unitFeet}`,
           });
         }
       } else {
         const meters = niceRound(maxMeters);
         const label =
           meters >= 1000
-            ? `${meters / 1000} ${t.unitKilometers}`
-            : `${meters} ${t.unitMeters}`;
+            ? `${numberFormat.format(meters / 1000)} ${t.unitKilometers}`
+            : `${numberFormat.format(meters)} ${t.unitMeters}`;
         setState({ width: (maxWidth * (meters / maxMeters)) | 0, label });
       }
     };
@@ -107,7 +109,7 @@ function ScaleBar({
     return () => {
       map.off("move", update);
     };
-  }, [map, unit, t]);
+  }, [map, unit, t, numberFormat]);
 
   if (!state) return null;
 

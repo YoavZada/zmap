@@ -3100,6 +3100,12 @@
       "description": "Formats a distance in metres as a human label (\"850 m\", \"1.20 km\", \"2.4 mi\")."
     },
     {
+      "name": "FormatOptions",
+      "kind": "type",
+      "category": "util",
+      "description": "Options for the measurement formatters."
+    },
+    {
       "name": "generateArc",
       "kind": "value",
       "category": "util",
@@ -3334,6 +3340,12 @@
       "description": "A [longitude, latitude] pair."
     },
     {
+      "name": "localeUnitLabels",
+      "kind": "value",
+      "category": "util",
+      "description": "Maps the `unit*` keys off a `ZmapLocaleText` onto `MeasureUnitLabels`, for passing `useLocaleText()`'s value straight into `formatDistance`/`formatArea`."
+    },
+    {
       "name": "Map",
       "kind": "value",
       "category": "component",
@@ -3458,6 +3470,12 @@
       "kind": "type",
       "category": "util",
       "description": "Unit system for measurement readouts: metric (meters/km) or imperial (feet/miles)."
+    },
+    {
+      "name": "MeasureUnitLabels",
+      "kind": "type",
+      "category": "util",
+      "description": "Unit labels used by `formatDistance` / `formatArea`. Defaults are English abbreviations."
     },
     {
       "name": "nominatim",

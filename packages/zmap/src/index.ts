@@ -195,8 +195,13 @@ export {
   polygonArea,
   formatDistance,
   formatArea,
+  localeUnitLabels,
 } from "./utils/measure";
-export type { MeasureUnit } from "./utils/measure";
+export type {
+  MeasureUnit,
+  FormatOptions,
+  MeasureUnitLabels,
+} from "./utils/measure";
 export { pointInPolygon, pointInBox } from "./utils/geometry";
 export type { ScreenPoint } from "./utils/geometry";
 export { LAYER_ROLES, layerIds } from "./utils/layerIds";

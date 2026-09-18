@@ -9,11 +9,12 @@ import StraightenOutlined from "@mui/icons-material/StraightenOutlined";
 import SquareFootOutlined from "@mui/icons-material/SquareFootOutlined";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import { useDraw } from "../../hooks/useDraw";
-import { useLocaleText } from "../../context/useLocaleText";
+import { useLocale, useLocaleText } from "../../context/useLocaleText";
 import {
   formatArea,
   formatDistance,
   lineDistance,
+  localeUnitLabels,
   polygonArea,
   type MeasureUnit,
 } from "../../utils/measure";
@@ -61,6 +62,8 @@ const MeasureControl: FC<MeasureControlProps> = ({
   color = "secondary.main",
 }) => {
   const t = useLocaleText();
+  const locale = useLocale();
+  const units = useMemo(() => localeUnitLabels(t), [t]);
   const modeLabel: Record<MeasureMode, string> = {
     line: t.measureDistance,
     polygon: t.measureArea,
@@ -79,7 +82,7 @@ const MeasureControl: FC<MeasureControlProps> = ({
             {
               id: f.properties.id,
               icon: StraightenOutlined,
-              text: formatDistance(meters, unit),
+              text: formatDistance(meters, unit, { locale, units }),
             },
           ];
         }
@@ -92,13 +95,13 @@ const MeasureControl: FC<MeasureControlProps> = ({
             {
               id: f.properties.id,
               icon: SquareFootOutlined,
-              text: formatArea(polygonArea(ring), unit),
+              text: formatArea(polygonArea(ring), unit, { locale, units }),
             },
           ];
         }
         return [];
       }),
-    [features, unit],
+    [features, unit, locale, units],
   );
 
   const live = useMemo<Readout | null>(() => {
@@ -107,17 +110,17 @@ const MeasureControl: FC<MeasureControlProps> = ({
     if (mode === "line") {
       return {
         icon: StraightenOutlined,
-        text: formatDistance(lineDistance(path), unit),
+        text: formatDistance(lineDistance(path), unit, { locale, units }),
       };
     }
     if (mode === "polygon" && path.length >= 3) {
       return {
         icon: SquareFootOutlined,
-        text: formatArea(polygonArea(path), unit),
+        text: formatArea(polygonArea(path), unit, { locale, units }),
       };
     }
     return null;
-  }, [isDrawing, cursor, draft, mode, unit]);
+  }, [isDrawing, cursor, draft, mode, unit, locale, units]);
 
   const hasContent = features.length > 0 || draft.length > 0;
 
