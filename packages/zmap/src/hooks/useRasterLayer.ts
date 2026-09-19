@@ -37,7 +37,7 @@ export interface RasterLayerConfig {
  * only recreated after a style swap wipes it. Removes both on unmount.
  */
 export function useRasterLayer(config: RasterLayerConfig): void {
-  const { map, loaded } = useMapContext();
+  const { map, loaded, reportError } = useMapContext();
   const {
     id,
     tiles,
@@ -102,5 +102,11 @@ export function useRasterLayer(config: RasterLayerConfig): void {
     [id],
   );
 
-  useStyleReapply(map, loaded, apply, cleanup);
+  useStyleReapply(
+    map,
+    loaded,
+    apply,
+    cleanup,
+    useCallback((e: Error) => reportError?.(e, "layer"), [reportError]),
+  );
 }

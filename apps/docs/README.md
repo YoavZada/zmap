@@ -24,6 +24,16 @@ pnpm preview          # serve the production build
 pnpm typecheck        # tsc --noEmit
 ```
 
+## Environment
+
+Optional `VITE_*` variables, read through `src/env.ts` (put them in a
+gitignored `.env` next to this README):
+
+| Variable              | Purpose                                                                                            |
+| --------------------- | -------------------------------------------------------------------------------------------------- |
+| `VITE_PATHFINDER_URL` | Where the pathfinder demo is deployed (defaults to the dev port).                                  |
+| `VITE_ARCGIS_KEY`     | ArcGIS Location Platform API key. Enables the live ArcGIS toggle on `/providers`; hidden if unset. |
+
 ## Live against library source
 
 `vite.config.ts` aliases the `zmapgl` import to the library **source**

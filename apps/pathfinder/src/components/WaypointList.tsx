@@ -8,7 +8,7 @@ import ArrowUpward from "@mui/icons-material/ArrowUpward";
 import ArrowDownward from "@mui/icons-material/ArrowDownward";
 import Close from "@mui/icons-material/Close";
 import type { RoutePoint } from "../lib/types";
-import { type WaypointRole } from "./waypoints.style";
+import type { WaypointRole } from "./waypoints.style";
 import Styles from "./waypointList.style";
 
 export type WaypointListProps = {

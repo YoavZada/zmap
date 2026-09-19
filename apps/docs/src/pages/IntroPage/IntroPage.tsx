@@ -46,7 +46,7 @@ const features = [
   {
     icon: <ExtensionIcon />,
     title: "Pluggable providers",
-    body: "CARTO and OpenStreetMap ship built in — or pass any MapLibre style URL or spec. Drop down to the raw map instance whenever you need it.",
+    body: "CARTO, OpenStreetMap, VersaTiles and OpenTopoMap ship built in; MapTiler and Esri ArcGIS are a factory call away — or pass any MapLibre style URL or spec. Drop down to the raw map instance whenever you need it.",
     span: 7,
   },
 ];

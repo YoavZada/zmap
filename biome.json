@@ -43,7 +43,7 @@
     "rules": {
       "preset": "recommended",
       "suspicious": {
-        "noExplicitAny": "off",
+        "noExplicitAny": "error",
         "noShadowRestrictedNames": "off",
         "noArrayIndexKey": "off",
         "noAssignInExpressions": "off",
@@ -52,16 +52,13 @@
       "correctness": {
         "noUnusedVariables": "warn",
         "noUnusedFunctionParameters": "warn",
-        "noUnusedImports": "warn",
+        "noUnusedImports": "error",
         "noChildrenProp": "off",
         "useExhaustiveDependencies": "warn",
         "useHookAtTopLevel": "error"
       },
       "style": {
         "noNonNullAssertion": "off"
-      },
-      "a11y": {
-        "noSvgWithoutTitle": "off"
       }
     }
   }

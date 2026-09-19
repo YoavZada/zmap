@@ -16,7 +16,11 @@ import {
 
 /** Props for `<Route>`, which draws a polyline on the map from a list of coordinates. */
 export interface RouteProps {
-  /** Explicit source/layer id. Auto-generated when omitted. */
+  /**
+   * Explicit source/layer id. Auto-generated when omitted. Sub-layers are
+   * `${id}-<role>`; see `layerIds()`. Auto-generated ids are not
+   * predictable — pass `id` when you need to reference the layers.
+   */
   id?: string;
   /** The line's vertices as [longitude, latitude] pairs, in draw order. */
   coordinates: LngLatTuple[];
@@ -34,6 +38,12 @@ export interface RouteProps {
   lineJoin?: "bevel" | "round" | "miter";
   /** Insert before this existing layer id. */
   beforeId?: string;
+  /**
+   * Feature property to use as the stable feature id (MapLibre `promoteId`).
+   * When omitted, ids are generated per feature (`generateId`), which is
+   * enough for hover / feature-state highlighting.
+   */
+  featureId?: string;
   /** Paint/layout patches merged into the generated line layer. */
   layerOverrides?: { line?: LayerOverride };
   /** Fired when the line is clicked, with the raw map event. */
@@ -51,6 +61,7 @@ const Route: FC<RouteProps> = ({
   lineCap = "round",
   lineJoin = "round",
   beforeId,
+  featureId,
   layerOverrides,
   onClick,
 }) => {
@@ -95,7 +106,12 @@ const Route: FC<RouteProps> = ({
     ],
   );
 
-  useMapLayer({ id: baseId, data, layers, beforeId });
+  const sourceOptions = useMemo(
+    () => (featureId ? { promoteId: featureId } : { generateId: true }),
+    [featureId],
+  );
+
+  useMapLayer({ id: baseId, data, layers, beforeId, sourceOptions });
 
   useLayerClick(layerId, onClick);
 

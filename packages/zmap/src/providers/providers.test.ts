@@ -1,11 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
+  arcgis,
   maptiler,
   providerKey,
   resolveAttribution,
   resolveStyle,
   type MapProvider,
 } from "./index";
+
+const ARCGIS_BASE =
+  "https://basemapstyles-api.arcgis.com/arcgis/rest/services/styles/v2/styles";
 
 describe("resolveStyle", () => {
   it("returns CARTO positron for carto/light", () => {
@@ -70,9 +74,103 @@ describe("resolveStyle", () => {
   });
 });
 
+describe("arcgis", () => {
+  it("defaults to light-gray, tokenised, and pairs it with dark-gray", () => {
+    const provider = arcgis("KEY123");
+    expect(resolveStyle(provider, "light")).toBe(
+      `${ARCGIS_BASE}/arcgis/light-gray?token=KEY123`,
+    );
+    expect(resolveStyle(provider, "dark")).toBe(
+      `${ARCGIS_BASE}/arcgis/dark-gray?token=KEY123`,
+    );
+  });
+
+  it.each([
+    ["arcgis/light-gray", "arcgis/dark-gray"],
+    ["arcgis/streets", "arcgis/streets-night"],
+    ["arcgis/navigation", "arcgis/navigation-night"],
+    ["arcgis/human-geography", "arcgis/human-geography-dark"],
+    ["open/light-gray", "open/dark-gray"],
+    ["open/streets", "open/streets-night"],
+    ["open/navigation", "open/navigation-dark"],
+  ])("pairs %s with %s in dark mode", (light, dark) => {
+    const provider = arcgis("K", light);
+    expect(resolveStyle(provider, "light")).toContain(`/styles/${light}?`);
+    expect(resolveStyle(provider, "dark")).toContain(`/styles/${dark}?`);
+  });
+
+  it.each(["arcgis/imagery", "arcgis/topographic", "open/osm-style"])(
+    "reuses %s in both modes when it has no dark twin",
+    (style) => {
+      const provider = arcgis("K", style);
+      expect(resolveStyle(provider, "dark")).toBe(
+        resolveStyle(provider, "light"),
+      );
+      expect(resolveStyle(provider, "light")).toContain(`/styles/${style}?`);
+    },
+  );
+
+  it("honours an explicit { light, dark } pair", () => {
+    const provider = arcgis("K", {
+      light: "arcgis/topographic",
+      dark: "arcgis/nova",
+    });
+    expect(resolveStyle(provider, "light")).toContain("/arcgis/topographic?");
+    expect(resolveStyle(provider, "dark")).toContain("/arcgis/nova?");
+  });
+
+  it("forwards language, worldview and places as query params", () => {
+    const provider = arcgis("K", undefined, {
+      language: "fr",
+      worldview: "unitedStatesOfAmerica",
+      places: "attributed",
+    });
+    expect(resolveStyle(provider, "light")).toBe(
+      `${ARCGIS_BASE}/arcgis/light-gray?token=K&language=fr&worldview=unitedStatesOfAmerica&places=attributed`,
+    );
+  });
+
+  it("url-encodes preference values", () => {
+    expect(
+      resolveStyle(arcgis("K", undefined, { language: "a b" }), "light"),
+    ).toContain("language=a+b");
+  });
+
+  it("adds nothing for unset preferences", () => {
+    expect(resolveStyle(arcgis("K", "arcgis/streets", {}), "light")).toBe(
+      `${ARCGIS_BASE}/arcgis/streets?token=K`,
+    );
+  });
+
+  it("exposes Esri attribution", () => {
+    expect(resolveAttribution(arcgis("K"))).toContain("Esri");
+  });
+});
+
 describe("providerKey", () => {
   it("keys built-in ids", () => {
     expect(providerKey("carto")).toBe("id:carto");
+  });
+
+  it("keys an ArcGIS provider by its styles, never by its key", () => {
+    const key = providerKey(arcgis("SECRET"));
+    expect(key).toBe("provider:arcgis:arcgis/light-gray|arcgis/dark-gray");
+    expect(key).not.toContain("SECRET");
+  });
+
+  it("gives a string style and its equivalent explicit pair the same key", () => {
+    expect(providerKey(arcgis("K", "arcgis/streets"))).toBe(
+      providerKey(
+        arcgis("K", { light: "arcgis/streets", dark: "arcgis/streets-night" }),
+      ),
+    );
+  });
+
+  it("changes the ArcGIS key when preferences change", () => {
+    const plain = providerKey(arcgis("K"));
+    const french = providerKey(arcgis("K", undefined, { language: "fr" }));
+    expect(french).not.toBe(plain);
+    expect(french).toContain("language=fr");
   });
   it("keys custom providers by id", () => {
     const custom: MapProvider = { id: "abc", getStyle: () => "x" };

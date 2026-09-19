@@ -1,4 +1,5 @@
 import type { LngLatTuple } from "./geojson";
+import type { ZmapLocaleText } from "../locales/types";
 
 /** Mean Earth radius in metres — used for great-circle distances. */
 const EARTH_RADIUS = 6371008.8;
@@ -50,34 +51,120 @@ export function polygonArea(ring: LngLatTuple[]): number {
   return Math.abs((total * EARTH_RADIUS_EQ * EARTH_RADIUS_EQ) / 2);
 }
 
+/** Unit labels used by `formatDistance` / `formatArea`. Defaults are English abbreviations. */
+export interface MeasureUnitLabels {
+  meters: string;
+  kilometers: string;
+  feet: string;
+  miles: string;
+  squareMeters: string;
+  squareKilometers: string;
+  acres: string;
+  squareMiles: string;
+}
+
+/** Options for the measurement formatters. */
+export interface FormatOptions {
+  /** BCP-47 locale for `Intl.NumberFormat` (decimal separator, grouping). Default: the runtime's default locale. */
+  locale?: string;
+  /** Override any unit label (e.g. from `useLocaleText()`). */
+  units?: Partial<MeasureUnitLabels>;
+  /** Maximum fraction digits. Default 2. */
+  maximumFractionDigits?: number;
+}
+
+const DEFAULT_UNITS: MeasureUnitLabels = {
+  meters: "m",
+  kilometers: "km",
+  feet: "ft",
+  miles: "mi",
+  squareMeters: "m²",
+  squareKilometers: "km²",
+  acres: "ac",
+  squareMiles: "mi²",
+};
+
+/**
+ * Maps the `unit*` keys off a `ZmapLocaleText` onto `MeasureUnitLabels`, for
+ * passing `useLocaleText()`'s value straight into `formatDistance`/`formatArea`.
+ */
+export function localeUnitLabels(t: ZmapLocaleText): MeasureUnitLabels {
+  return {
+    meters: t.unitMeters,
+    kilometers: t.unitKilometers,
+    feet: t.unitFeet,
+    miles: t.unitMiles,
+    squareMeters: t.unitSquareMeters,
+    squareKilometers: t.unitSquareKilometers,
+    acres: t.unitAcres,
+    squareMiles: t.unitSquareMiles,
+  };
+}
+
+/**
+ * Formats a rounded whole number (the "below threshold" branch — no
+ * fractional digits, mirrors the old `` `${Math.round(value)}` `` — never
+ * grouped, so `en-US` defaults stay byte-identical).
+ */
+function formatWhole(
+  value: number,
+  options: FormatOptions | undefined,
+): string {
+  return new Intl.NumberFormat(options?.locale, {
+    maximumFractionDigits: 0,
+    useGrouping: false,
+  }).format(Math.round(value));
+}
+
+/**
+ * Formats a value at a fixed fraction-digit count (the "above threshold"
+ * branch — mirrors the old `value.toFixed(2)`, trailing zeros included —
+ * never grouped, so `en-US` defaults stay byte-identical).
+ */
+function formatFixed(
+  value: number,
+  options: FormatOptions | undefined,
+): string {
+  const digits = options?.maximumFractionDigits ?? 2;
+  return new Intl.NumberFormat(options?.locale, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+    useGrouping: false,
+  }).format(value);
+}
+
 /** Formats a distance in metres as a human label ("850 m", "1.20 km", "2.4 mi"). */
 export function formatDistance(
   meters: number,
   unit: MeasureUnit = "metric",
+  options?: FormatOptions,
 ): string {
+  const units: MeasureUnitLabels = { ...DEFAULT_UNITS, ...options?.units };
   if (unit === "imperial") {
     const feet = meters * 3.28084;
     return feet < 5280
-      ? `${Math.round(feet)} ft`
-      : `${(feet / 5280).toFixed(2)} mi`;
+      ? `${formatWhole(feet, options)} ${units.feet}`
+      : `${formatFixed(feet / 5280, options)} ${units.miles}`;
   }
   return meters < 1000
-    ? `${Math.round(meters)} m`
-    : `${(meters / 1000).toFixed(2)} km`;
+    ? `${formatWhole(meters, options)} ${units.meters}`
+    : `${formatFixed(meters / 1000, options)} ${units.kilometers}`;
 }
 
 /** Formats an area in m² as a human label ("850 m²", "1.20 km²", "3.4 ac"). */
 export function formatArea(
   squareMeters: number,
   unit: MeasureUnit = "metric",
+  options?: FormatOptions,
 ): string {
+  const units: MeasureUnitLabels = { ...DEFAULT_UNITS, ...options?.units };
   if (unit === "imperial") {
     const acres = squareMeters / 4046.8564224;
     return acres < 640
-      ? `${acres.toFixed(2)} ac`
-      : `${(squareMeters / 2_589_988.110336).toFixed(2)} mi²`;
+      ? `${formatFixed(acres, options)} ${units.acres}`
+      : `${formatFixed(squareMeters / 2_589_988.110336, options)} ${units.squareMiles}`;
   }
   return squareMeters < 1_000_000
-    ? `${Math.round(squareMeters)} m²`
-    : `${(squareMeters / 1_000_000).toFixed(2)} km²`;
+    ? `${formatWhole(squareMeters, options)} ${units.squareMeters}`
+    : `${formatFixed(squareMeters / 1_000_000, options)} ${units.squareKilometers}`;
 }

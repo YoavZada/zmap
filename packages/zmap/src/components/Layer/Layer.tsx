@@ -75,6 +75,10 @@ const Layer: FC<LayerProps> = ({
   }, [registryVisible, controlled, onVisibleChange]);
 
   const visible = controlled !== undefined ? controlled : registryVisible;
+  // The fragment is deliberate: under @types/react@18 an FC must return a
+  // ReactElement, and `children` is a ReactNode (the React 18 / MUI 6 compat
+  // job typechecks this file).
+  // biome-ignore lint/complexity/noUselessFragments: React 18 FC return type
   return visible ? <>{children}</> : null;
 };
 

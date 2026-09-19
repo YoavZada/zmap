@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MapContext } from "../../context/MapContext";
+import { PortalContainerContext } from "../../context/PortalContainerContext";
 import type {
   GeocodeResult,
   GeocodingProvider,
@@ -44,11 +45,20 @@ function makeProvider(
 function renderControl(
   map: FakeMap,
   props: Partial<GeocoderControlProps> = {},
+  portalContainer?: HTMLElement | null,
 ) {
   const wrapper = ({ children }: { children: ReactNode }) => (
     <MapContext.Provider
       value={{ map: map as never, loaded: true }}
-      children={children}
+      children={
+        portalContainer !== undefined ? (
+          <PortalContainerContext.Provider value={portalContainer}>
+            {children}
+          </PortalContainerContext.Provider>
+        ) : (
+          children
+        )
+      }
     />
   );
   return render(
@@ -231,5 +241,19 @@ describe("GeocoderControl", () => {
 
     fireEvent.change(input, { target: { value: "berl" } });
     expect(await screen.findByText("Berlin")).toBeTruthy();
+  });
+
+  it("listbox portals into the map container", async () => {
+    const mapContainer = document.createElement("div");
+    document.body.appendChild(mapContainer);
+
+    renderControl(new FakeMap(), {}, mapContainer);
+    const input = screen.getByRole("combobox");
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: "ber" } });
+    await screen.findByText("Berlin");
+
+    const listbox = screen.getByRole("listbox");
+    expect(mapContainer.contains(listbox)).toBe(true);
   });
 });

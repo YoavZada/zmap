@@ -8,7 +8,11 @@ import { opentopomap } from "./opentopomap";
 /** Built-in providers, keyed by id. */
 export const providers = { carto, osm, versatiles, opentopomap } as const;
 
-/** One of the built-in basemap provider ids ("carto", "osm", "versatiles", "opentopomap"). */
+/**
+ * One of the built-in, keyless basemap provider ids ("carto", "osm",
+ * "versatiles", "opentopomap"). Keyed providers (`maptiler(key)`,
+ * `arcgis(key)`) are factories, not ids — pass their return value to `provider`.
+ */
 export type ProviderId = keyof typeof providers;
 
 /**
@@ -64,4 +68,6 @@ export { osm } from "./osm";
 export { versatiles } from "./versatiles";
 export { opentopomap } from "./opentopomap";
 export { maptiler } from "./maptiler";
+export { arcgis } from "./arcgis";
+export type { ArcgisStyle, ArcgisStylePair, ArcgisOptions } from "./arcgis";
 export type { ColorMode, MapProvider };

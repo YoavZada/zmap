@@ -10,9 +10,9 @@ coverage
 
 # Local Claude tooling, internal docs, and generated screenshots — not public
 .claude/
+.superpowers/
 CLAUDE.md
 DEPLOYMENT.md
-DEVELOPMENT.md
 PUBLISHING.md
 demo-screenshots/
 .env*

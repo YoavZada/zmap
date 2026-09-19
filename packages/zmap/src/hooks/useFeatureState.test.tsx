@@ -115,6 +115,28 @@ describe("useFeatureState", () => {
     expect(map.getCanvas().style.cursor).toBe("");
   });
 
+  it("forgets the hovered id on styledata", () => {
+    const map = new FakeMap();
+    renderFeatureState(map);
+
+    act(() => {
+      move(map, 1);
+    });
+    // A style swap wipes feature-state; the hook must stop believing feature
+    // 1 is still marked as hovered so the next mousemove re-applies it.
+    act(() => {
+      map.fire("styledata");
+    });
+    const spy = vi.spyOn(map, "setFeatureState");
+    act(() => {
+      move(map, 1);
+    });
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(map.getFeatureState({ source: "states", id: 1 })).toEqual({
+      hover: true,
+    });
+  });
+
   it("unbinds and clears state on unmount", () => {
     const map = new FakeMap();
     const { unmount } = renderFeatureState(map);

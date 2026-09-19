@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useState, type FC } from "react";
+import { useCallback, useEffect, useMemo, useState, type FC } from "react";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import Add from "@mui/icons-material/Add";
 import Remove from "@mui/icons-material/Remove";
@@ -14,6 +13,8 @@ import Fullscreen from "@mui/icons-material/Fullscreen";
 import FullscreenExit from "@mui/icons-material/FullscreenExit";
 import ViewInAr from "@mui/icons-material/ViewInAr";
 import { useMapContext } from "../../context/useMap";
+import { useLocale, useLocaleText } from "../../context/useLocaleText";
+import ControlTooltip from "../ControlTooltip";
 import Styles from "./mapControls.style";
 
 /** Which corner of the map a control is anchored to. */
@@ -48,7 +49,7 @@ export interface MapControlsProps {
 }
 
 function niceRound(value: number): number {
-  const pow = Math.pow(10, Math.floor(Math.log10(value)));
+  const pow = 10 ** Math.floor(Math.log10(value));
   const d = value / pow;
   const nice = d >= 5 ? 5 : d >= 3 ? 3 : d >= 2 ? 2 : 1;
   return nice * pow;
@@ -62,6 +63,9 @@ function ScaleBar({
   unit: "metric" | "imperial";
 }) {
   const { map } = useMapContext();
+  const t = useLocaleText();
+  const locale = useLocale();
+  const numberFormat = useMemo(() => new Intl.NumberFormat(locale), [locale]);
   const [state, setState] = useState<{ width: number; label: string } | null>(
     null,
   );
@@ -74,7 +78,7 @@ function ScaleBar({
       const left = map.unproject([0, y]);
       const right = map.unproject([maxWidth, y]);
       const maxMeters = left.distanceTo(right);
-      if (!isFinite(maxMeters) || maxMeters <= 0) return;
+      if (!Number.isFinite(maxMeters) || maxMeters <= 0) return;
 
       if (unit === "imperial") {
         const maxFeet = maxMeters * 3.28084;
@@ -82,18 +86,21 @@ function ScaleBar({
           const miles = niceRound(maxFeet / 5280);
           setState({
             width: (maxWidth * ((miles * 5280) / maxFeet)) | 0,
-            label: `${miles} mi`,
+            label: `${numberFormat.format(miles)} ${t.unitMiles}`,
           });
         } else {
           const feet = niceRound(maxFeet);
           setState({
             width: (maxWidth * (feet / maxFeet)) | 0,
-            label: `${feet} ft`,
+            label: `${numberFormat.format(feet)} ${t.unitFeet}`,
           });
         }
       } else {
         const meters = niceRound(maxMeters);
-        const label = meters >= 1000 ? `${meters / 1000} km` : `${meters} m`;
+        const label =
+          meters >= 1000
+            ? `${numberFormat.format(meters / 1000)} ${t.unitKilometers}`
+            : `${numberFormat.format(meters)} ${t.unitMeters}`;
         setState({ width: (maxWidth * (meters / maxMeters)) | 0, label });
       }
     };
@@ -102,7 +109,7 @@ function ScaleBar({
     return () => {
       map.off("move", update);
     };
-  }, [map, unit]);
+  }, [map, unit, t, numberFormat]);
 
   if (!state) return null;
 
@@ -134,6 +141,7 @@ const MapControls: FC<MapControlsProps> = ({
   scaleUnit = "metric",
 }) => {
   const { map } = useMapContext();
+  const t = useLocaleText();
   const [bearing, setBearing] = useState(0);
   const [pitch, setPitch] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -203,72 +211,72 @@ const MapControls: FC<MapControlsProps> = ({
         <Stack direction="column" divider={<Divider flexItem />}>
           {showZoom && (
             <Stack direction="column" divider={<Divider flexItem />}>
-              <Tooltip title="Zoom in" placement="left">
-                <IconButton size="small" onClick={zoomIn} aria-label="Zoom in">
+              <ControlTooltip title={t.zoomIn} placement="left">
+                <IconButton size="small" onClick={zoomIn} aria-label={t.zoomIn}>
                   <Add fontSize="small" />
                 </IconButton>
-              </Tooltip>
-              <Tooltip title="Zoom out" placement="left">
+              </ControlTooltip>
+              <ControlTooltip title={t.zoomOut} placement="left">
                 <IconButton
                   size="small"
                   onClick={zoomOut}
-                  aria-label="Zoom out"
+                  aria-label={t.zoomOut}
                 >
                   <Remove fontSize="small" />
                 </IconButton>
-              </Tooltip>
+              </ControlTooltip>
             </Stack>
           )}
 
           {showCompass && (
-            <Tooltip title="Reset bearing" placement="left">
+            <ControlTooltip title={t.resetBearing} placement="left">
               <IconButton
                 size="small"
                 onClick={resetNorth}
-                aria-label="Reset bearing to north"
+                aria-label={t.resetBearingLabel}
               >
                 <Navigation fontSize="small" sx={Styles.compass(bearing)} />
               </IconButton>
-            </Tooltip>
+            </ControlTooltip>
           )}
 
           {showPitch && (
-            <Tooltip
-              title={tilted ? "Reset tilt" : "Tilt (3D)"}
+            <ControlTooltip
+              title={tilted ? t.resetTilt : t.tilt}
               placement="left"
             >
               <IconButton
                 size="small"
                 onClick={togglePitch}
-                aria-label="Toggle 3D tilt"
+                aria-label={t.toggleTiltLabel}
                 color={tilted ? "primary" : "default"}
               >
                 <ViewInAr fontSize="small" />
               </IconButton>
-            </Tooltip>
+            </ControlTooltip>
           )}
 
           {showGeolocate && (
-            <Tooltip title="My location" placement="left">
+            <ControlTooltip title={t.myLocation} placement="left">
               <IconButton
                 size="small"
                 onClick={geolocate}
-                aria-label="Go to my location"
+                aria-label={t.myLocationLabel}
               >
                 <MyLocation fontSize="small" />
               </IconButton>
-            </Tooltip>
+            </ControlTooltip>
           )}
 
           {showFullscreen && (
-            <Tooltip
-              title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+            <ControlTooltip
+              title={isFullscreen ? t.exitFullscreen : t.fullscreen}
               placement="left"
             >
               <IconButton
                 size="small"
                 onClick={toggleFullscreen}
-                aria-label="Toggle fullscreen"
+                aria-label={t.toggleFullscreenLabel}
               >
                 {isFullscreen ? (
                   <FullscreenExit fontSize="small" />
@@ -276,7 +284,7 @@ const MapControls: FC<MapControlsProps> = ({
                   <Fullscreen fontSize="small" />
                 )}
               </IconButton>
-            </Tooltip>
+            </ControlTooltip>
           )}
         </Stack>
       </Paper>

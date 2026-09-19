@@ -9,8 +9,8 @@ const zmapSrc = fileURLToPath(
 );
 
 export default defineConfig({
-  // Served from the domain root in dev and on Netlify. The GitHub Pages build
-  // sets BASE_PATH=/zmap/pathfinder/ (the app's subpath on the shared project
+  // Served from the domain root in dev. The GitHub Pages build sets
+  // BASE_PATH=/zmap/pathfinder/ (the app's subpath on the shared project
   // site) so emitted asset URLs resolve under
   // https://<user>.github.io/zmap/pathfinder/.
   base: process.env.BASE_PATH ?? "/",
@@ -20,6 +20,16 @@ export default defineConfig({
   resolve: {
     alias: {
       zmapgl: zmapSrc,
+    },
+  },
+  build: {
+    rollupOptions: {
+      onwarn(warning, defaultHandler) {
+        // zmapgl source starts with "use client" for RSC consumers; Rollup
+        // can't act on it here.
+        if (warning.code === "MODULE_LEVEL_DIRECTIVE") return;
+        defaultHandler(warning);
+      },
     },
   },
 });

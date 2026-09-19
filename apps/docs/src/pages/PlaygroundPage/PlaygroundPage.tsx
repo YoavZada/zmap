@@ -21,7 +21,7 @@ const PlaygroundPage: FC = () => (
     <Suspense
       fallback={
         <Box sx={Styles.loading}>
-          <CircularProgress />
+          <CircularProgress aria-label="Loading playground" />
         </Box>
       }
     >

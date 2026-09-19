@@ -4,9 +4,11 @@ import {
   formatDistance,
   haversineDistance,
   lineDistance,
+  localeUnitLabels,
   polygonArea,
 } from "./measure";
 import type { LngLatTuple } from "./geojson";
+import { enUS } from "../locales/enUS";
 
 const NY: LngLatTuple = [-74.006, 40.7128];
 const LDN: LngLatTuple = [-0.1276, 51.5072];
@@ -99,5 +101,42 @@ describe("formatArea", () => {
   it("formats imperial in acres then square miles", () => {
     expect(formatArea(4046.8564224, "imperial")).toBe("1.00 ac");
     expect(formatArea(5_000_000, "imperial")).toBe("1.93 mi²");
+  });
+});
+
+describe("locale-aware formatting", () => {
+  it("formats with a de-DE decimal comma", () => {
+    const text = formatDistance(1500, "metric", { locale: "de-DE" });
+    // German uses a comma decimal separator: "1,50 km" (trailing zero kept —
+    // see formatFixed, which mirrors the old toFixed(2) padding).
+    expect(text).toContain("1,5");
+    expect(text.endsWith(" km")).toBe(true);
+  });
+
+  it("uses custom unit labels", () => {
+    const text = formatDistance(1500, "metric", {
+      units: { kilometers: "ק״מ" },
+    });
+    expect(text.endsWith(" ק״מ")).toBe(true);
+  });
+
+  it("defaults match the previous output", () => {
+    expect(formatDistance(850)).toBe("850 m");
+    expect(formatDistance(1500)).toBe("1.50 km");
+    expect(formatArea(5000)).toBe("5000 m²");
+    expect(formatArea(2_500_000)).toBe("2.50 km²");
+  });
+
+  it("localeUnitLabels maps every ZmapLocaleText unit key", () => {
+    expect(localeUnitLabels(enUS)).toEqual({
+      meters: enUS.unitMeters,
+      kilometers: enUS.unitKilometers,
+      feet: enUS.unitFeet,
+      miles: enUS.unitMiles,
+      squareMeters: enUS.unitSquareMeters,
+      squareKilometers: enUS.unitSquareKilometers,
+      acres: enUS.unitAcres,
+      squareMiles: enUS.unitSquareMiles,
+    });
   });
 });

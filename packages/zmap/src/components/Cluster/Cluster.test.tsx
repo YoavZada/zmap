@@ -36,6 +36,15 @@ describe("Cluster", () => {
     expect(map.getSource("c")!.options.clusterProperties).toBeUndefined();
   });
 
+  it("keeps its own sourceOptions untouched", () => {
+    const map = new FakeMap();
+    renderCluster(map);
+
+    expect(map.getSource("c")!.options.cluster).toBe(true);
+    expect(map.getSource("c")!.options.generateId).toBeUndefined();
+    expect(map.getSource("c")!.options.promoteId).toBeUndefined();
+  });
+
   it("passes clusterProperties through to the source", () => {
     const map = new FakeMap();
     renderCluster(map, {

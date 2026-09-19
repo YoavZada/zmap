@@ -6,6 +6,7 @@ import Legend from "../Legend";
 import type { ChoroplethSpec } from "../../utils/choropleth";
 import { warnDeprecatedProp } from "../../utils/deprecation";
 import type { LayerOverride } from "../../utils/layerOverrides";
+import type { HoverHighlight } from "../../utils/hoverPaint";
 import type { ControlPosition } from "../MapControls";
 
 /** Configures the optional `<Legend>` a `<ChoroplethLayer>` can render from its own stops. */
@@ -20,7 +21,11 @@ export type ChoroplethLegendConfig = {
 
 /** Props for `<ChoroplethLayer>`, a data-driven polygon fill (choropleth). */
 export type ChoroplethLayerProps = {
-  /** Unique source/layer id. Auto-generated when omitted. */
+  /**
+   * Unique source/layer id. Auto-generated when omitted. Sub-layers are
+   * `${id}-<role>`; see `layerIds()`. Auto-generated ids are not
+   * predictable — pass `id` when you need to reference the layers.
+   */
   id?: string;
   /** GeoJSON polygons to color. */
   data: GeoJSON;
@@ -55,10 +60,23 @@ export type ChoroplethLayerProps = {
   lineOpacity?: number;
   /** Insert the layers before this existing layer id (e.g. a label layer). */
   beforeId?: string;
+  /**
+   * Feature property to use as the stable feature id (MapLibre `promoteId`).
+   * When omitted, ids are generated per feature (`generateId`), which is
+   * enough for hover / feature-state highlighting.
+   */
+  featureId?: string;
   /** Paint/layout patches merged into the generated fill/line layers. */
   layerOverrides?: { fill?: LayerOverride; line?: LayerOverride };
   /** Fired with the clicked feature and the raw map event. */
   onClick?: (feature: MapGeoJSONFeature, event: MapLayerMouseEvent) => void;
+  /** Fired with the hovered feature (null when the pointer leaves) and the raw map event. */
+  onHover?: (
+    feature: MapGeoJSONFeature | null,
+    event: MapLayerMouseEvent,
+  ) => void;
+  /** Highlight the hovered feature: `true` for theme defaults (stronger fill, `text.primary` outline), or explicit colors/opacity. Uses feature-state, so it works with the default generated ids. */
+  hoverHighlight?: boolean | HoverHighlight;
   /**
    * Render a matching <Legend> from the same stops — pass `true` for defaults,
    * or a config object to set its title, corner, and number format. The legend
@@ -86,8 +104,11 @@ const ChoroplethLayer: FC<ChoroplethLayerProps> = ({
   lineWidth,
   lineOpacity,
   beforeId,
+  featureId,
   layerOverrides,
   onClick,
+  onHover,
+  hoverHighlight,
   legend,
 }) => {
   if (lineColor !== undefined) {
@@ -118,8 +139,11 @@ const ChoroplethLayer: FC<ChoroplethLayerProps> = ({
         strokeWidth={strokeWidth ?? lineWidth ?? 1}
         strokeOpacity={strokeOpacity ?? lineOpacity ?? 1}
         beforeId={beforeId}
+        featureId={featureId}
         layerOverrides={layerOverrides}
         onClick={onClick}
+        onHover={onHover}
+        hoverHighlight={hoverHighlight}
       />
       {legendConfig && (
         <Legend

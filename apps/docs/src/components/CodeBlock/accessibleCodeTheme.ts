@@ -18,6 +18,16 @@ const LIGHT_FIXES: Record<string, string> = {
   "attr-name": "#3f68bc",
   // was #989fb1 (2.55:1 on #FBFBFB).
   comment: "#6a6f7c",
+  // was #bc5454 (4.47:1 on #FBFBFB, just under the 4.5:1 AA floor) —
+  // surfaced by the v0.10 guide pages, the first code samples to render a
+  // literal true/false against the light theme.
+  boolean: "#b85050",
+  // variable (rendered with an extra "dom" class for globals like
+  // `document`/`window`, but the theme rule keys on "variable") — was
+  // #c96765 (3.61:1 on #FBFBFB). Same fixed color as `boolean` above (same
+  // reddish family, already confirmed AA-safe) — surfaced by the
+  // troubleshooting guide's `document`/`window` references.
+  variable: "#b85050",
 };
 
 const DARK_FIXES: Record<string, string> = {

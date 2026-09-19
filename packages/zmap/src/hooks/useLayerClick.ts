@@ -23,7 +23,12 @@ export function useLayerClick(
       map.getCanvas().style.cursor = "pointer";
     };
     const leave = () => {
-      map.getCanvas().style.cursor = "";
+      // Kept in sync with useLayerHover's cursor restore — `zmapCursor` is
+      // the last cursor style zmap itself set (e.g. a drag handle), not
+      // necessarily "". Clearing to "" outright would fight that instead of
+      // restoring it.
+      const canvas = map.getCanvas();
+      canvas.style.cursor = canvas.dataset.zmapCursor ?? "";
     };
     map.on("click", layerId, click);
     map.on("mouseenter", layerId, enter);

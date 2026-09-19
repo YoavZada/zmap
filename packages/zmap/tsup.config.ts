@@ -1,8 +1,23 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.ts"],
+  // Both entries build in both formats (tsup applies `format` repo-wide, not
+  // per entry). dist/testing/index.cjs is a harmless but unreachable
+  // artifact: vitest's own CJS entry point deliberately throws ("Vitest
+  // cannot be imported in a CommonJS module using require()"), and
+  // mockMaplibre.ts uses `vi` at module scope, so requiring the built CJS
+  // file throws too. package.json's "./testing" export has no "require"
+  // condition — only "types"/"import" — so consumers can't reach it via the
+  // package's public surface; only ESM is documented/tested for it.
+  entry: { index: "src/index.ts", "testing/index": "src/testing/index.ts" },
   format: ["esm", "cjs"],
+  // tsup/esbuild enable ESM code-splitting by default once there's more than
+  // one entry point, which hoisted a shared `__publicField` class-field
+  // helper (needed only by the testing entry's FakeMap/FakeMarker/FakePopup
+  // classes) into a standalone chunk that dist/index.js then bare-imported
+  // even though it never uses it — silently growing the main bundle past its
+  // size-limit budget. false keeps every entry fully self-contained.
+  splitting: false,
   // d.ts comes from `tsc -p tsconfig.build.json` (second step of the build
   // script), not tsup: dts bundling needs the legacy TypeScript JS API, which
   // the native TypeScript 7 package no longer ships.
@@ -33,5 +48,6 @@ export default defineConfig({
     "@mui/icons-material",
     "@emotion/react",
     "@emotion/styled",
+    "vitest",
   ],
 });

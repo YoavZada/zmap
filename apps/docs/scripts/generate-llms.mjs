@@ -43,6 +43,26 @@ const routes = [
     "concept mapping from react-map-gl to zmapgl",
   ],
   [
+    "Troubleshooting guide",
+    "/guides/troubleshooting",
+    "symptom, cause, and fix for blank maps, vanishing layers, hover issues, and packaging gotchas",
+  ],
+  [
+    "Testing guide",
+    "/guides/testing",
+    "unit testing with zmapgl/testing (Vitest) and the e2e structure-only philosophy",
+  ],
+  [
+    "Accessibility guide",
+    "/guides/accessibility",
+    "what ships out of the box, translating aria-labels, and consumer responsibilities",
+  ],
+  [
+    "Localization & RTL guide",
+    "/guides/i18n",
+    "localeText, number formatting, the RTL text plugin, and control mirroring",
+  ],
+  [
     "Markers",
     "/markers",
     "MUI content at coordinates, draggable markers, symbol labels",

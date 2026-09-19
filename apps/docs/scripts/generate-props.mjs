@@ -28,7 +28,11 @@ const outFile = path.join(docsDir, "src", "generated", "props.json");
 // --- 1. Component props via react-docgen-typescript ---
 
 const componentsDir = path.join(zmapSrc, "components");
-const PRIVATE_COMPONENTS = new Set(["DrawLayers", "KeyboardCrosshair"]);
+const PRIVATE_COMPONENTS = new Set([
+  "DrawLayers",
+  "KeyboardCrosshair",
+  "ControlTooltip",
+]);
 const componentFiles = readdirSync(componentsDir)
   .filter((name) => !PRIVATE_COMPONENTS.has(name))
   .map((name) => path.join(componentsDir, name, `${name}.tsx`));
@@ -141,7 +145,7 @@ exports.sort((a, b) => a.name.localeCompare(b.name));
 // --- write ---
 
 mkdirSync(path.dirname(outFile), { recursive: true });
-writeFileSync(outFile, JSON.stringify({ components, exports }, null, 2) + "\n");
+writeFileSync(outFile, `${JSON.stringify({ components, exports }, null, 2)}\n`);
 console.log(
   `props.json: ${Object.keys(components).length} components, ${exports.length} exports`,
 );

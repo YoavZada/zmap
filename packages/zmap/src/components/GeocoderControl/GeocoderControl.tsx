@@ -6,6 +6,8 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import { type FC, useMemo, useState } from "react";
 import { useMapContext } from "../../context/useMap";
+import { usePortalContainer } from "../../context/usePortalContainer";
+import { useLocaleText } from "../../context/useLocaleText";
 import { DEFAULT_MIN_QUERY_LENGTH, useGeocoder } from "../../hooks/useGeocoder";
 import { resolveGeocoder } from "../../providers/geocoding";
 import type { GeocodeResult, GeocoderInput } from "../../providers/geocoding";
@@ -20,7 +22,7 @@ export type GeocoderControlProps = {
   position?: ControlPosition;
   /** Built-in provider id or a custom GeocodingProvider. Default "photon". */
   provider?: GeocoderInput;
-  /** Input placeholder, also used as the accessible label. Default "Search places…". */
+  /** Input placeholder, also used as the accessible label. Defaults to the locale's "Search places…". */
   placeholder?: string;
   /** Fly the camera to a picked result. Default true. */
   flyTo?: boolean;
@@ -38,7 +40,7 @@ export type GeocoderControlProps = {
   onSelect?: (result: GeocodeResult) => void;
   /** Fires when the input is cleared. */
   onClear?: () => void;
-  /** Empty-state text, also shown when the provider errors. Default "No places found". */
+  /** Empty-state text, also shown when the provider errors. Defaults to the locale's "No places found". */
   noOptionsText?: string;
 };
 
@@ -51,7 +53,7 @@ export type GeocoderControlProps = {
 const GeocoderControl: FC<GeocoderControlProps> = ({
   position = "top-left",
   provider = "photon",
-  placeholder = "Search places…",
+  placeholder,
   flyTo = true,
   zoom = 14,
   marker = true,
@@ -60,9 +62,13 @@ const GeocoderControl: FC<GeocoderControlProps> = ({
   proximity = "map-center",
   onSelect,
   onClear,
-  noOptionsText = "No places found",
+  noOptionsText,
 }) => {
   const { map } = useMapContext();
+  const container = usePortalContainer();
+  const t = useLocaleText();
+  const resolvedPlaceholder = placeholder ?? t.searchPlaceholder;
+  const resolvedNoOptionsText = noOptionsText ?? t.noPlacesFound;
   const [selected, setSelected] = useState<GeocodeResult | null>(null);
   const [inputText, setInputText] = useState("");
   const [focused, setFocused] = useState(false);
@@ -137,10 +143,13 @@ const GeocoderControl: FC<GeocoderControlProps> = ({
           open={open}
           onClose={() => setDirty(false)}
           loading={loading}
+          slotProps={{
+            popper: { container, popperOptions: { strategy: "fixed" } },
+          }}
           filterOptions={(options) => options}
           getOptionLabel={(option) => option.name}
           isOptionEqualToValue={(a, b) => a.id === b.id}
-          noOptionsText={noOptionsText}
+          noOptionsText={resolvedNoOptionsText}
           popupIcon={null}
           renderOption={(liProps, option) => {
             const { key: _key, ...rest } = liProps as {
@@ -158,10 +167,10 @@ const GeocoderControl: FC<GeocoderControlProps> = ({
           renderInput={(params) => (
             <TextField
               {...params}
-              placeholder={placeholder}
+              placeholder={resolvedPlaceholder}
               inputProps={{
                 ...params.inputProps,
-                "aria-label": placeholder,
+                "aria-label": resolvedPlaceholder,
               }}
               InputProps={{
                 ...params.InputProps,

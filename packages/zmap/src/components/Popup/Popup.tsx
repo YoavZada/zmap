@@ -1,8 +1,9 @@
-import { useEffect, useRef, type FC, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FC, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import maplibregl, { type PopupOptions } from "maplibre-gl";
 import { useTheme } from "@mui/material/styles";
 import { useMapContext } from "../../context/useMap";
+import { useLocaleText } from "../../context/useLocaleText";
 import {
   applyOverlayTheme,
   injectOverlayStyles,
@@ -14,9 +15,20 @@ export interface PopupProps {
   longitude: number;
   /** Latitude of the anchor coordinate. */
   latitude: number;
-  /** Controlled visibility. Default true. */
+  /** Controlled visibility. Omit to let the popup manage its own open state (see `defaultOpen`). */
   open?: boolean;
-  /** Fired when MapLibre closes the popup (X button, click, or move). */
+  /**
+   * Initial visibility when uncontrolled. Default true. Once an uncontrolled
+   * popup closes (X button, click, move, or Escape) it stays closed — there's
+   * no prop change that reopens it. To reopen, remount the component by
+   * changing its React `key`.
+   */
+  defaultOpen?: boolean;
+  /**
+   * Fired when MapLibre closes the popup (X button, map click/move, or
+   * Escape). In uncontrolled mode the popup also closes itself; in
+   * controlled mode, flip `open` to `false` in response.
+   */
   onClose?: () => void;
   /** Edge to pin to the coordinate (e.g. "bottom"). Auto-chosen to fit the view when omitted. */
   anchor?: PopupOptions["anchor"];
@@ -32,7 +44,7 @@ export interface PopupProps {
   maxWidth?: string;
   /** Extra class name(s) for the popup container. */
   className?: string;
-  /** Accessible name for the popup dialog. Default "Map popup". */
+  /** Accessible name for the popup dialog. Defaults to the locale's "Map popup". */
   ariaLabel?: string;
   /** Content rendered inside the popup. */
   children?: ReactNode;
@@ -45,7 +57,8 @@ export interface PopupProps {
 const Popup: FC<PopupProps> = ({
   longitude,
   latitude,
-  open = true,
+  open,
+  defaultOpen,
   onClose,
   anchor,
   offset,
@@ -54,17 +67,27 @@ const Popup: FC<PopupProps> = ({
   closeOnMove = false,
   maxWidth = "320px",
   className,
-  ariaLabel = "Map popup",
+  ariaLabel,
   children,
 }) => {
   const { map } = useMapContext();
   const theme = useTheme();
+  const t = useLocaleText();
+  const label = ariaLabel ?? t.popupLabel;
+
+  const isControlled = open !== undefined;
+  const [internalOpen, setInternalOpen] = useState(defaultOpen ?? true);
+  const isOpen = open ?? internalOpen;
+
+  const isControlledRef = useRef(isControlled);
+  isControlledRef.current = isControlled;
 
   const contentRef = useRef<HTMLDivElement | null>(null);
   if (!contentRef.current && typeof document !== "undefined") {
     contentRef.current = document.createElement("div");
   }
   const popupRef = useRef<maplibregl.Popup | null>(null);
+  const classNamesRef = useRef<string[]>([]);
 
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
@@ -73,11 +96,18 @@ const Popup: FC<PopupProps> = ({
     injectOverlayStyles();
   }, []);
 
-  // Create the popup while `open`; tear it down when closed.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: recreated only on map/open; options + content sync in later effects
+  const optionsKey = JSON.stringify([
+    anchor,
+    closeButton,
+    closeOnClick,
+    closeOnMove,
+  ]);
+
+  // Create the popup while `isOpen`; tear it down when closed.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: recreated on map/isOpen/optionsKey only — anchor/closeButton/closeOnClick/closeOnMove are creation-only and folded into optionsKey; offset/maxWidth/className/position/content sync in later effects
   useEffect(() => {
     const content = contentRef.current;
-    if (!map || !content || !open) return;
+    if (!map || !content || !isOpen) return;
 
     // Capture focus before creating the popup: MapLibre's own
     // `focusAfterOpen` (default true) synchronously auto-focuses the first
@@ -89,6 +119,13 @@ const Popup: FC<PopupProps> = ({
     // wrong place. Disabled explicitly; we do our own, more deliberate
     // version (focus the whole dialog, restore to `previouslyFocused` after).
     const previouslyFocused = document.activeElement as HTMLElement | null;
+
+    // The classNames the constructor below is about to apply — sync the ref
+    // so the className-diff effect (which only adds/removes tokens beyond
+    // this initial set) doesn't redundantly re-apply them.
+    classNamesRef.current = className
+      ? className.split(/\s+/).filter(Boolean)
+      : [];
 
     const popup = new maplibregl.Popup({
       closeButton,
@@ -109,7 +146,7 @@ const Popup: FC<PopupProps> = ({
     // a11y: the portaled content is a non-modal dialog.
     content.setAttribute("role", "dialog");
     content.setAttribute("aria-modal", "false");
-    content.setAttribute("aria-label", ariaLabel);
+    content.setAttribute("aria-label", label);
     content.tabIndex = -1;
 
     // Move focus into the popup once it's mounted.
@@ -123,7 +160,10 @@ const Popup: FC<PopupProps> = ({
     };
     content.addEventListener("keydown", onKeyDown);
 
-    const handleClose = () => onCloseRef.current?.();
+    const handleClose = () => {
+      onCloseRef.current?.();
+      if (!isControlledRef.current) setInternalOpen(false);
+    };
     popup.on("close", handleClose);
 
     return () => {
@@ -135,11 +175,34 @@ const Popup: FC<PopupProps> = ({
       popup.remove();
       popupRef.current = null;
     };
-  }, [map, open]);
+  }, [map, isOpen, optionsKey]);
 
   useEffect(() => {
     popupRef.current?.setLngLat([longitude, latitude]);
   }, [longitude, latitude]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: offset is re-applied via its JSON key (offset can be an object/array, so it's compared by value, not identity)
+  useEffect(() => {
+    popupRef.current?.setOffset(offset);
+  }, [JSON.stringify(offset ?? null)]);
+
+  useEffect(() => {
+    popupRef.current?.setMaxWidth(maxWidth);
+  }, [maxWidth]);
+
+  useEffect(() => {
+    const popup = popupRef.current;
+    if (!popup) return;
+    const next = className ? className.split(/\s+/).filter(Boolean) : [];
+    const prev = classNamesRef.current;
+    for (const name of prev) {
+      if (!next.includes(name)) popup.removeClassName(name);
+    }
+    for (const name of next) {
+      if (!prev.includes(name)) popup.addClassName(name);
+    }
+    classNamesRef.current = next;
+  }, [className]);
 
   useEffect(() => {
     const el = popupRef.current?.getElement();
@@ -147,10 +210,10 @@ const Popup: FC<PopupProps> = ({
   }, [theme]);
 
   useEffect(() => {
-    contentRef.current?.setAttribute("aria-label", ariaLabel);
-  }, [ariaLabel]);
+    contentRef.current?.setAttribute("aria-label", label);
+  }, [label]);
 
-  if (!contentRef.current || !open) return null;
+  if (!contentRef.current || !isOpen) return null;
   return createPortal(children, contentRef.current);
 };
 

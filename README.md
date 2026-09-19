@@ -10,6 +10,7 @@ MUI and follow your theme, including automatic light/dark basemaps.
 
 [**Docs & live demos**](https://yoavzada.github.io/zmap) · [Quick start](#quick-start) · [Components](#components) · [Providers & theming](#providers--theming)
 
+[![CI](https://github.com/YoavZada/zmap/actions/workflows/ci.yml/badge.svg)](https://github.com/YoavZada/zmap/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/zmapgl.svg)](https://www.npmjs.com/package/zmapgl)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![MapLibre GL](https://img.shields.io/badge/MapLibre%20GL-1A1A2E)](https://maplibre.org/)
@@ -39,7 +40,10 @@ work. It stays close to MapLibre GL, so you can always reach the raw map instanc
 - 🛤️ **Routes & arcs** — draw polylines and curved (bezier or great-circle) connection lines.
 - 🟣 **Clustering** — native MapLibre clustering rendered as themed MUI bubbles, click-to-expand.
 - 🗂️ **Layers** — group overlays into a themed `LayerControl` panel to toggle visibility; bulk-render data with `PointLayer`, `HeatmapLayer` and choropleth `ShapeLayer`.
-- 🔌 **Pluggable providers** — CARTO and OpenStreetMap built in; drop in any MapLibre style URL/spec (MapTiler, Stadia, self-hosted).
+- 🔌 **Pluggable providers** — CARTO, OpenStreetMap, VersaTiles and OpenTopoMap built in; MapTiler and Esri ArcGIS with a key; or drop in any MapLibre style URL/spec.
+- 🖱️ **Hover** — `onHover` + `hoverHighlight` on every GL layer component, backed by a stable per-feature id.
+- 🌍 **Localization & RTL** — translate every built-in string (`localeText`, ship-ready `enUS`/`heIL`), locale-aware number formatting, and controls that mirror under `dir="rtl"`.
+- 🧪 **Testing kit** — `zmapgl/testing` ships the library's own `FakeMap` double for Vitest, no hand-rolled maplibre-gl mock needed.
 - 🟦 **Fully typed** — written in TypeScript, ships its own types.
 
 ## Installation
@@ -133,6 +137,11 @@ Switch basemaps with a single prop:
 <Map provider="carto" />   {/* default — positron / dark-matter, theme-aware */}
 <Map provider="osm" />     {/* OpenStreetMap raster */}
 
+{/* Keyed factories — MapTiler and Esri ArcGIS: */}
+import { maptiler, arcgis } from "zmapgl";
+<Map provider={maptiler(import.meta.env.VITE_MAPTILER_KEY)} />
+<Map provider={arcgis(import.meta.env.VITE_ARCGIS_KEY)} />   {/* light-gray / dark-gray */}
+
 {/* Anything MapLibre-compatible: */}
 <Map provider="https://tiles.example.com/style.json" />
 <Map provider={myStyleSpecification} />
@@ -149,9 +158,19 @@ for development:
 
 - **Commercial use** requires a CARTO Enterprise license — see [CARTO's terms](https://carto.com/legal/).
 - **Non-commercial / evaluation** use is free under CARTO's basemap terms.
-- **Alternatives:** switch `provider` to OpenStreetMap, or any MapLibre-compatible
-  source (MapTiler, Stadia Maps, self-hosted). You're responsible for complying
+- **Alternatives:** switch `provider` to OpenStreetMap, the `maptiler` or
+  `arcgis` factories, or any MapLibre-compatible source (Stadia Maps,
+  self-hosted). You're responsible for complying
   with the chosen provider's usage policy and attribution.
+
+## Guides
+
+Beyond the component reference, the docs site has four standalone guides:
+
+- [Troubleshooting](https://yoavzada.github.io/zmap/guides/troubleshooting) — symptom, cause, and fix for blank maps, layers that vanish on theme toggle, hover that does nothing, and packaging gotchas.
+- [Testing](https://yoavzada.github.io/zmap/guides/testing) — unit testing with `zmapgl/testing` (Vitest), and the structure-only philosophy behind the e2e suite.
+- [Accessibility](https://yoavzada.github.io/zmap/guides/accessibility) — what ships out of the box, translating every aria-label, and what's left for you to get right.
+- [Localization & RTL](https://yoavzada.github.io/zmap/guides/i18n) — `localeText`, number formatting, the RTL text plugin, and control mirroring under `dir="rtl"`.
 
 ## Development
 
@@ -167,7 +186,8 @@ pnpm test      # run the library test suite
 
 ## Contributing
 
-Contributions are welcome!
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup,
+commands, and conventions — the short version:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)

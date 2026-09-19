@@ -3,7 +3,6 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import PlaceOutlined from "@mui/icons-material/PlaceOutlined";
 import TimelineOutlined from "@mui/icons-material/TimelineOutlined";
 import PentagonOutlined from "@mui/icons-material/PentagonOutlined";
@@ -11,6 +10,8 @@ import Check from "@mui/icons-material/Check";
 import Undo from "@mui/icons-material/Undo";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import { useDraw, type DrawFeature, type DrawMode } from "../../hooks/useDraw";
+import { useLocaleText } from "../../context/useLocaleText";
+import ControlTooltip from "../ControlTooltip";
 import type { ControlPosition } from "../MapControls";
 import DrawLayers from "../DrawLayers";
 import KeyboardCrosshair from "../KeyboardCrosshair";
@@ -36,10 +37,10 @@ export type DrawControlProps = {
   onCreate?: (feature: DrawFeature) => void;
 };
 
-const MODE_META: Record<DrawMode, { icon: ElementType; label: string }> = {
-  point: { icon: PlaceOutlined, label: "Draw point" },
-  line: { icon: TimelineOutlined, label: "Draw line" },
-  polygon: { icon: PentagonOutlined, label: "Draw polygon" },
+const MODE_ICONS: Record<DrawMode, ElementType> = {
+  point: PlaceOutlined,
+  line: TimelineOutlined,
+  polygon: PentagonOutlined,
 };
 
 /**
@@ -58,6 +59,12 @@ const DrawControl: FC<DrawControlProps> = ({
   onChange,
   onCreate,
 }) => {
+  const t = useLocaleText();
+  const modeLabel: Record<DrawMode, string> = {
+    point: t.drawPoint,
+    line: t.drawLine,
+    polygon: t.drawPolygon,
+  };
   const reactId = useId();
   const idPrefix = `zmap-draw-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const {
@@ -80,10 +87,11 @@ const DrawControl: FC<DrawControlProps> = ({
         <Stack direction="column" divider={<Divider flexItem />}>
           <Stack direction="column" divider={<Divider flexItem />}>
             {modes.map((m) => {
-              const { icon: Icon, label } = MODE_META[m];
+              const Icon = MODE_ICONS[m];
+              const label = modeLabel[m];
               const active = mode === m;
               return (
-                <Tooltip key={m} title={label} placement="right">
+                <ControlTooltip key={m} title={label} placement="right">
                   <IconButton
                     size="small"
                     onClick={() => setMode(active ? null : m)}
@@ -93,40 +101,40 @@ const DrawControl: FC<DrawControlProps> = ({
                   >
                     <Icon fontSize="small" />
                   </IconButton>
-                </Tooltip>
+                </ControlTooltip>
               );
             })}
           </Stack>
 
           {isDrawing && (
             <Stack direction="column" divider={<Divider flexItem />}>
-              <Tooltip title="Finish shape" placement="right">
+              <ControlTooltip title={t.finishShape} placement="right">
                 <IconButton
                   size="small"
                   onClick={finish}
-                  aria-label="Finish shape"
+                  aria-label={t.finishShape}
                 >
                   <Check fontSize="small" />
                 </IconButton>
-              </Tooltip>
-              <Tooltip title="Undo last point" placement="right">
+              </ControlTooltip>
+              <ControlTooltip title={t.undoLastPoint} placement="right">
                 <IconButton
                   size="small"
                   onClick={undo}
-                  aria-label="Undo last point"
+                  aria-label={t.undoLastPoint}
                 >
                   <Undo fontSize="small" />
                 </IconButton>
-              </Tooltip>
+              </ControlTooltip>
             </Stack>
           )}
 
           {showClear && hasContent && (
-            <Tooltip title="Clear all" placement="right">
-              <IconButton size="small" onClick={clear} aria-label="Clear all">
+            <ControlTooltip title={t.clearAll} placement="right">
+              <IconButton size="small" onClick={clear} aria-label={t.clearAll}>
                 <DeleteOutline fontSize="small" />
               </IconButton>
-            </Tooltip>
+            </ControlTooltip>
           )}
         </Stack>
       </Paper>

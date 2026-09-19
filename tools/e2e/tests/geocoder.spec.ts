@@ -7,6 +7,15 @@ test("GeocoderControl searches and drops a marker on select", async ({
   page,
 }) => {
   await setColorMode(page, "light");
+  // The page also renders the live Photon-backed "Place search" demo; make
+  // sure it can never reach the network even though this test never
+  // interacts with it — the assertions below are all against the offline
+  // canned-cities demo.
+  await page.route(
+    /photon\.komoot\.io|nominatim\.openstreetmap\.org/,
+    (route) =>
+      route.fulfill({ json: { type: "FeatureCollection", features: [] } }),
+  );
   await page.goto("/geocoder");
   const demo = await revealDemo(page, "custom-provider");
 

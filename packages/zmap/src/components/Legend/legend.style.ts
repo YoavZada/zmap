@@ -1,12 +1,6 @@
 import type { SxProps, Theme } from "@mui/material/styles";
 import type { ControlPosition } from "../MapControls";
-
-const OFFSETS: Record<ControlPosition, Record<string, number>> = {
-  "top-left": { top: 8, left: 8 },
-  "top-right": { top: 8, right: 8 },
-  "bottom-left": { bottom: 8, left: 8 },
-  "bottom-right": { bottom: 8, right: 8 },
-};
+import { CONTROL_OFFSETS } from "../../utils/controlPosition";
 
 const panel = (position: ControlPosition): SxProps<Theme> => ({
   position: "absolute",
@@ -14,7 +8,7 @@ const panel = (position: ControlPosition): SxProps<Theme> => ({
   p: 1,
   minWidth: 132,
   maxWidth: 240,
-  ...OFFSETS[position],
+  ...CONTROL_OFFSETS[position],
 });
 
 const title: SxProps<Theme> = {

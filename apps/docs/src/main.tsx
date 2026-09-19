@@ -13,8 +13,8 @@ import { AppThemeProvider } from "./theme";
 import App from "./App";
 import "./testRegistry";
 
-// Vite sets BASE_URL from the build `base`: "/" in dev and on Netlify, "/zmap/"
-// for the GitHub Pages subpath build. react-router wants a leading-slash,
+// Vite sets BASE_URL from the build `base`: "/" in dev, "/zmap/" for the
+// GitHub Pages subpath build. react-router wants a leading-slash,
 // no-trailing-slash basename, so normalize it (and fall back to "/" at root).
 const basename = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
 

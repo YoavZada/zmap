@@ -1,3 +1,10 @@
+"use client";
+
+// Source-aliased consumers (docs, pathfinder, any Next `transpilePackages`
+// setup pointed at src/ instead of dist/) never see tsup's banner (see
+// tsup.config.ts) — the directive has to live in source too. A doubled
+// directive when both apply is harmless.
+
 import maplibreglNamespace from "maplibre-gl";
 
 // Components
@@ -6,6 +13,8 @@ export type {
   MapProps,
   MapViewState,
   MapViewEventHandler,
+  MapErrorKind,
+  MapRef,
 } from "./components/Map";
 // The built-in loader component is private; only its props type is public,
 // for typing `<Map loaderProps={…}>`.
@@ -86,6 +95,8 @@ export type { RasterLayerProps } from "./components/RasterLayer";
 // Hooks & context
 export { useMap, useMapContext } from "./context/useMap";
 export type { MapContextValue } from "./context/MapContext";
+export { usePortalContainer } from "./context/usePortalContainer";
+export { useLocaleText, useLocale } from "./context/useLocaleText";
 export { useMapLayer } from "./hooks/useMapLayer";
 export type { MapLayerConfig, LayerInput } from "./hooks/useMapLayer";
 export { useRasterLayer } from "./hooks/useRasterLayer";
@@ -134,6 +145,12 @@ export { osm } from "./providers/osm";
 export { versatiles } from "./providers/versatiles";
 export { opentopomap } from "./providers/opentopomap";
 export { maptiler } from "./providers/maptiler";
+export { arcgis } from "./providers/arcgis";
+export type {
+  ArcgisStyle,
+  ArcgisStylePair,
+  ArcgisOptions,
+} from "./providers/arcgis";
 export {
   geocoders,
   resolveGeocoder,
@@ -151,6 +168,15 @@ export {
   registerPmtilesProtocol,
   isPmtilesRegistered,
 } from "./providers/pmtiles";
+export {
+  registerRtlTextPlugin,
+  isRtlTextPluginRegistered,
+  DEFAULT_RTL_TEXT_PLUGIN_URL,
+} from "./providers/rtlTextPlugin";
+
+// Locales
+export { enUS, heIL } from "./locales";
+export type { ZmapLocaleText } from "./locales";
 
 // Utils
 export { generateArc } from "./utils/arc";
@@ -161,6 +187,8 @@ export type { LayerOverride } from "./utils/layerOverrides";
 export { resolvePaletteColor } from "./utils/color";
 export { buildColorExpression, isChoroplethSpec } from "./utils/choropleth";
 export type { ChoroplethSpec } from "./utils/choropleth";
+export { hoverCase } from "./utils/hoverPaint";
+export type { HoverHighlight } from "./utils/hoverPaint";
 export { binPoints } from "./utils/bin";
 export type {
   BinPoint,
@@ -174,10 +202,17 @@ export {
   polygonArea,
   formatDistance,
   formatArea,
+  localeUnitLabels,
 } from "./utils/measure";
-export type { MeasureUnit } from "./utils/measure";
+export type {
+  MeasureUnit,
+  FormatOptions,
+  MeasureUnitLabels,
+} from "./utils/measure";
 export { pointInPolygon, pointInBox } from "./utils/geometry";
 export type { ScreenPoint } from "./utils/geometry";
+export { LAYER_ROLES, layerIds } from "./utils/layerIds";
+export type { LayerComponentName } from "./utils/layerIds";
 
 /** The underlying MapLibre GL namespace, re-exported for power users. */
 export const maplibregl = maplibreglNamespace;

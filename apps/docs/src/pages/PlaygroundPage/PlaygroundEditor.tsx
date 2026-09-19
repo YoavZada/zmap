@@ -30,6 +30,14 @@ createRoot(document.getElementById("root")!).render(
 );
 `;
 
+// Pin the Sandpack playground to the library version this docs build ships
+// with (baked in at build time — see VITE_ZMAP_VERSION in vite.config.ts).
+// Falls back to a known-good version when unset or still the "dev" default
+// (e.g. a standalone build of this component).
+const rawZmapVersion = import.meta.env.VITE_ZMAP_VERSION;
+const zmapVersionRange =
+  !rawZmapVersion || rawZmapVersion === "dev" ? "^0.9.0" : `^${rawZmapVersion}`;
+
 /** Heavy Sandpack editor, loaded lazily so it never weighs on other routes. */
 const PlaygroundEditor: FC = () => {
   const { mode } = useColorMode();
@@ -40,7 +48,7 @@ const PlaygroundEditor: FC = () => {
       files={{ "/src/App.tsx": APP_TSX, "/src/main.tsx": MAIN_TSX }}
       customSetup={{
         dependencies: {
-          zmapgl: "^0.8.0",
+          zmapgl: zmapVersionRange,
           "maplibre-gl": "^5.15.0",
           "@mui/material": "^7",
           "@mui/icons-material": "^7",

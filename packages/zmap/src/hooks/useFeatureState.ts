@@ -70,11 +70,20 @@ export function useFeatureState(
       setHovered(null);
     };
 
+    // A theme swap wipes feature-state along with the layers; forget the
+    // tracked id so the next mousemove re-applies it instead of deduping
+    // against a feature that's no longer actually marked as hovered.
+    const onStyleData = () => {
+      currentId = undefined;
+    };
+
     map.on("mousemove", layer, onMove);
     map.on("mouseleave", layer, onLeave);
+    map.on("styledata", onStyleData);
     return () => {
       map.off("mousemove", layer, onMove);
       map.off("mouseleave", layer, onLeave);
+      map.off("styledata", onStyleData);
       onLeave();
     };
   }, [map, layer, source, stateKey, pointerCursor]);

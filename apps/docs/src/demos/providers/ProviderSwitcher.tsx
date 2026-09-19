@@ -5,17 +5,51 @@ import Stack from "@mui/material/Stack";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Typography from "@mui/material/Typography";
-import { Map, MapControls, type MapStyleInput } from "zmapgl";
+import { Map, MapControls, arcgis, type MapStyleInput } from "zmapgl";
+import { ARCGIS_KEY } from "../../env";
 
 type Scheme = "auto" | "light" | "dark";
 
-// Built-in, no API key: "carto" (default) | "osm" | "versatiles".
-// Or bring your own: a style URL, a StyleSpecification, or a MapProvider —
+type Option = {
+  id: string;
+  label: string;
+  provider: MapStyleInput;
+  /** Set when the provider ships one style for both modes. */
+  singleStyle?: string;
+};
+
+// Built-in, no API key: "carto" (default) | "osm" | "versatiles" | "opentopomap".
+// Keyed factories: maptiler(key), arcgis(key). Or bring your own: a style URL,
+// a StyleSpecification, or a MapProvider —
 // e.g. <Map provider="https://tiles.example.com/style.json" />.
 // colorScheme: "auto" (follow MUI theme) | "light" | "dark"
+const OPTIONS: Option[] = [
+  { id: "carto", label: "CARTO", provider: "carto" },
+  {
+    id: "osm",
+    label: "OpenStreetMap",
+    provider: "osm",
+    singleStyle:
+      "OpenStreetMap ships a single raster style, so it looks the same in light and dark.",
+  },
+  { id: "versatiles", label: "VersaTiles", provider: "versatiles" },
+  {
+    id: "opentopomap",
+    label: "OpenTopoMap",
+    provider: "opentopomap",
+    singleStyle:
+      "OpenTopoMap ships a single raster style, so it looks the same in light and dark.",
+  },
+  // ArcGIS needs a key — the toggle only appears when VITE_ARCGIS_KEY is set.
+  ...(ARCGIS_KEY
+    ? [{ id: "arcgis", label: "ArcGIS", provider: arcgis(ARCGIS_KEY) }]
+    : []),
+];
+
 const ProviderSwitcher: FC = () => {
-  const [provider, setProvider] = useState<MapStyleInput>("carto");
+  const [id, setId] = useState("carto");
   const [scheme, setScheme] = useState<Scheme>("auto");
+  const option = OPTIONS.find((o) => o.id === id) ?? OPTIONS[0];
 
   return (
     <Box>
@@ -27,12 +61,14 @@ const ProviderSwitcher: FC = () => {
           <ToggleButtonGroup
             size="small"
             exclusive
-            value={provider}
-            onChange={(_, v) => v && setProvider(v)}
+            value={id}
+            onChange={(_, v) => v && setId(v)}
           >
-            <ToggleButton value="carto">CARTO</ToggleButton>
-            <ToggleButton value="osm">OpenStreetMap</ToggleButton>
-            <ToggleButton value="versatiles">VersaTiles</ToggleButton>
+            {OPTIONS.map((o) => (
+              <ToggleButton key={o.id} value={o.id}>
+                {o.label}
+              </ToggleButton>
+            ))}
           </ToggleButtonGroup>
         </Stack>
         <Stack spacing={0.5}>
@@ -53,7 +89,7 @@ const ProviderSwitcher: FC = () => {
       </Stack>
 
       <Map
-        provider={provider}
+        provider={option.provider}
         colorScheme={scheme}
         center={[2.2, 41]}
         zoom={3.5}
@@ -62,10 +98,10 @@ const ProviderSwitcher: FC = () => {
         <MapControls position="top-right" />
       </Map>
 
-      {provider === "osm" && scheme === "dark" && (
+      {option.singleStyle && scheme === "dark" && (
         <Alert severity="info" sx={{ mt: 2 }}>
-          OpenStreetMap ships a single raster style, so it looks the same in
-          light and dark. CARTO and VersaTiles provide dedicated dark tiles.
+          {option.singleStyle} CARTO, VersaTiles and ArcGIS provide dedicated
+          dark styles.
         </Alert>
       )}
     </Box>

@@ -123,4 +123,50 @@ describe("ChoroplethLayer", () => {
 
     expect(map.layerOrder).toEqual(["choro-fill", "choro-line", "labels"]);
   });
+
+  it("hoverHighlight: true leaves the choropleth fill-color expression unwrapped and wraps fill-opacity", () => {
+    const map = new FakeMap();
+    renderChoropleth(map, { hoverHighlight: true });
+
+    const paint = map.getLayer("choro-fill")!.paint as Record<string, unknown>;
+    expect(paint["fill-color"]).toEqual([
+      "interpolate",
+      ["linear"],
+      ["get", "density"],
+      0,
+      "#000000",
+      100,
+      "#ffffff",
+    ]);
+    expect((paint["fill-opacity"] as unknown[])[0]).toBe("case");
+  });
+
+  it("hoverHighlight: { fillColor } wraps the color with the expression as the base branch", () => {
+    const map = new FakeMap();
+    renderChoropleth(map, { hoverHighlight: { fillColor: "#ff00ff" } });
+
+    const paint = map.getLayer("choro-fill")!.paint as Record<string, unknown>;
+    const fillColor = paint["fill-color"] as unknown[];
+    expect(fillColor[0]).toBe("case");
+    expect(fillColor[2]).toBe("#ff00ff");
+    expect(fillColor[3]).toEqual([
+      "interpolate",
+      ["linear"],
+      ["get", "density"],
+      0,
+      "#000000",
+      100,
+      "#ffffff",
+    ]);
+  });
+
+  it("forwards onHover to the underlying ShapeLayer", () => {
+    const map = new FakeMap();
+    const onHover = vi.fn();
+    renderChoropleth(map, { onHover });
+
+    const feature = { id: 1, properties: { density: 42 } };
+    map.fireLayer("mousemove", "choro-fill", { features: [feature] });
+    expect(onHover).toHaveBeenCalledWith(feature, expect.anything());
+  });
 });
