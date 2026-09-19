@@ -156,7 +156,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Download docs build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: docs-dist
           path: apps/docs/dist
@@ -223,7 +223,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Download blob reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: blob-report-*
           path: all-blob-reports
