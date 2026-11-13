@@ -36,7 +36,7 @@ jobs:
 
       - name: Set up pnpm
         # Reads the version from the root package.json "packageManager" field.
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Set up Node
         uses: actions/setup-node@v4
