@@ -226,11 +226,18 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: blob-report-*
-          path: all-blob-reports
+          path: tools/e2e/all-blob-reports
           merge-multiple: true
 
       - name: Merge reports
-        run: pnpm --filter @zmap/e2e exec playwright merge-reports --reporter html ./all-blob-reports
+        run: |
+          # The download lands in tools/e2e/ because merge-reports runs with
+          # that package as its cwd and resolves ./all-blob-reports from there.
+          if [ -z "$(ls -A tools/e2e/all-blob-reports 2>/dev/null)" ]; then
+            echo "No blob reports were downloaded - nothing to merge."
+            exit 0
+          fi
+          pnpm --filter @zmap/e2e exec playwright merge-reports --reporter html ./all-blob-reports
 
       - name: Upload merged HTML report
         uses: actions/upload-artifact@v4
@@ -238,3 +245,4 @@ jobs:
           name: playwright-report
           path: tools/e2e/playwright-report
           retention-days: 7
+          if-no-files-found: ignore
